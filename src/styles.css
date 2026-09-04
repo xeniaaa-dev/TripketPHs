@@ -8,6 +8,10 @@
   /* Brand palette — docs/Tripket-branding.md */
   --tripket-orange: #f45a16;
   --tripket-orange-dark: #c9460e;
+  /* Lighter orange reserved for the two secondary actions (hero "Learn More"
+     and the nav "Admin Dashboard"), so they read as orange without competing
+     with the filled brand-orange CTA beside them. */
+  --tripket-orange-500: #f97316;
   --ink: #171717;
   --ink-muted: #5f5a55;
   --cream: #fff8ee;
@@ -25,6 +29,7 @@
   --border: var(--line-warm);
   --accent: var(--tripket-orange);
   --accent-hover: var(--tripket-orange-dark);
+  --accent-secondary: var(--tripket-orange-500);
   --on-accent: var(--ink);
   --on-accent-hover: var(--white);
   --outline-label: var(--ink);
@@ -50,6 +55,17 @@
     rgba(255, 248, 238, 0) 80%
   );
   --wave-stroke: rgba(244, 90, 22, 0.28);
+  /* Testimonials: frosted cards over a warm, faintly gridded ground. */
+  --testimonial-ground: linear-gradient(168deg, var(--sand) 0%, var(--cream) 46%, var(--sand) 100%);
+  --grid-line: rgba(228, 214, 198, 0.85);
+  --glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.62));
+  --glass-bg-strong: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 252, 246, 0.86));
+  --glass-border: rgba(255, 255, 255, 0.95);
+  --glass-ring: rgba(228, 214, 198, 0.65);
+  --glass-shadow: 0 1px 2px rgba(23, 23, 23, 0.04), 0 18px 40px rgba(120, 72, 32, 0.1);
+  --glass-shadow-hover: 0 2px 6px rgba(23, 23, 23, 0.06), 0 30px 60px rgba(120, 72, 32, 0.17);
+  --avatar-ring: rgba(255, 255, 255, 0.92);
+  --brand-mark: var(--tripket-orange-500);
   --shadow-sm: 0 1px 2px rgba(23, 23, 23, 0.04), 0 6px 16px rgba(23, 23, 23, 0.05);
   --shadow-md: 0 2px 4px rgba(23, 23, 23, 0.05), 0 18px 44px rgba(23, 23, 23, 0.08);
 
@@ -107,6 +123,16 @@
   --nav-shadow: 0 2px 4px rgba(0, 0, 0, 0.32), 0 16px 40px rgba(0, 0, 0, 0.42);
   --nav-quiet-border: rgba(255, 248, 238, 0.26);
   --nav-current: #ff8a4d;
+  --testimonial-ground: linear-gradient(168deg, #241a13 0%, #16110d 48%, #241a13 100%);
+  --grid-line: rgba(255, 248, 238, 0.09);
+  --glass-bg: linear-gradient(180deg, rgba(255, 248, 238, 0.1), rgba(255, 248, 238, 0.035));
+  --glass-bg-strong: linear-gradient(180deg, rgba(255, 248, 238, 0.17), rgba(255, 248, 238, 0.06));
+  --glass-border: rgba(255, 248, 238, 0.18);
+  --glass-ring: rgba(255, 248, 238, 0.08);
+  --glass-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 20px 44px rgba(0, 0, 0, 0.42);
+  --glass-shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.36), 0 32px 64px rgba(0, 0, 0, 0.52);
+  --avatar-ring: rgba(255, 248, 238, 0.14);
+  --brand-mark: var(--white);
   --footer-bg: #100c09;
   --footer-text: var(--cream);
   --footer-muted: #c7b8a8;
@@ -227,6 +253,16 @@ button {
   transform: scale(0.965);
 }
 
+/* Below this width the side-entering elements already span the full column,
+   so a 28px sideways offset has nowhere to go but past the viewport edge —
+   it added 8px of horizontal scroll on every phone. They fade up instead. */
+@media (max-width: 900px) {
+  [data-reveal-ready] [data-reveal='left'],
+  [data-reveal-ready] [data-reveal='right'] {
+    transform: translate3d(0, 24px, 0);
+  }
+}
+
 [data-reveal-ready] [data-reveal].is-revealed {
   opacity: 1;
   transform: none;
@@ -326,6 +362,9 @@ button {
   font-size: 0.95rem;
   cursor: pointer;
   white-space: nowrap;
+  /* Never wider than its container: a long label on a nowrap button would
+     otherwise force the whole page to scroll sideways on small phones. */
+  max-width: 100%;
   transition: background-color 180ms var(--ease), border-color 180ms var(--ease),
     color 180ms var(--ease);
 }
@@ -342,9 +381,11 @@ button {
   font-size: 1.02rem;
 }
 
+/* Label is white from the start rather than flipping to white on hover, so
+   the CTA looks the same before and after the pointer reaches it. */
 .button-primary {
   background: var(--accent);
-  color: var(--on-accent);
+  color: var(--white);
 }
 
 .button-primary:hover {
@@ -446,7 +487,7 @@ button {
 }
 
 .brand-mark {
-  transition: transform 220ms var(--ease);
+  transition: transform 220ms var(--ease), color 220ms var(--ease);
 }
 
 .site-header.is-stuck .brand-mark {
@@ -463,6 +504,9 @@ button {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2xs);
+  /* Keeps the 44px minimum target height the branding doc asks for; the mark
+     alone is only 38px. */
+  min-height: 44px;
   order: 1;
   font-family: var(--font-display);
   font-size: 1.3rem;
@@ -471,9 +515,16 @@ button {
 }
 
 .brand-mark {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-pill);
+  width: auto;
+  height: 26px;
+  flex: none;
+  color: var(--brand-mark);
+}
+
+/* The footer band is dark in both themes, so the mark stays light there
+   rather than following the page theme. */
+.site-footer .brand-mark {
+  color: var(--footer-text);
 }
 
 .brand-word-accent {
@@ -588,6 +639,7 @@ button {
    pill, so quiet controls get their own contrast-carrying edge. */
 .nav-actions .button-quiet {
   border-color: var(--nav-quiet-border);
+  color: var(--accent-secondary);
 }
 
 .nav-actions .button-quiet:hover {
@@ -745,10 +797,11 @@ button {
   padding-inline: var(--space-lg);
 }
 
-/* Secondary action stays a quiet inline link so one orange CTA dominates. */
+/* Secondary action stays an inline link so the filled CTA still dominates. */
 .hero-actions .button-ghost {
   padding-inline: var(--space-2xs);
   background: transparent;
+  color: var(--accent-secondary);
 }
 
 .hero-actions .button-ghost:hover {
@@ -1144,7 +1197,7 @@ button {
   background: var(--surface);
   color: var(--text);
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -1159,21 +1212,47 @@ button {
 
 /* ---------------------------------------------------------- testimonials */
 
+/* Composition follows the supplied reference: a centred heading over a faintly
+   gridded ground, and three equal frosted cards that lead with the person
+   rather than the quote. The reference's blue/violet palette is deliberately
+   not carried over — docs/Tripket-branding.md rules out a competing blue or
+   purple, so the glass sits on Tripket's warm neutrals instead. */
 .testimonials {
+  position: relative;
   padding-block: var(--section-y);
-  background: var(--surface);
+  background: var(--testimonial-ground);
   border-block: 1px solid var(--border);
+  overflow: hidden;
+  isolation: isolate;
 }
 
-/* One quote carries the section; the other two sit beside it. */
+/* The grid fades out towards the edges, so it reads as depth behind the cards
+   rather than as a table drawn across the section. */
+.testimonials::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: clamp(56px, 7vw, 120px) clamp(56px, 7vw, 120px);
+  -webkit-mask-image: radial-gradient(ellipse 72% 56% at 50% 32%, #000 12%, transparent 78%);
+  mask-image: radial-gradient(ellipse 72% 56% at 50% 32%, #000 12%, transparent 78%);
+  pointer-events: none;
+}
+
+.testimonials .section-head {
+  margin-bottom: var(--space-xl);
+}
+
+.testimonials .section-head h2 {
+  font-size: var(--h2-lg);
+}
+
 .testimonial-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  gap: var(--space-md);
-}
-
-.testimonial-cell.is-featured {
-  grid-row: span 2;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
 }
 
 .testimonial {
@@ -1181,57 +1260,101 @@ button {
   display: flex;
   height: 100%;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   margin: 0;
   padding: var(--space-lg);
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  background: var(--bg);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
+  background: var(--glass-bg);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(14px) saturate(1.06);
+  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
+    background 220ms var(--ease);
 }
 
-.testimonial::before {
-  content: '\201C';
+/* A warm hairline just inside the near-white glass edge, so the card keeps a
+   defined boundary against the pale ground. */
+.testimonial::after {
+  content: '';
   position: absolute;
-  top: 8px;
-  right: var(--space-md);
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-size: 4rem;
-  font-weight: 800;
-  line-height: 1;
-  opacity: 0.16;
+  inset: 0;
+  border: 1px solid var(--glass-ring);
+  border-radius: inherit;
   pointer-events: none;
 }
 
+.testimonial-cell:hover .testimonial,
+.testimonial-cell:focus-within .testimonial {
+  transform: translateY(-6px);
+  background: var(--glass-bg-strong);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+/* One card stays raised so the row has a focal point before the pointer
+   arrives — the reference's lifted middle card, made permanent. */
 .is-featured .testimonial {
-  justify-content: center;
-  gap: var(--space-lg);
-  padding: var(--space-xl) var(--space-lg);
+  background: var(--glass-bg-strong);
+  box-shadow: var(--glass-shadow-hover);
 }
 
-.is-featured figcaption {
-  margin-top: 0;
+/* Avatar on its own row above the name, as in the reference. Beside the name
+   it left the meta line only ~140px and wrapped it, which pushed the rating
+   and quote of the longer card out of line with its neighbours. */
+.testimonial-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
 }
 
-.is-featured .testimonial::before {
-  font-size: 7.5rem;
-  opacity: 0.18;
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  /* Initials rather than stock portraits: the quotes are demo content, and a
+     photographed stranger would imply a real, attributable customer. */
+  background: linear-gradient(150deg, var(--peach), var(--sand));
+  box-shadow: 0 0 0 3px var(--avatar-ring);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+}
+
+.testimonial-person {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.testimonial-person strong {
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  letter-spacing: -0.01em;
+}
+
+.testimonial-person span {
+  color: var(--text-muted);
+  font-size: 0.86rem;
 }
 
 .rating {
   display: flex;
-  gap: 2px;
+  gap: 3px;
   color: var(--accent);
 }
 
 .rating svg {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
   fill: none;
   stroke: currentColor;
-  opacity: 0.32;
+  opacity: 0.3;
 }
 
 .rating svg.is-filled {
@@ -1241,50 +1364,9 @@ button {
 
 .testimonial blockquote {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  line-height: 1.55;
-}
-
-.is-featured blockquote {
-  font-size: clamp(1.5rem, 2.8vw, 2.3rem);
-  line-height: 1.3;
-}
-
-.testimonial figcaption {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  margin-top: auto;
-}
-
-.avatar {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  flex: none;
-  border-radius: var(--radius-pill);
-  background: var(--peach);
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-.testimonial-person {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-}
-
-.testimonial-person strong {
-  font-family: var(--font-display);
-}
-
-.testimonial-person span {
   color: var(--text-muted);
-  font-size: 0.88rem;
+  font-size: 1.02rem;
+  line-height: 1.6;
 }
 
 /* ----------------------------------------------------------- partner cta */
@@ -1419,6 +1501,9 @@ button {
 @media (pointer: coarse) {
   .footer-group a {
     min-height: 44px;
+    /* Short labels such as "FAQ" were only 31px wide; the extra hit area sits
+       under the column and is invisible. */
+    min-width: 44px;
   }
 }
 
@@ -1465,11 +1550,1326 @@ button {
   height: 22px;
 }
 
+/* ============================================ interior pages (about, partners) */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------- page hero */
+
+/* Shorter than the home hero and photograph-free, so an interior page reads
+   as the same site without competing with the ferry. */
+.page-hero {
+  position: relative;
+  padding-top: calc(var(--nav-h) + var(--space-xl));
+  padding-bottom: var(--space-2xl);
+  background: var(--testimonial-ground);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* One soft warm bloom behind the headline for depth — kept low-contrast and
+   off-centre so it reads as light on water, not as a glowing blob. */
+.page-hero-glow {
+  position: absolute;
+  z-index: -2;
+  top: -30%;
+  right: -10%;
+  width: min(720px, 70%);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(247, 196, 139, 0.55), transparent 68%);
+  pointer-events: none;
+}
+
+.page-hero-waves {
+  position: absolute;
+  z-index: -1;
+  inset-inline: 0;
+  bottom: -8px;
+  width: 100%;
+  height: clamp(90px, 12vw, 160px);
+  fill: none;
+  stroke: var(--wave-stroke);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.page-hero-inner {
+  position: relative;
+  max-width: 56rem;
+}
+
+.page-hero h1 {
+  margin-top: var(--space-xs);
+  font-size: clamp(2.3rem, 5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.page-hero-lede {
+  margin-top: var(--space-md);
+  max-width: 48ch;
+  color: var(--text-muted);
+  font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+  line-height: 1.6;
+}
+
+.page-hero-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin-top: var(--space-md);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.page-hero-note svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--accent);
+}
+
+.page-hero-count {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2xs);
+  margin-top: var(--space-lg);
+}
+
+.page-hero-count strong {
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.page-hero-count span {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* --------------------------------------------------- mission/vision/values */
+
+.pillars {
+  padding-block: var(--section-y);
+  background: var(--bg);
+}
+
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+}
+
+.pillar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
+    border-color 220ms var(--ease);
+}
+
+.pillar:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.pillar-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--space-2xs);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  color: var(--accent);
+  transition: transform 260ms var(--ease-out), background-color 220ms var(--ease);
+}
+
+.pillar-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.pillar:hover .pillar-icon {
+  transform: translateY(-2px) rotate(-6deg);
+  background: var(--peach);
+}
+
+.pillar h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+}
+
+.pillar p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ---------------------------------------------------------------- story */
+
+.story {
+  padding-block: var(--section-y);
+  background: var(--surface);
+  border-block: 1px solid var(--border);
+}
+
+.story-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: clamp(var(--space-lg), 4vw, var(--space-2xl));
+  align-items: start;
+}
+
+.story-copy h2 {
+  margin-top: var(--space-xs);
+  font-size: var(--h2-md);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.story-body p {
+  color: var(--text-muted);
+  font-size: clamp(1.02rem, 1.4vw, 1.14rem);
+  line-height: 1.7;
+}
+
+.story-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border);
+}
+
+.story-stats li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.story-stats strong {
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.story-stats span {
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+/* -------------------------------------------------------------- founders */
+
+.founders {
+  padding-block: var(--section-y);
+  background: var(--testimonial-ground);
+}
+
+.founders .section-head {
+  margin-bottom: var(--space-xl);
+}
+
+.founder-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(var(--space-sm), 1.4vw, var(--space-md));
+}
+
+.founder figure {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: var(--space-lg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(14px) saturate(1.06);
+  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
+    background 220ms var(--ease);
+}
+
+.founder:hover figure,
+.founder:focus-within figure {
+  transform: translateY(-6px);
+  background: var(--glass-bg-strong);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+.founder-person {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.founder-person strong {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.founder-person span {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.founder blockquote {
+  position: relative;
+  margin: 0;
+  margin-top: auto;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--glass-ring);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.founder-quote-mark {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  color: var(--accent);
+  vertical-align: -2px;
+  opacity: 0.7;
+}
+
+/* --------------------------------------------------------- office/contact */
+
+.contact-band {
+  padding-block: var(--section-y);
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+
+.contact-band .section-head {
+  margin-bottom: var(--space-xl);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+}
+
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 220ms var(--ease), border-color 220ms var(--ease);
+}
+
+.contact-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.contact-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  color: var(--accent);
+}
+
+.contact-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.contact-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+.contact-card p,
+.contact-card a {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.contact-card a {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------------------------------------------------- partner directory */
+
+.partner-directory {
+  padding-block: var(--section-y);
+  background: var(--bg);
+}
+
+.partner-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+}
+
+.partner-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
+    border-color 220ms var(--ease);
+}
+
+.partner-card:hover,
+.partner-card:focus-within {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+/* A compact badge rather than a full-width strip: the logos are small and
+   mostly square, so a wide box just left them floating in whitespace. */
+.partner-card-logo {
+  display: grid;
+  place-items: center;
+  width: 116px;
+  height: 88px;
+  margin-bottom: var(--space-2xs);
+  padding: var(--space-2xs);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  border: 1px solid var(--border);
+}
+
+.partner-card-logo img {
+  /* A grid item's `min-height: auto` resolves to the image's intrinsic size
+     and overrides max-height, so these are sized explicitly and let
+     object-fit do the letterboxing — the same approach as .partner-badge. */
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: contain;
+  /* Matches the home-page marquee: muted until the row is engaged. */
+  filter: grayscale(1);
+  opacity: 0.75;
+  transition: filter 220ms var(--ease), opacity 220ms var(--ease);
+}
+
+.partner-card:hover .partner-card-logo img,
+.partner-card:focus-within .partner-card-logo img {
+  filter: none;
+  opacity: 1;
+}
+
+.partner-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  text-wrap: balance;
+}
+
+.partner-card p {
+  color: var(--text-muted);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------------------- page cta */
+
+.page-cta {
+  padding-block: var(--section-y);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.page-cta-inner {
+  max-width: 46rem;
+  padding: clamp(var(--space-lg), 4vw, var(--space-xl));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(155deg, var(--surface-alt), var(--bg) 70%);
+  text-align: center;
+}
+
+.page-cta-inner h2 {
+  font-size: var(--h2-md);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.page-cta-inner p {
+  margin-top: var(--space-sm);
+  margin-inline: auto;
+  max-width: 46ch;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.page-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+/* Row-position stagger for the interior-page grids, so a row of cards enters
+   in sequence rather than all at once. */
+[data-reveal-ready]
+  :where(.pillar-grid, .founder-grid, .contact-grid, .partner-card-grid)
+  > [data-reveal]:nth-child(3n + 2) {
+  transition-delay: 80ms;
+}
+
+[data-reveal-ready]
+  :where(.pillar-grid, .founder-grid, .contact-grid, .partner-card-grid)
+  > [data-reveal]:nth-child(3n + 3) {
+  transition-delay: 160ms;
+}
+
+/* ==================================================== support pages */
+
+/* ------------------------------------------------------------- legal docs */
+
+.legal {
+  padding-block: var(--section-y);
+  background: var(--bg);
+}
+
+.legal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+  gap: clamp(var(--space-lg), 4vw, var(--space-2xl));
+  align-items: start;
+}
+
+/* Sticky contents rail, offset so the fixed nav pill never covers it. */
+.legal-toc {
+  position: sticky;
+  top: calc(var(--nav-h) + var(--space-md));
+  max-height: calc(100vh - var(--nav-h) - var(--space-xl));
+  overflow-y: auto;
+  padding: var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.legal-toc-heading {
+  margin-bottom: var(--space-2xs);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.legal-toc ol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: none;
+  counter-reset: toc;
+}
+
+.legal-toc a {
+  display: block;
+  padding: 7px var(--space-2xs);
+  border-radius: 8px;
+  border-left: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.4;
+  transition: color 160ms var(--ease), background-color 160ms var(--ease),
+    border-color 160ms var(--ease);
+}
+
+.legal-toc a:hover {
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+.legal-toc a.is-active {
+  border-left-color: var(--accent);
+  background: var(--surface-alt);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.legal-body > section {
+  scroll-margin-top: calc(var(--nav-h) + var(--space-md));
+}
+
+.legal-body > section + section {
+  margin-top: var(--space-xl);
+}
+
+.legal-body h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.legal-body p {
+  margin-top: var(--space-sm);
+  max-width: 68ch;
+  color: var(--text-muted);
+  line-height: 1.75;
+}
+
+.legal-body ul {
+  margin-top: var(--space-sm);
+  max-width: 68ch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  list-style: none;
+}
+
+.legal-body ul li {
+  position: relative;
+  padding-left: var(--space-md);
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.legal-body ul li::before {
+  content: '';
+  position: absolute;
+  top: 0.65em;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.legal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border);
+}
+
+/* -------------------------------------------------------------------- faq */
+
+.faq {
+  padding-block: var(--section-y);
+  background: var(--bg);
+}
+
+.faq-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.faq-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+}
+
+.faq-tab {
+  min-height: 44px;
+  padding: 0 var(--space-md);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease);
+}
+
+.faq-tab:hover {
+  color: var(--text);
+}
+
+.faq-tab.is-selected {
+  background: var(--accent);
+  color: var(--white);
+}
+
+.faq-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 16rem;
+  max-width: 24rem;
+}
+
+.faq-search svg {
+  position: absolute;
+  left: var(--space-xs);
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.faq-search input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 var(--space-sm) 0 calc(var(--space-xs) + 26px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.faq-search input::placeholder {
+  color: var(--text-muted);
+}
+
+.faq-count {
+  margin-top: var(--space-md);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.faq-group {
+  margin-top: var(--space-xl);
+}
+
+.faq-group > h3 {
+  margin-bottom: var(--space-sm);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.faq-group ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  list-style: none;
+}
+
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  overflow: hidden;
+  transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+
+.faq-item:hover {
+  border-color: var(--accent);
+}
+
+.faq-item.is-open {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  width: 100%;
+  min-height: 60px;
+  padding: var(--space-sm) var(--space-md);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.faq-chevron {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  color: var(--accent);
+  transition: transform 240ms var(--ease-out);
+}
+
+.faq-item.is-open .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  padding: 0 var(--space-md) var(--space-md);
+}
+
+.faq-answer p {
+  max-width: 72ch;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.faq-empty {
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.faq-empty a {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------- contact */
+
+.contact-channels {
+  padding-block: var(--section-y);
+  background: var(--bg);
+}
+
+.channel-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+}
+
+.channel-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 220ms var(--ease), border-color 220ms var(--ease);
+}
+
+.channel-card:hover,
+.channel-card:focus-within {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+}
+
+.channel-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-2xs);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  color: var(--accent);
+}
+
+.channel-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.channel-card h3 {
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.channel-card a,
+.channel-value {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.channel-card a {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.channel-note {
+  margin-top: var(--space-3xs);
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+.contact-form-band {
+  padding-block: var(--section-y);
+  background: var(--testimonial-ground);
+  border-top: 1px solid var(--border);
+}
+
+.contact-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(var(--space-lg), 4vw, var(--space-2xl));
+  align-items: start;
+}
+
+.contact-form-copy h2 {
+  margin-top: var(--space-xs);
+  font-size: var(--h2-md);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.contact-form-copy p {
+  margin-top: var(--space-md);
+  max-width: 44ch;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.contact-form-copy a {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.contact-form-shell {
+  padding: clamp(var(--space-md), 2.4vw, var(--space-lg));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg-strong);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(14px) saturate(1.06);
+}
+
+/* ------------------------------------------------------------ form fields */
+
+.support-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row.is-wide {
+  grid-column: 1 / -1;
+}
+
+.form-row label {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.form-optional {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-2xs) var(--space-xs);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  transition: border-color 180ms var(--ease);
+}
+
+.form-row textarea {
+  min-height: auto;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.form-row input:hover,
+.form-row select:hover,
+.form-row textarea:hover {
+  border-color: var(--text-muted);
+}
+
+.form-hint {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-2xs);
+}
+
+.form-note,
+.form-status {
+  flex: 1 1 16rem;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.form-status {
+  grid-column: 1 / -1;
+}
+
+.form-status:not(:empty) {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+/* ------------------------------------------------------- account deletion */
+
+.deletion-data {
+  padding-block: var(--section-y);
+  background: var(--bg);
+}
+
+.deletion-data .section-head,
+.deletion-steps .section-head {
+  margin-bottom: var(--space-xl);
+}
+
+.deletion-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+}
+
+.deletion-card {
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.deletion-card h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-md);
+  font-family: var(--font-display);
+  font-size: 1.14rem;
+}
+
+.deletion-badge {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--surface-alt);
+  color: var(--accent);
+}
+
+.deletion-badge svg {
+  width: 17px;
+  height: 17px;
+}
+
+.deletion-card ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  list-style: none;
+}
+
+.deletion-card li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2xs);
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.deletion-card li svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  margin-top: 4px;
+  color: var(--accent);
+}
+
+.deletion-note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.deletion-note svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  margin-top: 2px;
+  color: var(--accent);
+}
+
+.deletion-note a {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.deletion-steps {
+  padding-block: var(--section-y);
+  background: var(--surface);
+  border-block: 1px solid var(--border);
+}
+
+.deletion-step-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+  list-style: none;
+  counter-reset: none;
+}
+
+.deletion-step-grid li {
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+  transition: transform 220ms var(--ease), border-color 220ms var(--ease);
+}
+
+.deletion-step-grid li:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+}
+
+.deletion-step-number {
+  display: block;
+  margin-bottom: var(--space-2xs);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.deletion-step-grid h3 {
+  font-family: var(--font-display);
+  font-size: 1.14rem;
+}
+
+.deletion-step-grid p {
+  margin-top: var(--space-2xs);
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+/* Support-page grids and the contents rail collapse together. */
+@media (max-width: 1040px) {
+  .legal-grid,
+  .contact-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Above the prose rather than beside it, so it stops being sticky. */
+  .legal-toc {
+    position: static;
+    max-height: none;
+  }
+
+  .channel-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .deletion-step-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .deletion-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .faq-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .faq-tabs {
+    justify-content: center;
+  }
+
+  .faq-search {
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Below this width a long label has to be allowed to wrap rather than
+     overflow — see the max-width note on .button. */
+  .button {
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+@media (max-width: 620px) {
+  .channel-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .support-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .faq-tab {
+    flex: 1 1 0;
+    padding-inline: var(--space-sm);
+    font-size: 0.9rem;
+  }
+
+  .legal-footer .button {
+    flex: 1 1 100%;
+  }
+}
+
+/* Interior-page grids collapse on their own content needs rather than sharing
+   the home page's breakpoints. */
+@media (max-width: 1040px) {
+  .story-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .founder-grid,
+  .partner-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .pillar-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .contact-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .page-hero {
+    padding-top: calc(var(--nav-h) + var(--space-lg));
+    padding-bottom: var(--space-xl);
+  }
+}
+
+@media (max-width: 620px) {
+  .founder-grid,
+  .partner-card-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .story-stats {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .page-cta-actions .button {
+    flex: 1 1 100%;
+  }
+}
+
 /* ----------------------------------------------------------- responsive */
 
 @media (max-width: 1100px) {
   .feature-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* The nav row is at its tightest just above the menu-button breakpoint, where
+   the full link list, both actions and the theme toggle share one pill. At the
+   inherited spacing it wrapped to a second row between 1001px and ~1041px,
+   which pushed the pill over the hero copy (--nav-h assumes a single row). */
+@media (min-width: 1001px) and (max-width: 1200px) {
+  .nav-shell {
+    gap: var(--space-sm);
+  }
+
+  .site-nav {
+    gap: var(--space-sm);
+  }
+
+  .nav-links {
+    gap: var(--space-2xs);
+  }
+
+  .nav-actions .button {
+    padding-inline: var(--space-sm);
   }
 }
 
@@ -1602,16 +3002,9 @@ button {
     display: none;
   }
 
+  /* Three equal cards need roughly 300px each; below that they stack. */
   .testimonial-grid {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .testimonial-cell.is-featured {
-    grid-row: auto;
-  }
-
-  .is-featured .testimonial {
-    padding: var(--space-lg);
   }
 
   .footer-grid {
@@ -1661,9 +3054,80 @@ button {
   }
 }
 
+@media (max-width: 400px) {
+  /* Reclaim the space between the three pill controls before the row wraps. */
+  .nav-shell {
+    gap: var(--space-2xs);
+    padding-left: var(--space-xs);
+  }
+
+  .brand {
+    font-size: 1.12rem;
+  }
+}
+
 @media (max-width: 380px) {
   .footer-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 340px) {
+  /* The three pill controls need every pixel here: at 280px the row has only
+     ~224px of usable width for a 44px menu button, a 44px theme toggle and
+     the brand. */
+  .nav-shell {
+    padding-left: var(--space-2xs);
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
+  .brand-mark {
+    height: 20px;
+  }
+}
+
+/* --------------------------------------------- large and 4K displays */
+
+/* Every clamp in the design reaches its ceiling by about 1350px, so above
+   that the page stopped adapting: on a 2560px display the content column
+   covered 48% of the screen and the headline stayed at its 1440px size. These
+   rules let the column, the nav pill, the type scale and the vertical rhythm
+   keep growing with the viewport. Each one starts from the value it already
+   had at 1600px, so nothing below this width changes, and each keeps a
+   ceiling so line length stays readable rather than spanning the whole wall. */
+@media (min-width: 1600px) {
+  :root {
+    --h2-md: clamp(3rem, 2.6vw, 3.8rem);
+    --h2-lg: clamp(3.4rem, 2.9vw, 4.3rem);
+    --h2-xl: clamp(3.9rem, 3.3vw, 4.9rem);
+    --section-y: clamp(120px, 6.5vw, 180px);
+    --gutter: clamp(40px, 2.6vw, 64px);
+  }
+
+  .container {
+    max-width: clamp(1240px, 78vw, 1760px);
+  }
+
+  .nav-shell {
+    max-width: clamp(1320px, 82vw, 1860px);
+  }
+
+  .hero h1 {
+    font-size: clamp(4.5rem, 4.5vw, 6rem);
+  }
+
+  .hero-lede {
+    font-size: clamp(1.2rem, 1.05vw, 1.45rem);
+  }
+
+  /* The hero actions would otherwise stay at their 1440px size next to a
+     headline half again as large. */
+  .button-lg {
+    min-height: clamp(52px, 3.4vw, 64px);
+    font-size: clamp(1.02rem, 0.72vw, 1.18rem);
   }
 }
 

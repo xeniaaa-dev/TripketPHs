@@ -10,7 +10,7 @@ export default function SiteFooter() {
 
       <div className="container footer-grid">
         <div className="footer-brand">
-          <Brand size={36} />
+          <Brand size={24} />
           <p>{FOOTER_TAGLINE}</p>
         </div>
 

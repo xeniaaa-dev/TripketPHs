@@ -13,18 +13,16 @@ function Rating({ value }) {
   )
 }
 
+/**
+ * Person first, then the rating, then the quote — the attribution leads the
+ * card rather than closing it, so the three cards line up on a shared visual
+ * rhythm instead of ragging against each other at the bottom.
+ */
 function Testimonial({ initials, name, location, quote, route, rating, featured = false }) {
   return (
-    <li
-      className={featured ? 'testimonial-cell is-featured' : 'testimonial-cell'}
-      // The pull quote and its two companions sit side by side, so they enter
-      // from their own side of the grid rather than both drifting upward.
-      data-reveal={featured ? 'left' : 'right'}
-    >
+    <li className={featured ? 'testimonial-cell is-featured' : 'testimonial-cell'} data-reveal>
       <figure className="testimonial">
-        <Rating value={rating} />
-        <blockquote>{quote}</blockquote>
-        <figcaption>
+        <figcaption className="testimonial-head">
           <span className="avatar" aria-hidden="true">
             {initials}
           </span>
@@ -35,6 +33,8 @@ function Testimonial({ initials, name, location, quote, route, rating, featured 
             </span>
           </span>
         </figcaption>
+        <Rating value={rating} />
+        <blockquote>{quote}</blockquote>
       </figure>
     </li>
   )

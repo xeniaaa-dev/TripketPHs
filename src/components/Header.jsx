@@ -1,9 +1,9 @@
 import { ArrowRight, ChevronDown, Menu, Moon, Sun, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Brand from './Brand'
-import { PRIMARY_NAV, ROUTES, SUPPORT_NAV } from '../data/content'
+import { NAV_CTA_LABEL, PRIMARY_NAV, ROUTES, SUPPORT_NAV } from '../data/content'
 
-export default function Header({ theme, onToggleTheme, isStuck = false }) {
+export default function Header({ theme, onToggleTheme, isStuck = false, path = '/' }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [supportOpen, setSupportOpen] = useState(false)
   const supportRef = useRef(null)
@@ -37,6 +37,7 @@ export default function Header({ theme, onToggleTheme, isStuck = false }) {
   }, [supportOpen])
 
   const isDark = theme === 'dark'
+  const inSupport = path.startsWith('/support')
 
   return (
     <header className={isStuck ? 'site-header is-stuck' : 'site-header'}>
@@ -60,22 +61,29 @@ export default function Header({ theme, onToggleTheme, isStuck = false }) {
           aria-label="Primary"
         >
           <ul className="nav-links">
-            {PRIMARY_NAV.map(({ label, href }) => (
-              <li key={label}>
-                <a
-                  className={label === 'Home' ? 'nav-link is-current' : 'nav-link'}
-                  href={href}
-                  aria-current={label === 'Home' ? 'page' : undefined}
-                  onClick={closeAll}
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
+            {PRIMARY_NAV.map(({ label, href }) => {
+              // Home's href is the #top anchor, so it cannot be compared to
+              // the route directly.
+              const isCurrent = label === 'Home' ? path === '/' : href === path
+              return (
+                <li key={label}>
+                  <a
+                    className={isCurrent ? 'nav-link is-current' : 'nav-link'}
+                    href={href}
+                    aria-current={isCurrent ? 'page' : undefined}
+                    onClick={closeAll}
+                  >
+                    {label}
+                  </a>
+                </li>
+              )
+            })}
 
             <li className="nav-support" ref={supportRef}>
               <button
-                className="nav-link nav-support-trigger"
+                className={
+                  inSupport ? 'nav-link nav-support-trigger is-current' : 'nav-link nav-support-trigger'
+                }
                 type="button"
                 ref={supportButtonRef}
                 aria-expanded={supportOpen}
@@ -88,7 +96,12 @@ export default function Header({ theme, onToggleTheme, isStuck = false }) {
               <ul className="support-menu" id="support-menu" hidden={!supportOpen}>
                 {SUPPORT_NAV.map(({ label, href }) => (
                   <li key={label}>
-                    <a href={href} onClick={closeAll}>
+                    <a
+                      href={href}
+                      className={href === path ? 'is-current' : undefined}
+                      aria-current={href === path ? 'page' : undefined}
+                      onClick={closeAll}
+                    >
                       {label}
                     </a>
                   </li>
@@ -103,7 +116,7 @@ export default function Header({ theme, onToggleTheme, isStuck = false }) {
               <ArrowRight aria-hidden="true" />
             </a>
             <a className="button button-primary" href={ROUTES.book} onClick={closeAll}>
-              Book Now
+              {NAV_CTA_LABEL}
               <ArrowRight aria-hidden="true" />
             </a>
           </div>

@@ -11,8 +11,12 @@ const READY_ATTR = 'revealReady'
  * The hiding styles are scoped behind `data-reveal-ready` on <html>, which
  * this hook sets on mount — so if the script never runs, or the browser has no
  * IntersectionObserver, every element simply stays visible.
+ *
+ * `routeKey` re-runs the effect on a client-side page change. Without it the
+ * observer would only ever know about the elements present on first render,
+ * and every section of a newly rendered page would stay stuck at opacity 0.
  */
-export default function useReveal() {
+export default function useReveal(routeKey) {
   useEffect(() => {
     const root = document.documentElement
 
@@ -48,5 +52,5 @@ export default function useReveal() {
       reducedMotion?.removeEventListener?.('change', onPreferenceChange)
       delete root.dataset[READY_ATTR]
     }
-  }, [])
+  }, [routeKey])
 }

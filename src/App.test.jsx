@@ -4,6 +4,8 @@ import { beforeEach, expect, test } from 'vitest'
 import App from './App'
 import {
   FEATURES,
+  HERO_CTA_LABEL,
+  NAV_CTA_LABEL,
   ROUTES,
   JOURNEY_STEPS,
   PARTNER_BENEFITS,
@@ -62,12 +64,15 @@ test('announces the v2 launch and retires the old version', () => {
   ).toBeInTheDocument()
 })
 
-test('every Book Now CTA points at the new web app', () => {
+test('every primary CTA points at the new web app', () => {
   render(<App />)
 
-  const bookNow = screen.getAllByRole('link', { name: /book now/i })
-  expect(bookNow.length).toBeGreaterThanOrEqual(2)
-  bookNow.forEach((link) => expect(link).toHaveAttribute('href', ROUTES.book))
+  const primaryCtas = [
+    ...screen.getAllByRole('link', { name: NAV_CTA_LABEL }),
+    ...screen.getAllByRole('link', { name: HERO_CTA_LABEL }),
+  ]
+  expect(primaryCtas.length).toBeGreaterThanOrEqual(2)
+  primaryCtas.forEach((link) => expect(link).toHaveAttribute('href', ROUTES.book))
   expect(screen.getAllByRole('link', { name: /learn more/i })[0]).toHaveAttribute('href', '#features')
 })
 

@@ -1,0 +1,1786 @@
+/* =========================================================================
+   Tripket PH — layout copied from tripketph.com, palette/type/shape from
+   docs/Tripket-branding.md. Light (warm cream) is the brand default; the
+   dark variant backs the theme toggle in the header.
+   ========================================================================= */
+
+:root {
+  /* Brand palette — docs/Tripket-branding.md */
+  --tripket-orange: #f45a16;
+  --tripket-orange-dark: #c9460e;
+  --ink: #171717;
+  --ink-muted: #5f5a55;
+  --cream: #fff8ee;
+  --sand: #f6e6d2;
+  --peach: #f7c48b;
+  --line-warm: #e4d6c6;
+  --white: #ffffff;
+
+  /* Semantic surfaces (light) */
+  --bg: var(--cream);
+  --surface: var(--white);
+  --surface-alt: var(--sand);
+  --text: var(--ink);
+  --text-muted: var(--ink-muted);
+  --border: var(--line-warm);
+  --accent: var(--tripket-orange);
+  --accent-hover: var(--tripket-orange-dark);
+  --on-accent: var(--ink);
+  --on-accent-hover: var(--white);
+  --outline-label: var(--ink);
+  --focus-ring: var(--ink);
+  /* Floating pill nav — sits over the hero photograph, so it carries its own
+     translucent surface rather than a full-width header bar. */
+  --nav-bg: rgba(255, 252, 246, 0.78);
+  --nav-bg-stuck: rgba(255, 252, 246, 0.95);
+  --nav-border: rgba(228, 214, 198, 0.9);
+  --nav-shadow: 0 1px 2px rgba(23, 23, 23, 0.04), 0 16px 40px rgba(23, 23, 23, 0.1);
+  --nav-quiet-border: rgba(23, 23, 23, 0.16);
+  /* Brand orange is only 3.4:1 on the pill, so the current-page label uses the
+     darker orange (5.6:1) while the underline stays full brand orange. */
+  --nav-current: var(--tripket-orange-dark);
+  --footer-bg: #171717;
+  --footer-text: var(--cream);
+  --footer-muted: #c7b8a8;
+  --hero-scrim: linear-gradient(
+    100deg,
+    rgba(255, 248, 238, 0.94) 0%,
+    rgba(255, 248, 238, 0.86) 34%,
+    rgba(255, 248, 238, 0.38) 60%,
+    rgba(255, 248, 238, 0) 80%
+  );
+  --wave-stroke: rgba(244, 90, 22, 0.28);
+  --shadow-sm: 0 1px 2px rgba(23, 23, 23, 0.04), 0 6px 16px rgba(23, 23, 23, 0.05);
+  --shadow-md: 0 2px 4px rgba(23, 23, 23, 0.05), 0 18px 44px rgba(23, 23, 23, 0.08);
+
+  /* Shape — 24-32px on large surfaces, 14-18px on fields and buttons */
+  --radius-lg: 28px;
+  --radius-md: 20px;
+  --radius-sm: 16px;
+  --radius-pill: 999px;
+  /* Rail the floating nav pill sits in. The hero itself is full-bleed, so
+     these only inset the pill from the viewport edge. */
+  --nav-rail-x: clamp(16px, 3vw, 44px);
+  --nav-rail-y: clamp(14px, 1.8vw, 24px);
+  --nav-h: calc(var(--nav-rail-y) * 2 + 66px);
+
+  /* Spacing — spacious scale */
+  --space-3xs: 4px;
+  --space-2xs: 8px;
+  --space-xs: 12px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 40px;
+  --space-xl: 64px;
+  --space-2xl: 96px;
+  --gutter: clamp(20px, 5vw, 40px);
+  --section-y: clamp(64px, 9vw, 120px);
+
+  --font-display: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Section headings step deliberately instead of sharing one size, so the
+     page reads as a hierarchy rather than five equal shouts. */
+  --h2-md: clamp(2rem, 3.8vw, 3rem);
+  --h2-lg: clamp(2.1rem, 4.4vw, 3.4rem);
+  --h2-xl: clamp(2.25rem, 5vw, 3.9rem);
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #16110d;
+  --surface: #201914;
+  --surface-alt: #1b1511;
+  --text: var(--cream);
+  --text-muted: #c7b8a8;
+  --border: #3a2e25;
+  --on-accent: var(--ink);
+  --on-accent-hover: var(--white);
+  --outline-label: var(--tripket-orange);
+  --focus-ring: var(--cream);
+  --nav-bg: rgba(32, 25, 20, 0.72);
+  --nav-bg-stuck: rgba(32, 25, 20, 0.93);
+  --nav-border: rgba(72, 57, 45, 0.9);
+  --nav-shadow: 0 2px 4px rgba(0, 0, 0, 0.32), 0 16px 40px rgba(0, 0, 0, 0.42);
+  --nav-quiet-border: rgba(255, 248, 238, 0.26);
+  --nav-current: #ff8a4d;
+  --footer-bg: #100c09;
+  --footer-text: var(--cream);
+  --footer-muted: #c7b8a8;
+  --hero-scrim: linear-gradient(
+      100deg,
+      rgba(22, 17, 13, 0.95) 0%,
+      rgba(22, 17, 13, 0.88) 34%,
+      rgba(22, 17, 13, 0.5) 60%,
+      rgba(22, 17, 13, 0.2) 82%
+    ),
+    linear-gradient(rgba(22, 17, 13, 0.28), rgba(22, 17, 13, 0.28));
+  --wave-stroke: rgba(247, 196, 139, 0.24);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.32), 0 18px 44px rgba(0, 0, 0, 0.4);
+
+  color-scheme: dark;
+}
+
+/* ------------------------------------------------------------------ base */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:where(a, button, [tabindex]) {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.accent {
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------- scroll reveal */
+
+/* Hiding is scoped behind data-reveal-ready, which useReveal sets on mount.
+   No script, no IntersectionObserver, or reduced motion => nothing hides. */
+[data-reveal-ready] [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+}
+
+/* Direction variants: elements enter from the side of the layout they
+   occupy, instead of everything drifting upward. */
+[data-reveal-ready] [data-reveal='left'] {
+  transform: translate3d(-28px, 0, 0);
+}
+
+[data-reveal-ready] [data-reveal='right'] {
+  transform: translate3d(28px, 0, 0);
+}
+
+[data-reveal-ready] [data-reveal='scale'] {
+  transform: scale(0.965);
+}
+
+[data-reveal-ready] [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* Items sharing a row enter together, so stagger them by DOM position. */
+[data-reveal-ready] :where(.feature-grid, .testimonial-grid) > [data-reveal]:nth-child(2) {
+  transition-delay: 80ms;
+}
+
+[data-reveal-ready] :where(.feature-grid, .testimonial-grid) > [data-reveal]:nth-child(3) {
+  transition-delay: 160ms;
+}
+
+[data-reveal-ready] .feature-grid > [data-reveal]:nth-child(4) {
+  transition-delay: 240ms;
+}
+
+[data-reveal-ready] .feature-grid > [data-reveal]:nth-child(5) {
+  transition-delay: 320ms;
+}
+
+[data-reveal-ready] .feature-grid > [data-reveal]:nth-child(6) {
+  transition-delay: 400ms;
+}
+
+/* ------------------------------------------------------------- wave rule */
+
+.wave-rule {
+  width: 100%;
+  height: 48px;
+  fill: none;
+  stroke: var(--wave-stroke);
+  stroke-width: 1.5;
+}
+
+.wave-rule.is-flipped {
+  transform: scaleY(-1);
+}
+
+/* ---------------------------------------------------------------- utils */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+  z-index: 60;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+  transform: translateY(-200%);
+  transition: transform 180ms var(--ease);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left));
+}
+
+/* The fixed nav pill must not cover the element an anchor jumps to. */
+:where(section, .page)[id] {
+  scroll-margin-top: calc(var(--nav-h) + var(--space-sm));
+}
+
+/* --------------------------------------------------------------- buttons */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  min-height: 44px;
+  padding: 0 var(--space-md);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 180ms var(--ease), border-color 180ms var(--ease),
+    color 180ms var(--ease);
+}
+
+.button svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.button-lg {
+  min-height: 52px;
+  padding: 0 var(--space-lg);
+  font-size: 1.02rem;
+}
+
+.button-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.button-primary:hover {
+  background: var(--accent-hover);
+  color: var(--on-accent-hover);
+}
+
+.button-outline {
+  border-color: var(--accent);
+  color: var(--outline-label);
+  background: transparent;
+}
+
+.button-outline svg {
+  color: var(--accent);
+}
+
+.button-outline:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.button-outline:hover svg {
+  color: currentColor;
+}
+
+.button-quiet {
+  border-color: var(--border);
+  color: var(--text);
+  background: transparent;
+}
+
+.button-quiet:hover {
+  border-color: var(--text);
+  background: var(--surface-alt);
+}
+
+.button-ghost {
+  background: transparent;
+  color: var(--text);
+}
+
+.button-ghost:hover {
+  color: var(--accent-hover);
+  background: var(--surface-alt);
+}
+
+.button-ghost.is-on-dark {
+  color: var(--cream);
+}
+
+.button-ghost.is-on-dark:hover {
+  background: rgba(255, 248, 238, 0.14);
+  color: var(--white);
+}
+
+/* ---------------------------------------------------------------- header */
+
+/* Floating pill navigation. The header itself is a transparent, click-through
+   rail pinned over the hero photograph; the visible pill is .nav-shell, so the
+   background image runs full-bleed underneath it. */
+.site-header {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 50;
+  padding: var(--nav-rail-y) var(--nav-rail-x);
+  padding-left: max(var(--nav-rail-x), env(safe-area-inset-left));
+  padding-right: max(var(--nav-rail-x), env(safe-area-inset-right));
+  background: transparent;
+  pointer-events: none;
+}
+
+.nav-shell {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding: 10px 10px 10px clamp(16px, 1.8vw, 26px);
+  border: 1px solid var(--nav-border);
+  border-radius: var(--radius-pill);
+  background: var(--nav-bg);
+  backdrop-filter: blur(18px) saturate(1.08);
+  box-shadow: var(--nav-shadow);
+  transition: background-color 220ms var(--ease), box-shadow 220ms var(--ease),
+    border-color 220ms var(--ease);
+}
+
+/* Pinned state: the pill firms up once it is floating over content rather
+   than over the hero's own light area. Height never changes, so nothing
+   below it reflows. */
+.site-header.is-stuck .nav-shell,
+.nav-shell.is-menu-open {
+  background: var(--nav-bg-stuck);
+  box-shadow: var(--shadow-md);
+}
+
+.brand-mark {
+  transition: transform 220ms var(--ease);
+}
+
+.site-header.is-stuck .brand-mark {
+  transform: scale(0.92);
+}
+
+/* Zero net layout cost. */
+.scroll-sentinel {
+  height: 1px;
+  margin-bottom: -1px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  order: 1;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-pill);
+}
+
+.brand-word-accent {
+  color: var(--accent);
+}
+
+.site-nav {
+  order: 2;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(var(--space-md), 2.4vw, var(--space-lg));
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+}
+
+.nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  min-height: 44px;
+  padding: 0 var(--space-2xs);
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 180ms var(--ease);
+}
+
+.nav-link:hover {
+  color: var(--text);
+}
+
+.nav-link.is-current {
+  color: var(--nav-current);
+}
+
+.nav-link.is-current::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(--space-2xs);
+  bottom: 7px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.nav-chevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 180ms var(--ease);
+}
+
+.nav-support-trigger[aria-expanded='true'] .nav-chevron {
+  transform: rotate(180deg);
+}
+
+.nav-support {
+  position: relative;
+}
+
+.support-menu {
+  position: absolute;
+  top: calc(100% + var(--space-sm));
+  right: 0;
+  z-index: 50;
+  min-width: 216px;
+  padding: var(--space-2xs);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+}
+
+.support-menu a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.94rem;
+  transition: background-color 180ms var(--ease), color 180ms var(--ease);
+}
+
+.support-menu a:hover {
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+/* Inside the pill every control is itself a pill. */
+.nav-actions .button {
+  border-radius: var(--radius-pill);
+}
+
+/* The warm page border reads as no border at all against the translucent
+   pill, so quiet controls get their own contrast-carrying edge. */
+.nav-actions .button-quiet {
+  border-color: var(--nav-quiet-border);
+}
+
+.nav-actions .button-quiet:hover {
+  border-color: var(--text);
+}
+
+.theme-toggle {
+  order: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color 180ms var(--ease), color 180ms var(--ease),
+    border-color 180ms var(--ease);
+}
+
+.theme-toggle:hover {
+  border-color: var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.menu-toggle {
+  display: none;
+  order: 4;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ hero */
+
+/* Full-bleed photographic stage: the sea runs edge to edge for the whole
+   first viewport, with the nav pill floating on top of it. */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 72% 50%;
+}
+
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: var(--hero-scrim);
+}
+
+.hero-waves {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  z-index: -1;
+  width: 100%;
+  height: clamp(120px, 18vw, 220px);
+  fill: none;
+  stroke: var(--wave-stroke);
+  stroke-width: 1.5;
+}
+
+/* Top padding clears the fixed nav pill; the copy still optically centres
+   because the block is centred within the remaining space. */
+.hero-inner {
+  padding-block: calc(var(--nav-h) + var(--space-lg)) var(--space-xl);
+}
+
+/* Capped so the headline never runs onto the vessel, which sits in the
+   right-hand 45% of the photograph. */
+.hero-copy {
+  max-width: min(46rem, 54%);
+}
+
+/* Launch marker. A live dot rather than an icon or emoji, so it reads as
+   status without pulling weight away from the headline. */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin: 0 0 var(--space-md);
+  padding: var(--space-3xs) var(--space-sm) var(--space-3xs) var(--space-xs);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--nav-bg-stuck);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.hero-badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.hero h1 {
+  font-size: clamp(2.4rem, 5.4vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.hero-lede {
+  margin-top: var(--space-md);
+  max-width: 42ch;
+  color: var(--text-muted);
+  font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.hero-actions .button-primary {
+  border-radius: var(--radius-pill);
+  padding-inline: var(--space-lg);
+}
+
+/* Secondary action stays a quiet inline link so one orange CTA dominates. */
+.hero-actions .button-ghost {
+  padding-inline: var(--space-2xs);
+  background: transparent;
+}
+
+.hero-actions .button-ghost:hover {
+  background: transparent;
+  color: var(--accent-hover);
+}
+
+/* ------------------------------------------------------------- trust bar */
+
+.trust-bar {
+  padding-block: var(--section-y);
+  background: var(--bg);
+}
+
+.trust-head {
+  margin-bottom: var(--space-lg);
+  text-align: center;
+}
+
+.eyebrow {
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.section-head .eyebrow,
+.trust-head .eyebrow {
+  margin-bottom: var(--space-2xs);
+}
+
+.trust-stat {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+  font-weight: 600;
+}
+
+.trust-stat strong {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+/* Two rows drifting in opposite directions at different speeds. */
+.marquee {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 64s linear infinite;
+}
+
+.marquee-track.is-reverse {
+  animation-duration: 78s;
+  animation-direction: reverse;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-group {
+  display: flex;
+  gap: clamp(var(--space-lg), 5vw, var(--space-xl));
+  padding-inline: clamp(var(--space-md), 2.5vw, var(--space-lg));
+}
+
+@keyframes marquee-scroll {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.partner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  width: 128px;
+  flex: none;
+  text-align: center;
+}
+
+.partner-badge {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease);
+}
+
+/* Fifteen carrier logos in clashing palettes fight each other and the brand
+   orange, so they rest desaturated and return to full colour on hover. */
+.partner-badge img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.72;
+  transition: filter 220ms var(--ease), opacity 220ms var(--ease);
+}
+
+.partner:hover .partner-badge img,
+.partner:focus-within .partner-badge img {
+  filter: none;
+  opacity: 1;
+}
+
+.partner:hover .partner-badge,
+.partner:focus-within .partner-badge {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.partner-name {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+/* -------------------------------------------------------------- sections */
+
+.section-head {
+  max-width: 52ch;
+  margin-bottom: var(--space-xl);
+}
+
+.section-head.is-centered {
+  max-width: 60ch;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.section-head h2 {
+  font-size: var(--h2-md);
+  font-weight: 800;
+}
+
+.features .section-head h2 {
+  font-size: var(--h2-lg);
+}
+
+@media (min-width: 1001px) {
+  .features .section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-areas:
+      'eyebrow .'
+      'title lede';
+    gap: 0 var(--space-xl);
+    align-items: end;
+    max-width: none;
+  }
+
+  .features .section-head .eyebrow {
+    grid-area: eyebrow;
+  }
+
+  .features .section-head h2 {
+    grid-area: title;
+  }
+
+  .features .section-head .section-lede {
+    grid-area: lede;
+    margin-top: 0;
+    padding-bottom: 0.4em;
+  }
+}
+
+.section-lede {
+  margin-top: var(--space-sm);
+  color: var(--text-muted);
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+}
+
+/* -------------------------------------------------------------- features */
+
+.features {
+  padding-block: var(--section-y);
+  background: var(--surface);
+  border-block: 1px solid var(--border);
+}
+
+/* Bento: the two product lines take two columns each on the first row, the
+   four supporting capabilities take one column each on the second. */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.feature {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2xs);
+  padding: var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  overflow: hidden;
+  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
+    border-color 220ms var(--ease);
+}
+
+.feature:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.feature-lg {
+  grid-column: span 2;
+  min-height: 232px;
+  gap: var(--space-2xs);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(155deg, var(--surface-alt), var(--bg) 68%);
+}
+
+/* Chip pinned to the top, title and copy sitting on the base line. */
+.feature-lg .feature-icon {
+  width: 52px;
+  height: 52px;
+  margin-bottom: auto;
+}
+
+.feature-lg .feature-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.feature-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: var(--space-2xs);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--accent);
+}
+
+.feature-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.feature h3 {
+  font-size: 1.14rem;
+  font-weight: 700;
+}
+
+.feature-lg h3 {
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+}
+
+.feature p {
+  color: var(--text-muted);
+  min-width: 0;
+}
+
+.feature-lg p {
+  max-width: 36ch;
+  font-size: 1.05rem;
+}
+
+.feature-watermark {
+  position: absolute;
+  right: -18px;
+  bottom: -24px;
+  width: 156px;
+  height: 156px;
+  color: var(--accent);
+  opacity: 0.07;
+  pointer-events: none;
+}
+
+/* ----------------------------------------------------------------- steps */
+
+.steps {
+  padding-block: var(--section-y);
+  background: var(--bg);
+}
+
+.step-map {
+  position: relative;
+}
+
+/* Decorative sailing route between the three nodes: a faint dotted guide
+   plus a solid line that draws itself in once the section is revealed. */
+.route-path {
+  position: absolute;
+  top: 0;
+  left: 16.67%;
+  width: 66.66%;
+  height: 72px;
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+.route-guide {
+  stroke: var(--accent);
+  stroke-dasharray: 3 9;
+  opacity: 0.32;
+}
+
+.route-drawn {
+  stroke: var(--accent);
+  stroke-dasharray: 100;
+  stroke-dashoffset: 0;
+  opacity: 0.85;
+}
+
+[data-reveal-ready] .route-drawn {
+  stroke-dashoffset: 100;
+}
+
+[data-reveal-ready] .step-map.is-revealed .route-drawn {
+  animation: route-draw 1100ms var(--ease-out) 200ms forwards;
+}
+
+@keyframes route-draw {
+  from {
+    stroke-dashoffset: 100;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.step-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-lg);
+}
+
+.step {
+  text-align: center;
+}
+
+.step-badge {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto var(--space-md);
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+  /* Ring of page colour so the route line stops short of the node. */
+  box-shadow: 0 0 0 8px var(--bg);
+}
+
+.step-badge svg {
+  width: 28px;
+  height: 28px;
+}
+
+.step-number {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.step h3 {
+  font-size: 1.28rem;
+}
+
+.step p {
+  margin-top: var(--space-2xs);
+  color: var(--text-muted);
+}
+
+/* ---------------------------------------------------------- testimonials */
+
+.testimonials {
+  padding-block: var(--section-y);
+  background: var(--surface);
+  border-block: 1px solid var(--border);
+}
+
+/* One quote carries the section; the other two sit beside it. */
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: var(--space-md);
+}
+
+.testimonial-cell.is-featured {
+  grid-row: span 2;
+}
+
+.testimonial {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin: 0;
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.testimonial::before {
+  content: '\201C';
+  position: absolute;
+  top: 8px;
+  right: var(--space-md);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.is-featured .testimonial {
+  justify-content: center;
+  gap: var(--space-lg);
+  padding: var(--space-xl) var(--space-lg);
+}
+
+.is-featured figcaption {
+  margin-top: 0;
+}
+
+.is-featured .testimonial::before {
+  font-size: 7.5rem;
+  opacity: 0.18;
+}
+
+.rating {
+  display: flex;
+  gap: 2px;
+  color: var(--accent);
+}
+
+.rating svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  opacity: 0.32;
+}
+
+.rating svg.is-filled {
+  fill: currentColor;
+  opacity: 1;
+}
+
+.testimonial blockquote {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.is-featured blockquote {
+  font-size: clamp(1.5rem, 2.8vw, 2.3rem);
+  line-height: 1.3;
+}
+
+.testimonial figcaption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: auto;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--peach);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.testimonial-person {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.testimonial-person strong {
+  font-family: var(--font-display);
+}
+
+.testimonial-person span {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+/* ----------------------------------------------------------- partner cta */
+
+/* The only full-bleed dark moment on the page, so the B2B ask reads as a
+   different surface from the consumer sections above it. */
+.partner-cta {
+  position: relative;
+  isolation: isolate;
+  /* clip, not hidden: `hidden` makes this a scroll container, which freezes
+     the photo's view() timeline at its midpoint. */
+  overflow: clip;
+  padding-block: clamp(72px, 10vw, 140px);
+  text-align: center;
+  color: var(--cream);
+  /* Ink focus rings would be invisible here. */
+  --focus-ring: var(--cream);
+}
+
+.partner-cta-photo {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 50%;
+}
+
+.partner-cta-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: radial-gradient(120% 90% at 84% 12%, rgba(244, 90, 22, 0.34), transparent 62%),
+    linear-gradient(rgba(16, 12, 8, 0.9), rgba(16, 12, 8, 0.92));
+}
+
+.partner-cta .eyebrow {
+  color: rgba(255, 248, 238, 0.74);
+}
+
+.partner-cta h2 {
+  font-size: var(--h2-xl);
+  font-weight: 800;
+}
+
+.partner-cta .section-lede {
+  max-width: 62ch;
+  margin-inline: auto;
+  color: rgba(255, 248, 238, 0.84);
+}
+
+.partner-benefits {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm) var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+.partner-benefits li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-weight: 500;
+}
+
+.partner-benefits svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--accent);
+}
+
+.cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.site-footer {
+  padding-block: 0 max(var(--space-md), env(safe-area-inset-bottom));
+  background: var(--footer-bg);
+  color: var(--footer-text);
+  /* Ink focus rings would be invisible on the dark footer. */
+  --focus-ring: var(--cream);
+}
+
+.site-footer .wave-rule {
+  margin-bottom: var(--space-lg);
+  stroke: rgba(255, 248, 238, 0.16);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr));
+  gap: var(--space-md) var(--space-lg);
+  padding-bottom: var(--space-lg);
+}
+
+.footer-brand p {
+  margin-top: var(--space-sm);
+  max-width: 38ch;
+  color: var(--footer-muted);
+}
+
+.footer-group h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.footer-group ul {
+  display: flex;
+  flex-direction: column;
+  /* Keeps a link that wraps to two lines visually separate from the next. */
+  gap: var(--space-3xs);
+  margin-top: var(--space-3xs);
+}
+
+.footer-group a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  color: var(--footer-muted);
+  transition: color 180ms var(--ease);
+}
+
+@media (pointer: coarse) {
+  .footer-group a {
+    min-height: 44px;
+  }
+}
+
+.footer-group a:hover {
+  color: var(--footer-text);
+}
+
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid rgba(255, 248, 238, 0.14);
+  color: var(--footer-muted);
+}
+
+.social-links {
+  display: flex;
+  gap: var(--space-2xs);
+}
+
+.social-links a {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 248, 238, 0.18);
+  border-radius: var(--radius-pill);
+  color: var(--footer-muted);
+  transition: background-color 180ms var(--ease), color 180ms var(--ease),
+    border-color 180ms var(--ease);
+}
+
+.social-links a:hover {
+  border-color: rgba(255, 248, 238, 0.4);
+  background: rgba(255, 248, 238, 0.12);
+  color: var(--footer-text);
+}
+
+.social-icon {
+  width: 22px;
+  height: 22px;
+}
+
+/* ----------------------------------------------------------- responsive */
+
+@media (max-width: 1100px) {
+  .feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1000px) {
+  .menu-toggle {
+    display: inline-flex;
+  }
+
+  .nav-shell {
+    position: relative;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px 10px 10px var(--space-sm);
+    /* Once the menu can expand, a full pill radius would clip the panel's
+       corners, so the shell relaxes to the large-surface radius. */
+    border-radius: var(--radius-lg);
+  }
+
+  .nav-shell.is-menu-open {
+    padding-bottom: var(--space-2xs);
+  }
+
+  .theme-toggle {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .site-nav {
+    order: 5;
+    flex: 1 0 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0 var(--space-2xs);
+  }
+
+  .site-nav:not(.is-open) {
+    display: none;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3xs);
+  }
+
+  .nav-link {
+    justify-content: space-between;
+    min-height: 48px;
+    padding-inline: var(--space-sm);
+    border-radius: var(--radius-sm);
+    width: 100%;
+    font-size: 1.05rem;
+  }
+
+  .nav-link.is-current::after {
+    inset-inline: var(--space-sm) auto;
+    width: 24px;
+    bottom: 8px;
+  }
+
+  .nav-support {
+    position: static;
+  }
+
+  .support-menu {
+    position: static;
+    box-shadow: none;
+    margin-top: var(--space-3xs);
+  }
+
+  .nav-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nav-actions .button {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 860px) {
+  /* Branding guardrail: at mobile widths the ferry becomes a cropped detail
+     below the copy, so the scrim turns vertical instead of horizontal. */
+  :root {
+    --hero-scrim: linear-gradient(
+      180deg,
+      rgba(255, 248, 238, 0.98) 0%,
+      rgba(255, 248, 238, 0.96) 56%,
+      rgba(255, 248, 238, 0.5) 78%,
+      rgba(255, 248, 238, 0) 94%
+    );
+  }
+
+  :root[data-theme='dark'] {
+    --hero-scrim: linear-gradient(
+      180deg,
+      rgba(22, 17, 13, 0.97) 0%,
+      rgba(22, 17, 13, 0.94) 56%,
+      rgba(22, 17, 13, 0.58) 80%,
+      rgba(22, 17, 13, 0.14) 96%
+    );
+  }
+
+  /* Copy sits at the top of the frame and the ferry stays visible as a
+     cropped detail beneath it, per docs/Tripket-branding.md. */
+  .hero {
+    align-items: stretch;
+  }
+
+  .hero-photo {
+    object-position: 80% 58%;
+  }
+
+  .hero-inner {
+    padding-block: calc(var(--nav-h) + var(--space-md)) clamp(180px, 34vh, 300px);
+  }
+
+  .hero-copy,
+  .hero-lede {
+    max-width: none;
+  }
+
+  .step-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Stacked nodes carry the sequence on their own. */
+  .route-path {
+    display: none;
+  }
+
+  .testimonial-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .testimonial-cell.is-featured {
+    grid-row: auto;
+  }
+
+  .is-featured .testimonial {
+    padding: var(--space-lg);
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 620px) {
+  .hero-actions .button {
+    flex: 1 1 100%;
+  }
+
+  .feature-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .feature-lg {
+    grid-column: span 1;
+    padding: var(--space-md);
+  }
+
+  .feature-watermark {
+    width: 120px;
+    height: 120px;
+  }
+
+  .partner {
+    width: 108px;
+  }
+
+  .partner-badge {
+    width: 80px;
+    height: 80px;
+  }
+
+  .footer-grid {
+    gap: var(--space-md);
+  }
+
+  .footer-bottom {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  /* With the animation off, wrap both rows into static centred grids rather
+     than horizontal scrollers no keyboard can reach. */
+  .marquee {
+    overflow: visible;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .marquee-track {
+    animation: none;
+    transform: none;
+    width: 100%;
+  }
+
+  .marquee-group {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-lg) var(--space-md);
+    width: 100%;
+  }
+
+  /* The looping clone adds nothing once the animation is off. */
+  .marquee-group[aria-hidden='true'] {
+    display: none;
+  }
+
+  .feature:hover,
+  .partner:hover .partner-badge {
+    transform: none;
+  }
+}
+
+/* -------------------------------------------------- scroll-driven motion */
+
+@keyframes photo-drift {
+  from {
+    transform: translate3d(0, -5%, 0) scale(1.12);
+  }
+
+  to {
+    transform: translate3d(0, 5%, 0) scale(1.12);
+  }
+}
+
+@keyframes wave-drift {
+  from {
+    transform: translate3d(-3%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(3%, 0, 0);
+  }
+}
+
+/* Progressive enhancement. Where scroll-driven animations are supported these
+   run off the main thread and track scroll position directly; everywhere else
+   the page keeps the timed behaviour defined above and loses nothing. */
+@supports (animation-timeline: view()) {
+  @media not (prefers-reduced-motion: reduce) {
+    /* The photo drifts slower than the page. scale(1.12) leaves 6% of
+       overspill top and bottom, so the translate never exposes an edge. */
+    .hero-photo {
+      animation: photo-drift linear both;
+      animation-duration: auto;
+      animation-timeline: scroll(root block);
+      animation-range: 0 100vh;
+    }
+
+    .partner-cta-photo {
+      animation: photo-drift linear both;
+      animation-duration: auto;
+      animation-timeline: view();
+    }
+
+    /* Waves slide gently as their section passes through the viewport. */
+    .wave-rule {
+      animation: wave-drift linear both;
+      animation-duration: auto;
+      animation-timeline: view();
+    }
+
+    /* The route draws in step with the scroll rather than on a timer. The
+       first selector matches the timed rule's specificity and comes later,
+       so it wins wherever this block applies. */
+    [data-reveal-ready] .step-map.is-revealed .route-drawn,
+    [data-reveal-ready] .route-drawn {
+      animation: route-draw linear both;
+      animation-duration: auto;
+      animation-timeline: view();
+      animation-range: cover 15% cover 55%;
+    }
+  }
+}
+
+/* The mobile hero has a hand-tuned crop (ferry as a cropped detail below the
+   copy), and a 12% zoom plus drift pushes the vessel out of frame. Keep the
+   parallax to widths where the horizontal composition is used. */
+@media (max-width: 860px) {
+  .hero-photo {
+    animation: none;
+  }
+}

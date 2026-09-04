@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fff8ee" />
+    <meta
+      name="description"
+      content="Book ferry tickets and cargo shipments online with Tripket PH — the all-in-one platform for Philippine transportation ticketing."
+    />
+    <link rel="icon" href="/assets/tripketLogo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"
+    />
+    <title>Tripket PH — Online Ticket &amp; Cargo Booking in the Philippines</title>
+    <script>
+      // Applied before paint so a stored dark preference does not flash cream.
+      try {
+        var stored = localStorage.getItem('tripket-theme.v1')
+        var theme =
+          stored === 'light' || stored === 'dark'
+            ? stored
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+        document.documentElement.dataset.theme = theme
+        document.documentElement.style.colorScheme = theme
+      } catch (error) {
+        document.documentElement.dataset.theme = 'light'
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

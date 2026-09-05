@@ -1,18 +1,13 @@
 import { PARTNER_LOGOS } from '../data/content'
 
-// Two rows drifting in opposite directions read as a deliberate wall of
-// carriers rather than a thin strip. Split once at module scope.
-const SPLIT = Math.ceil(PARTNER_LOGOS.length / 2)
-const ROWS = [PARTNER_LOGOS.slice(0, SPLIT), PARTNER_LOGOS.slice(SPLIT)]
-
-function LogoGroup({ logos, rowIndex, cloned = false }) {
+function LogoGroup({ cloned = false }) {
   return (
     <ul
       className="marquee-group"
-      aria-label={cloned ? undefined : `Tripket PH shipping line partners, row ${rowIndex + 1}`}
+      aria-label={cloned ? undefined : 'Tripket PH shipping line partners'}
       aria-hidden={cloned || undefined}
     >
-      {logos.map(({ name, src }) => (
+      {PARTNER_LOGOS.map(({ name, src }) => (
         <li className="partner" key={name}>
           <span className="partner-badge">
             {/* Eager: the track extends past the viewport horizontally, so lazy
@@ -39,18 +34,15 @@ export default function PartnerMarquee() {
         </p>
       </div>
 
-      {/* Motion stops on hover and on keyboard focus, and prefers-reduced-motion
-          replaces both scrolling rows with one static grid (see styles.css). */}
+      {/* One continuous row. The clone is what makes the loop seamless: the
+          track scrolls exactly one group's width, then snaps back invisibly.
+          Motion stops on hover and on keyboard focus, and prefers-reduced-motion
+          replaces the scroller with a static grid (see styles.css). */}
       <div className="marquee">
-        {ROWS.map((logos, rowIndex) => (
-          <div
-            className={rowIndex === 1 ? 'marquee-track is-reverse' : 'marquee-track'}
-            key={rowIndex}
-          >
-            <LogoGroup logos={logos} rowIndex={rowIndex} />
-            <LogoGroup logos={logos} rowIndex={rowIndex} cloned />
-          </div>
-        ))}
+        <div className="marquee-track">
+          <LogoGroup />
+          <LogoGroup cloned />
+        </div>
       </div>
     </section>
   )

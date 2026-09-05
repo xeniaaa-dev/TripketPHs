@@ -62,14 +62,17 @@ export default function Header({ theme, onToggleTheme, isStuck = false, path = '
         >
           <ul className="nav-links">
             {PRIMARY_NAV.map(({ label, href }) => {
-              // Home's href is the #top anchor, so it cannot be compared to
-              // the route directly.
-              const isCurrent = label === 'Home' ? path === '/' : href === path
+              const isCurrent = href === path
+              // Home links to `/` so it routes back from any other page. Only
+              // once we are already home does it degrade to the #top anchor —
+              // an href pointing at the current route would otherwise reload
+              // the document instead of scrolling up.
+              const target = isCurrent && href === ROUTES.home ? ROUTES.top : href
               return (
                 <li key={label}>
                   <a
                     className={isCurrent ? 'nav-link is-current' : 'nav-link'}
-                    href={href}
+                    href={target}
                     aria-current={isCurrent ? 'page' : undefined}
                     onClick={closeAll}
                   >

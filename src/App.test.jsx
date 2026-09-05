@@ -89,16 +89,14 @@ test('renders every feature, step, testimonial, and partner exactly once', () =>
     expect(screen.getByText(name)).toBeInTheDocument()
   })
 
-  // Two marquee rows, each with an aria-hidden clone: every carrier should be
-  // announced exactly once across the two labelled lists.
+  // One marquee row plus an aria-hidden clone: the clone must stay out of the
+  // accessibility tree so every carrier is announced exactly once.
   const rows = screen.getAllByRole('list', { name: /shipping line partners/i })
-  expect(rows).toHaveLength(2)
+  expect(rows).toHaveLength(1)
 
-  const announced = rows.flatMap((row) =>
-    within(row)
-      .getAllByRole('listitem')
-      .map((item) => item.textContent),
-  )
+  const announced = within(rows[0])
+    .getAllByRole('listitem')
+    .map((item) => item.textContent)
   expect(announced).toHaveLength(PARTNER_LOGOS.length)
   PARTNER_LOGOS.forEach(({ name }) => {
     expect(announced).toContain(name)

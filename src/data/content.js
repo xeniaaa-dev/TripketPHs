@@ -49,7 +49,7 @@ export const ROUTES = {
 }
 
 export const PRIMARY_NAV = [
-  { label: 'Home', href: ROUTES.top },
+  { label: 'Home', href: ROUTES.home },
   { label: 'About', href: ROUTES.about },
   { label: 'Partners', href: ROUTES.partners },
 ]

@@ -35,6 +35,32 @@ test('clicking About in the nav renders the about page without a reload', async 
   ).toBeInTheDocument()
 })
 
+test('Home in the nav routes back to the home page from another route', async () => {
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(screen.getAllByRole('link', { name: 'About' })[0])
+  expect(window.location.pathname).toBe('/about')
+
+  // Regression: Home used to be a bare `#top` fragment, which resolved
+  // against the current URL and left the user on /about#top.
+  await user.click(screen.getAllByRole('link', { name: 'Home' })[0])
+
+  expect(window.location.pathname).toBe('/')
+  expect(window.location.hash).toBe('')
+  expect(
+    screen.getByRole('heading', { level: 1, name: /the new tripket ph is here/i }),
+  ).toBeInTheDocument()
+})
+
+test('Home stays an in-page scroll anchor while already on the home page', () => {
+  render(<App />)
+
+  const home = screen.getAllByRole('link', { name: 'Home' })[0]
+  expect(home).toHaveAttribute('href', ROUTES.top)
+  expect(home).toHaveAttribute('aria-current', 'page')
+})
+
 test('clicking Partners in the nav renders the partners page', async () => {
   const user = userEvent.setup()
   render(<App />)

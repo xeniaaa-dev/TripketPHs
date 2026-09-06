@@ -20,9 +20,11 @@ export default function PageHero({ eyebrow, lead, accent, copy, children }) {
           {lead}
           <span className="accent">{accent}</span>
         </h1>
-        <p className="page-hero-lede" data-reveal>
-          {copy}
-        </p>
+        {copy ? (
+          <p className="page-hero-lede" data-reveal>
+            {copy}
+          </p>
+        ) : null}
         {children}
       </div>
     </section>

@@ -41,3 +41,13 @@ if (!window.scrollTo || !window.scrollTo._stubbed) {
   stub._stubbed = true
   window.scrollTo = stub
 }
+
+// jsdom has no layout engine and so no ResizeObserver; the carousel observes
+// its track to re-measure how many pages it has.
+if (!window.ResizeObserver) {
+  window.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+}

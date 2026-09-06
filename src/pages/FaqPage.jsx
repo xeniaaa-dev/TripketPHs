@@ -1,6 +1,5 @@
 import { useId, useMemo, useRef, useState } from 'react'
-import { ArrowRight, ChevronDown, Search } from 'lucide-react'
-import PageHero from '../components/PageHero'
+import { ArrowRight, ChevronDown, HelpCircle, Search } from 'lucide-react'
 import { FAQ_AUDIENCES } from '../data/faq'
 import { ROUTES } from '../data/content'
 
@@ -11,7 +10,7 @@ function Answer({ item, idPrefix }) {
 
   return (
     <li className={open ? 'faq-item is-open' : 'faq-item'}>
-      <h4>
+      <h3>
         <button
           type="button"
           id={buttonId}
@@ -21,9 +20,11 @@ function Answer({ item, idPrefix }) {
           onClick={() => setOpen((value) => !value)}
         >
           <span>{item.q}</span>
-          <ChevronDown className="faq-chevron" aria-hidden="true" />
+          <span className="faq-chevron" aria-hidden="true">
+            <ChevronDown />
+          </span>
         </button>
-      </h4>
+      </h3>
       {/* Kept in the DOM and hidden, so in-page search and screen-reader
           browsing still reach the answers. */}
       <div className="faq-answer" id={panelId} role="region" aria-labelledby={buttonId} hidden={!open}>
@@ -69,64 +70,71 @@ export default function FaqPage() {
 
   return (
     <>
-      <PageHero
-        eyebrow="Support"
-        lead="Frequently asked "
-        accent="questions"
-        copy="Find answers to common questions about booking, payments, cancellations, and more."
-      />
+      <section className="faq" aria-labelledby="page-heading">
+        <div className="container faq-layout">
+          {/* The title block sits beside the answers rather than above them, so
+              the list starts at the top of the screen instead of below a hero. */}
+          <div className="faq-rail">
+            <div className="faq-rail-inner">
+              <p className="pill-eyebrow" data-reveal>
+                <HelpCircle aria-hidden="true" />
+                Frequently asked questions
+              </p>
+              <h1 id="page-heading" data-reveal>
+                Frequently asked <span className="accent">questions</span>
+              </h1>
+              <p className="faq-rail-lede" data-reveal>
+                Find answers to common questions about booking, payments, cancellations, and more.
+              </p>
 
-      <section className="faq" aria-labelledby="faq-heading">
-        <div className="container">
-          <h2 className="visually-hidden" id="faq-heading">
-            Questions and answers
-          </h2>
+              <div className="faq-controls" data-reveal>
+                <div className="faq-tabs" role="tablist" aria-label="Choose who you are">
+                  {FAQ_AUDIENCES.map((item, index) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      role="tab"
+                      ref={(node) => {
+                        tabRefs.current[index] = node
+                      }}
+                      id={`${uid}-tab-${item.id}`}
+                      className={item.id === audienceId ? 'faq-tab is-selected' : 'faq-tab'}
+                      aria-selected={item.id === audienceId}
+                      aria-controls={`${uid}-panel-${item.id}`}
+                      tabIndex={item.id === audienceId ? 0 : -1}
+                      onClick={() => setAudienceId(item.id)}
+                      onKeyDown={(event) => onTabKeyDown(event, index)}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
 
-          <div className="faq-controls">
-            <div className="faq-tabs" role="tablist" aria-label="Choose who you are">
-              {FAQ_AUDIENCES.map((item, index) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  role="tab"
-                  ref={(node) => {
-                    tabRefs.current[index] = node
-                  }}
-                  id={`${uid}-tab-${item.id}`}
-                  className={item.id === audienceId ? 'faq-tab is-selected' : 'faq-tab'}
-                  aria-selected={item.id === audienceId}
-                  aria-controls={`${uid}-panel-${item.id}`}
-                  tabIndex={item.id === audienceId ? 0 : -1}
-                  onClick={() => setAudienceId(item.id)}
-                  onKeyDown={(event) => onTabKeyDown(event, index)}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
+                <div className="faq-search">
+                  <Search aria-hidden="true" />
+                  <label className="visually-hidden" htmlFor={`${uid}-search`}>
+                    Search the FAQ
+                  </label>
+                  <input
+                    id={`${uid}-search`}
+                    type="search"
+                    placeholder="Search questions…"
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                  />
+                </div>
 
-            <div className="faq-search">
-              <Search aria-hidden="true" />
-              <label className="visually-hidden" htmlFor={`${uid}-search`}>
-                Search the FAQ
-              </label>
-              <input
-                id={`${uid}-search`}
-                type="search"
-                placeholder="Search questions…"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-              />
+                <p className="faq-count" role="status">
+                  {query.trim()
+                    ? `${matchCount} ${matchCount === 1 ? 'answer' : 'answers'} matching “${query.trim()}”`
+                    : `${matchCount} answers`}
+                </p>
+              </div>
             </div>
           </div>
 
-          <p className="faq-count" role="status">
-            {query.trim()
-              ? `${matchCount} ${matchCount === 1 ? 'answer' : 'answers'} matching “${query.trim()}”`
-              : `${matchCount} answers`}
-          </p>
-
           <div
+            className="faq-panels"
             role="tabpanel"
             id={`${uid}-panel-${audience.id}`}
             aria-labelledby={`${uid}-tab-${audience.id}`}
@@ -140,7 +148,7 @@ export default function FaqPage() {
             ) : (
               groups.map((group) => (
                 <div className="faq-group" key={group.title} data-reveal>
-                  <h3>{group.title}</h3>
+                  <h2>{group.title}</h2>
                   <ul>
                     {group.items.map((item) => (
                       <Answer

@@ -1,21 +1,8 @@
 import { ArrowRight, Ship } from 'lucide-react'
 import PageHero from '../components/PageHero'
+import PartnerCarousel from '../components/PartnerCarousel'
 import WaveRule from '../components/WaveRule'
 import { PARTNERS_CTA, PARTNERS_HERO, PARTNER_LOGOS, ROUTES } from '../data/content'
-
-function PartnerCard({ name, src, blurb }) {
-  return (
-    <li className="partner-card" data-reveal>
-      <div className="partner-card-logo">
-        {/* The box is a fixed height, so no width/height attributes are needed
-            to reserve space — and the logos vary in aspect ratio. */}
-        <img src={src} alt={name} loading="lazy" decoding="async" />
-      </div>
-      <h3>{name}</h3>
-      <p>{blurb}</p>
-    </li>
-  )
-}
 
 export default function PartnersPage() {
   return (
@@ -36,18 +23,7 @@ export default function PartnersPage() {
         </p>
       </PageHero>
 
-      <section className="partner-directory" aria-labelledby="directory-heading">
-        <div className="container">
-          <h2 className="visually-hidden" id="directory-heading">
-            Our shipping partners
-          </h2>
-          <ul className="partner-card-grid">
-            {PARTNER_LOGOS.map((partner) => (
-              <PartnerCard key={partner.name} {...partner} />
-            ))}
-          </ul>
-        </div>
-      </section>
+      <PartnerCarousel />
 
       <WaveRule />
 

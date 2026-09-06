@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { Send } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 const SUPPORT_EMAIL = 'support@tripketph.com'
 
@@ -71,6 +71,7 @@ export default function SupportForm({ fields, subjectPrefix, submitLabel = 'Send
                 name={field.name}
                 rows={field.rows}
                 required={!field.optional}
+                placeholder={field.placeholder}
                 value={values[field.name] ?? ''}
                 onChange={(event) => set(field.name, event.target.value)}
               />
@@ -81,6 +82,7 @@ export default function SupportForm({ fields, subjectPrefix, submitLabel = 'Send
                 type={field.type ?? 'text'}
                 required={!field.optional}
                 autoComplete={field.autoComplete}
+                placeholder={field.placeholder}
                 value={values[field.name] ?? ''}
                 onChange={(event) => set(field.name, event.target.value)}
               />
@@ -92,9 +94,11 @@ export default function SupportForm({ fields, subjectPrefix, submitLabel = 'Send
       })}
 
       <div className="form-actions">
-        <button className="button button-primary button-lg" type="submit">
+        <button className="form-submit" type="submit">
+          <span className="form-submit-icon" aria-hidden="true">
+            <ArrowRight />
+          </span>
           {submitLabel}
-          <Send aria-hidden="true" />
         </button>
         <p className="form-note">
           This opens your own email app with the details filled in — it is not sent from the page.

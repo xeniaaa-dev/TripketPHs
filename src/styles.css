@@ -30,6 +30,9 @@
   --accent: var(--tripket-orange);
   --accent-hover: var(--tripket-orange-dark);
   --accent-secondary: var(--tripket-orange-500);
+  /* Inline links. --accent-hover is 4.81:1 on the light surface but only
+     3.61:1 on the dark one, so the dark theme lifts it. */
+  --link: var(--tripket-orange-dark);
   --on-accent: var(--ink);
   --on-accent-hover: var(--white);
   --outline-label: var(--ink);
@@ -123,6 +126,7 @@
   --nav-shadow: 0 2px 4px rgba(0, 0, 0, 0.32), 0 16px 40px rgba(0, 0, 0, 0.42);
   --nav-quiet-border: rgba(255, 248, 238, 0.26);
   --nav-current: #ff8a4d;
+  --link: #ff8a4d;
   --testimonial-ground: linear-gradient(168deg, #241a13 0%, #16110d 48%, #241a13 100%);
   --grid-line: rgba(255, 248, 238, 0.09);
   --glass-bg: linear-gradient(180deg, rgba(255, 248, 238, 0.1), rgba(255, 248, 238, 0.035));
@@ -175,9 +179,15 @@ body {
   overflow-x: hidden;
 }
 
+/* h4-h6 are included so a heading used purely for structure — the FAQ wraps
+   each question button in an h4 — does not bring 21px of default margin with
+   it on every row. */
 h1,
 h2,
-h3 {
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 700;
@@ -263,30 +273,18 @@ button {
   }
 }
 
-[data-reveal-ready] [data-reveal].is-revealed {
+[data-reveal-ready] [data-reveal][data-revealed] {
   opacity: 1;
   transform: none;
 }
 
 /* Items sharing a row enter together, so stagger them by DOM position. */
-[data-reveal-ready] :where(.feature-grid, .testimonial-grid) > [data-reveal]:nth-child(2) {
+[data-reveal-ready] :where(.feature-grid, .testimonial-grid) > [data-reveal]:nth-child(3n + 2) {
   transition-delay: 80ms;
 }
 
-[data-reveal-ready] :where(.feature-grid, .testimonial-grid) > [data-reveal]:nth-child(3) {
+[data-reveal-ready] :where(.feature-grid, .testimonial-grid) > [data-reveal]:nth-child(3n + 3) {
   transition-delay: 160ms;
-}
-
-[data-reveal-ready] .feature-grid > [data-reveal]:nth-child(4) {
-  transition-delay: 240ms;
-}
-
-[data-reveal-ready] .feature-grid > [data-reveal]:nth-child(5) {
-  transition-delay: 320ms;
-}
-
-[data-reveal-ready] .feature-grid > [data-reveal]:nth-child(6) {
-  transition-delay: 400ms;
 }
 
 /* ------------------------------------------------------------- wave rule */
@@ -393,25 +391,6 @@ button {
   color: var(--on-accent-hover);
 }
 
-.button-outline {
-  border-color: var(--accent);
-  color: var(--outline-label);
-  background: transparent;
-}
-
-.button-outline svg {
-  color: var(--accent);
-}
-
-.button-outline:hover {
-  background: var(--accent);
-  color: var(--on-accent);
-}
-
-.button-outline:hover svg {
-  color: currentColor;
-}
-
 .button-quiet {
   border-color: var(--border);
   color: var(--text);
@@ -429,7 +408,7 @@ button {
 }
 
 .button-ghost:hover {
-  color: var(--accent-hover);
+  color: var(--link);
   background: var(--surface-alt);
 }
 
@@ -806,7 +785,7 @@ button {
 
 .hero-actions .button-ghost:hover {
   background: transparent;
-  color: var(--accent-hover);
+  color: var(--link);
 }
 
 /* ------------------------------------------------------------- trust bar */
@@ -945,33 +924,6 @@ button {
   font-size: var(--h2-lg);
 }
 
-@media (min-width: 1001px) {
-  .features .section-head {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    grid-template-areas:
-      'eyebrow .'
-      'title lede';
-    gap: 0 var(--space-xl);
-    align-items: end;
-    max-width: none;
-  }
-
-  .features .section-head .eyebrow {
-    grid-area: eyebrow;
-  }
-
-  .features .section-head h2 {
-    grid-area: title;
-  }
-
-  .features .section-head .section-lede {
-    grid-area: lede;
-    margin-top: 0;
-    padding-bottom: 0.4em;
-  }
-}
-
 .section-lede {
   margin-top: var(--space-sm);
   color: var(--text-muted);
@@ -980,107 +932,36 @@ button {
 
 /* -------------------------------------------------------------- features */
 
+/* Centred like the How-it-works and Testimonials heads. The shared cap is
+   lifted so the headline runs full width on one line instead of breaking over
+   three; only the lede keeps a reading measure, centred under it. */
+.features .section-head {
+  max-width: none;
+}
+
+.features .section-head .section-lede {
+  max-width: 58ch;
+  margin-inline: auto;
+}
+
 .features {
   padding-block: var(--section-y);
-  background: var(--surface);
+  /* Cards are the light surface on a warm ground, matching every other card
+     grid on the site (pillars, partners, contact). */
+  background: var(--bg);
   border-block: 1px solid var(--border);
 }
 
-/* Bento: the two product lines take two columns each on the first row, the
-   four supporting capabilities take one column each on the second. */
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-md);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
 }
 
-.feature {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2xs);
-  padding: var(--space-md);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--bg);
-  overflow: hidden;
-  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
-    border-color 220ms var(--ease);
-}
-
-.feature:hover {
-  transform: translateY(-4px);
-  border-color: var(--accent);
-  box-shadow: var(--shadow-md);
-}
-
-.feature-lg {
-  grid-column: span 2;
-  min-height: 232px;
-  gap: var(--space-2xs);
-  padding: var(--space-lg);
-  border-radius: var(--radius-lg);
-  background: linear-gradient(155deg, var(--surface-alt), var(--bg) 68%);
-}
-
-/* Chip pinned to the top, title and copy sitting on the base line. */
-.feature-lg .feature-icon {
-  width: 52px;
-  height: 52px;
-  margin-bottom: auto;
-}
-
-.feature-lg .feature-icon svg {
-  width: 26px;
-  height: 26px;
-}
-
-.feature-icon {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  margin-bottom: var(--space-2xs);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--accent);
-}
-
-.feature-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-.feature h3 {
-  font-size: 1.14rem;
-  font-weight: 700;
-}
-
-.feature-lg h3 {
-  font-size: clamp(1.35rem, 2vw, 1.7rem);
-}
-
-.feature p {
-  color: var(--text-muted);
-  min-width: 0;
-}
-
-.feature-lg p {
-  max-width: 36ch;
-  font-size: 1.05rem;
-}
-
-.feature-watermark {
-  position: absolute;
-  right: -18px;
-  bottom: -24px;
-  width: 156px;
-  height: 156px;
-  color: var(--accent);
-  opacity: 0.07;
-  pointer-events: none;
+/* The two product lines keep a warmer badge so the business hierarchy still
+   reads on an even grid. */
+.feature-icon.is-primary {
+  background: var(--peach);
 }
 
 /* ----------------------------------------------------------------- steps */
@@ -1098,14 +979,18 @@ button {
    plus a solid line that draws itself in once the section is revealed. */
 .route-path {
   position: absolute;
-  top: 0;
+  /* Centred on the badge row (badges are 72px tall) rather than pinned to the
+     top, because the height is now derived from the width. */
+  top: 36px;
   left: 16.67%;
   width: 66.66%;
-  height: 72px;
+  height: auto;
+  transform: translateY(-50%);
   fill: none;
   stroke-linecap: round;
   stroke-width: 2;
   pointer-events: none;
+  overflow: visible;
 }
 
 .route-guide {
@@ -1125,7 +1010,7 @@ button {
   stroke-dashoffset: 100;
 }
 
-[data-reveal-ready] .step-map.is-revealed .route-drawn {
+[data-reveal-ready] .step-map[data-revealed] .route-drawn {
   animation: route-draw 1100ms var(--ease-out) 200ms forwards;
 }
 
@@ -1136,6 +1021,46 @@ button {
 
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+/* The ferry rides the same curve the line draws. offset-path takes the path in
+   the SVG's own user units, so it tracks the route at every width without any
+   measuring in JavaScript. */
+.route-ship {
+  offset-path: path('M4 40C220 4 400 76 720 40s500-36 716 0');
+  offset-rotate: auto;
+  offset-distance: 0%;
+  color: var(--accent);
+  animation: route-sail 18s linear 1300ms infinite;
+}
+
+.route-ship svg {
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  /* The nested viewport is 24 units wide but drawn at 48, and the outer SVG
+     then scales down — so the stroke is thickened to stay legible. */
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@keyframes route-sail {
+  from {
+    offset-distance: 0%;
+  }
+
+  to {
+    offset-distance: 100%;
+  }
+}
+
+/* Held at the start of the route rather than left mid-crossing. */
+@media (prefers-reduced-motion: reduce) {
+  .route-ship {
+    animation: none;
+    offset-distance: 0%;
   }
 }
 
@@ -1661,7 +1586,10 @@ button {
   gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
 }
 
-.pillar {
+/* One card definition for the About pillars and the home "What you get"
+   tiles, so the two cannot drift apart. */
+.pillar,
+.feature {
   display: flex;
   flex-direction: column;
   gap: var(--space-2xs);
@@ -1674,13 +1602,15 @@ button {
     border-color 220ms var(--ease);
 }
 
-.pillar:hover {
+.pillar:hover,
+.feature:hover {
   transform: translateY(-6px);
   border-color: var(--accent);
   box-shadow: var(--shadow-md);
 }
 
-.pillar-icon {
+.pillar-icon,
+.feature-icon {
   display: grid;
   place-items: center;
   width: 52px;
@@ -1692,22 +1622,27 @@ button {
   transition: transform 260ms var(--ease-out), background-color 220ms var(--ease);
 }
 
-.pillar-icon svg {
+.pillar-icon svg,
+.feature-icon svg {
   width: 24px;
   height: 24px;
 }
 
-.pillar:hover .pillar-icon {
+.pillar:hover .pillar-icon,
+.feature:hover .feature-icon {
   transform: translateY(-2px) rotate(-6deg);
   background: var(--peach);
 }
 
-.pillar h3 {
+.pillar h3,
+.feature h3 {
   font-family: var(--font-display);
   font-size: 1.3rem;
+  text-wrap: balance;
 }
 
-.pillar p {
+.pillar p,
+.feature p {
   color: var(--text-muted);
   line-height: 1.6;
 }
@@ -1725,6 +1660,12 @@ button {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   gap: clamp(var(--space-lg), 4vw, var(--space-2xl));
   align-items: start;
+}
+
+/* Compact rows tucked under the story heading, using the same treatment as
+   the contact page rather than a second card grid. */
+.story-contact {
+  margin-top: var(--space-lg);
 }
 
 .story-copy h2 {
@@ -1779,17 +1720,96 @@ button {
   margin-bottom: var(--space-xl);
 }
 
-.founder-grid {
+/* Faces on the left, detail cards on the right. */
+.founders-split {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(var(--space-sm), 1.4vw, var(--space-md));
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+  gap: clamp(var(--space-lg), 3.5vw, var(--space-2xl));
 }
 
-.founder figure {
+.founder-faces,
+.founder-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+  list-style: none;
+}
+
+/* Equal-height rows let the cards column fill the height the taller faces
+   column sets, so the two sides finish level instead of leaving dead space.
+   The quotes are bottom-anchored (margin-top: auto), so the extra height
+   opens up between the role and the quote rather than trailing off the end. */
+.founder-cards {
+  grid-auto-rows: 1fr;
+}
+
+/* ---- left column: the gallery */
+
+.founder-face {
+  transition: opacity 240ms var(--ease);
+}
+
+.founder-portrait {
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* Square rather than 4:5 portraits: it keeps the faces column close to the
+     natural height of the cards column, so the equal-height rows below do not
+     have to stretch the cards open around a hollow middle. */
+  aspect-ratio: 1 / 1;
+  margin-bottom: var(--space-2xs);
+  border: 1px solid var(--glass-ring);
+  border-radius: var(--radius-md);
+  /* Monogram panel stands in until a real portrait is supplied; see the
+     `photo` note on FOUNDERS in src/data/content.js. */
+  background: linear-gradient(155deg, var(--peach), var(--sand) 55%, var(--surface-alt));
+  overflow: hidden;
+  transition: transform 300ms var(--ease-out), box-shadow 300ms var(--ease);
+}
+
+.founder-portrait img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: cover;
+  filter: grayscale(1);
+  transition: filter 300ms var(--ease), transform 400ms var(--ease-out);
+}
+
+.founder-monogram {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+}
+
+.founder-face-name {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.founder-face-role {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* ---- right column: the detail cards */
+
+.founder-card {
+  transition: opacity 240ms var(--ease);
+}
+
+.founder-card figure {
   display: flex;
   height: 100%;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-2xs);
   margin: 0;
   padding: var(--space-lg);
   border: 1px solid var(--glass-border);
@@ -1797,15 +1817,35 @@ button {
   background: var(--glass-bg);
   box-shadow: var(--glass-shadow);
   backdrop-filter: blur(14px) saturate(1.06);
-  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
-    background 220ms var(--ease);
+  transition: transform 240ms var(--ease), box-shadow 240ms var(--ease),
+    background 240ms var(--ease), border-color 240ms var(--ease);
 }
 
-.founder:hover figure,
-.founder:focus-within figure {
-  transform: translateY(-6px);
-  background: var(--glass-bg-strong);
-  box-shadow: var(--glass-shadow-hover);
+/* Small round avatar in the card's top-left corner, as in the reference. */
+.founder-avatar {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  flex: none;
+  margin-bottom: var(--space-2xs);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(150deg, var(--peach), var(--sand));
+  box-shadow: 0 0 0 3px var(--avatar-ring);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+.founder-avatar img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  border-radius: inherit;
+  object-fit: cover;
 }
 
 .founder-person {
@@ -1817,154 +1857,198 @@ button {
 
 .founder-person strong {
   font-family: var(--font-display);
-  font-size: 1.02rem;
+  font-size: 1rem;
   letter-spacing: -0.01em;
+  line-height: 1.3;
+  /* Two lines reserved: some names wrap and some do not, and without this the
+     divider and quote sit at a different height in each card. */
+  min-height: 2.6em;
   text-wrap: balance;
 }
 
 .founder-person span {
   color: var(--text-muted);
-  font-size: 0.84rem;
+  font-size: 0.82rem;
 }
 
-.founder blockquote {
-  position: relative;
+.founder-card blockquote {
   margin: 0;
-  margin-top: auto;
+  margin-top: var(--space-sm);
   padding-top: var(--space-sm);
   border-top: 1px solid var(--glass-ring);
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   line-height: 1.6;
 }
 
 .founder-quote-mark {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   margin-right: 6px;
   color: var(--accent);
   vertical-align: -2px;
   opacity: 0.7;
 }
 
-/* --------------------------------------------------------- office/contact */
+/* ---- pairing: hovering either side lifts the matching pair and dims the rest */
 
-.contact-band {
-  padding-block: var(--section-y);
-  background: var(--bg);
-  border-top: 1px solid var(--border);
+/* Scoped through .founders-split so this matches the specificity of the
+   reveal rule above ([data-reveal-ready] [data-reveal][data-revealed]) and,
+   coming later in the file, still wins once an item has been revealed. */
+.founders-split .founder-face.is-dimmed,
+.founders-split .founder-card.is-dimmed {
+  opacity: 0.45;
 }
 
-.contact-band .section-head {
+.founder-face.is-paired .founder-portrait {
+  transform: translateY(-4px);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+.founder-face.is-paired .founder-portrait img {
+  filter: grayscale(0);
+  transform: scale(1.04);
+}
+
+.founder-card.is-paired figure {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  background: var(--glass-bg-strong);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .founder-face.is-paired .founder-portrait,
+  .founder-card.is-paired figure,
+  .founder-face.is-paired .founder-portrait img {
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------- partner carousel */
+
+.partner-carousel {
+  padding-block: var(--section-y);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.partner-carousel .section-head {
   margin-bottom: var(--space-xl);
 }
 
-.contact-grid {
+/* Scroll-snap track. Swipeable by touch, scrollable by keyboard, and driven by
+   the buttons below — no slide framework and no absolute positioning. */
+.p-track {
+  /* The gap is a variable because the column width is derived from it; if the
+     two drift apart the last card is clipped or a gap is left over. */
+  --p-gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+  grid-auto-flow: column;
+  /* A definite width, not minmax(0, …): a zero minimum lets grid shrink all 15
+     columns to fit the container, so the track never overflows and there is
+     nothing to scroll. One card plus a peek at the next. */
+  grid-auto-columns: 78%;
+  gap: var(--p-gap);
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  /* Room for the cards' hover lift and shadow, which a plain overflow would
+     clip against the track edge. */
+  padding: 6px 6px 18px;
+  margin-inline: -6px;
+  scrollbar-width: none;
 }
 
-.contact-card {
+.p-track::-webkit-scrollbar {
+  display: none;
+}
+
+.p-track:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 4px;
+  border-radius: var(--radius-md);
+}
+
+@media (min-width: 700px) {
+  .p-track {
+    grid-auto-columns: calc((100% - var(--p-gap)) / 2);
+  }
+}
+
+@media (min-width: 1000px) {
+  .p-track {
+    grid-auto-columns: calc((100% - var(--p-gap) * 2) / 3);
+  }
+}
+
+.p-slide {
+  scroll-snap-align: start;
   display: flex;
+}
+
+.p-card {
+  display: flex;
+  width: 100%;
   flex-direction: column;
-  gap: var(--space-2xs);
-  padding: var(--space-lg);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
   box-shadow: var(--shadow-sm);
-  transition: transform 220ms var(--ease), border-color 220ms var(--ease);
+  overflow: hidden;
+  transition: transform 240ms var(--ease), box-shadow 240ms var(--ease),
+    border-color 240ms var(--ease);
 }
 
-.contact-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--accent);
-}
-
-.contact-icon {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-alt);
-  color: var(--accent);
-}
-
-.contact-icon svg {
-  width: 20px;
-  height: 20px;
-}
-
-.contact-card h3 {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-}
-
-.contact-card p,
-.contact-card a {
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-.contact-card a {
-  color: var(--accent-hover);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* ---------------------------------------------------- partner directory */
-
-.partner-directory {
-  padding-block: var(--section-y);
-  background: var(--bg);
-}
-
-.partner-card-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
-}
-
-.partner-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
-  padding: var(--space-lg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
-    border-color 220ms var(--ease);
-}
-
-.partner-card:hover,
-.partner-card:focus-within {
+.p-card:hover,
+.p-card:focus-within {
   transform: translateY(-6px);
   border-color: var(--accent);
   box-shadow: var(--shadow-md);
 }
 
-/* A compact badge rather than a full-width strip: the logos are small and
-   mostly square, so a wide box just left them floating in whitespace. */
-.partner-card-logo {
-  display: grid;
-  place-items: center;
-  width: 116px;
-  height: 88px;
-  margin-bottom: var(--space-2xs);
-  padding: var(--space-2xs);
-  border-radius: var(--radius-sm);
-  background: var(--white);
-  border: 1px solid var(--border);
+/* ---- media, with the logo badge overlapping its lower-left corner */
+
+.p-card-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  /* As a flex item this box's automatic minimum size is its content's — the
+     photo's own height — which overrides aspect-ratio and gave every card a
+     different media height, because the source photos have different ratios.
+     Pinning the size makes aspect-ratio authoritative again. */
+  flex: none;
+  min-height: 0;
+  background: var(--surface-alt);
 }
 
-.partner-card-logo img {
-  /* A grid item's `min-height: auto` resolves to the image's intrinsic size
-     and overrides max-height, so these are sized explicitly and let
-     object-fit do the letterboxing — the same approach as .partner-badge. */
+.p-card-media > img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: cover;
+  transition: transform 500ms var(--ease-out);
+}
+
+.p-card:hover .p-card-media > img {
+  transform: scale(1.05);
+}
+
+.p-card-logo {
+  position: absolute;
+  left: var(--space-md);
+  bottom: calc(var(--space-md) * -1);
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  padding: 9px;
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  box-shadow: 0 2px 4px rgba(23, 23, 23, 0.08), 0 10px 24px rgba(120, 72, 32, 0.16);
+}
+
+.p-card-logo img {
   width: 100%;
   height: 100%;
   min-width: 0;
@@ -1972,16 +2056,148 @@ button {
   object-fit: contain;
 }
 
-.partner-card h3 {
+/* ---- body */
+
+.p-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  /* Clears the badge that hangs below the media. */
+  padding: calc(var(--space-md) + var(--space-lg)) var(--space-md) var(--space-md);
+}
+
+.p-card-body h3 {
   font-family: var(--font-display);
-  font-size: 1.08rem;
+  /* Shrinks on narrow cards so even the longest legal name still fits the two
+     reserved lines — these are company names, so truncating is not an option. */
+  font-size: clamp(0.98rem, 0.55vw + 0.82rem, 1.16rem);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  /* Two lines are always reserved, so a one-line name and a two-line name
+     start their blurb at the same height and the row stays aligned. */
+  min-height: 2.6em;
   text-wrap: balance;
 }
 
-.partner-card p {
+.p-card-blurb {
+  margin-top: var(--space-2xs);
   color: var(--text-muted);
-  font-size: 0.94rem;
+  font-size: 0.92rem;
   line-height: 1.6;
+  /* Clamped so every card in a row is the same height; the button below
+     releases it. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+.p-card.is-expanded .p-card-blurb {
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  overflow: visible;
+}
+
+.p-card-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  min-height: 44px;
+  margin-top: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color 200ms var(--ease);
+}
+
+.p-card-more svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 240ms var(--ease-out);
+}
+
+.p-card.is-expanded .p-card-more svg {
+  transform: rotate(180deg);
+}
+
+/* The reference highlights the engaged card's action in the accent colour. */
+.p-card:hover .p-card-more,
+.p-card:focus-within .p-card-more {
+  color: var(--link);
+}
+
+/* ---- controls */
+
+.p-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.p-progress {
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.p-progress-total {
+  opacity: 0.6;
+}
+
+.p-buttons {
+  display: flex;
+  gap: var(--space-2xs);
+}
+
+.p-nav {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease),
+    border-color 200ms var(--ease), opacity 200ms var(--ease);
+}
+
+.p-nav svg {
+  width: 20px;
+  height: 20px;
+}
+
+.p-nav:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--link);
+}
+
+.p-nav.is-primary:not(:disabled) {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--white);
+}
+
+.p-nav.is-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  color: var(--white);
+}
+
+.p-nav:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 /* ------------------------------------------------------------- page cta */
@@ -2026,13 +2242,13 @@ button {
 /* Row-position stagger for the interior-page grids, so a row of cards enters
    in sequence rather than all at once. */
 [data-reveal-ready]
-  :where(.pillar-grid, .founder-grid, .contact-grid, .partner-card-grid)
+  :where(.pillar-grid, .founder-cards)
   > [data-reveal]:nth-child(3n + 2) {
   transition-delay: 80ms;
 }
 
 [data-reveal-ready]
-  :where(.pillar-grid, .founder-grid, .contact-grid, .partner-card-grid)
+  :where(.pillar-grid, .founder-cards)
   > [data-reveal]:nth-child(3n + 3) {
   transition-delay: 160ms;
 }
@@ -2169,16 +2385,72 @@ button {
 /* -------------------------------------------------------------------- faq */
 
 .faq {
-  padding-block: var(--section-y);
+  padding-top: calc(var(--nav-h) + var(--space-lg));
+  padding-bottom: clamp(48px, 6vw, 80px);
   background: var(--bg);
+}
+
+.faq-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+  gap: clamp(var(--space-lg), 5vw, var(--space-2xl));
+  /* Deliberately NOT align-items: start — the rail cell has to fill the row so
+     the sticky block inside it has somewhere to travel. Left at start height
+     it scrolled straight off and left the column empty for 1800px. */
+  align-items: stretch;
+}
+
+/* The rail follows the reader down the answer list. */
+.faq-rail-inner {
+  position: sticky;
+  top: calc(var(--nav-h) + var(--space-lg));
+}
+
+/* Small badge above the heading, as in the reference. Reusable across the
+   site wherever a section needs a labelled chip rather than a plain eyebrow. */
+.pill-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: 6px var(--space-sm) 6px var(--space-xs);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.pill-eyebrow svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent);
+}
+
+.faq-rail h1 {
+  margin-top: var(--space-md);
+  font-size: clamp(2.1rem, 4vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.faq-rail-lede {
+  margin-top: var(--space-sm);
+  max-width: 40ch;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
 }
 
 .faq-controls {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
 }
 
 .faq-tabs {
@@ -2199,7 +2471,7 @@ button {
   color: var(--text-muted);
   cursor: pointer;
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   transition: background-color 200ms var(--ease), color 200ms var(--ease);
 }
@@ -2217,8 +2489,8 @@ button {
   position: relative;
   display: flex;
   align-items: center;
-  flex: 1 1 16rem;
-  max-width: 24rem;
+  width: 100%;
+  max-width: 22rem;
 }
 
 .faq-search svg {
@@ -2235,7 +2507,7 @@ button {
   min-height: 48px;
   padding: 0 var(--space-sm) 0 calc(var(--space-xs) + 26px);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text);
   font: inherit;
@@ -2246,20 +2518,21 @@ button {
 }
 
 .faq-count {
-  margin-top: var(--space-md);
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
-.faq-group {
-  margin-top: var(--space-xl);
+/* ---- the answer list */
+
+.faq-group + .faq-group {
+  margin-top: var(--space-md);
 }
 
-.faq-group > h3 {
+.faq-group > h2 {
   margin-bottom: var(--space-sm);
   color: var(--text-muted);
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -2272,12 +2545,13 @@ button {
   list-style: none;
 }
 
+/* Each question is its own rounded card, as in the reference. */
 .faq-item {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: var(--surface);
-  overflow: hidden;
-  transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease);
+  background: var(--surface-alt);
+  transition: background-color 220ms var(--ease), border-color 220ms var(--ease),
+    box-shadow 220ms var(--ease);
 }
 
 .faq-item:hover {
@@ -2286,6 +2560,7 @@ button {
 
 .faq-item.is-open {
   border-color: var(--accent);
+  background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
 
@@ -2295,42 +2570,57 @@ button {
   justify-content: space-between;
   gap: var(--space-sm);
   width: 100%;
-  min-height: 60px;
-  padding: var(--space-sm) var(--space-md);
+  min-height: 56px;
+  padding: var(--space-xs) var(--space-md);
   border: 0;
   background: transparent;
   color: var(--text);
   cursor: pointer;
   font-family: var(--font-display);
-  font-size: 1.02rem;
+  font-size: 1rem;
   font-weight: 600;
+  line-height: 1.4;
   text-align: left;
 }
 
+/* Circular toggle on the right, filled once the answer is open. */
 .faq-chevron {
-  width: 20px;
-  height: 20px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
   flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  border: 1px solid var(--border);
   color: var(--accent);
-  transition: transform 240ms var(--ease-out);
+  transition: background-color 220ms var(--ease), color 220ms var(--ease),
+    transform 240ms var(--ease-out), border-color 220ms var(--ease);
+}
+
+.faq-chevron svg {
+  width: 18px;
+  height: 18px;
 }
 
 .faq-item.is-open .faq-chevron {
   transform: rotate(180deg);
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--white);
 }
 
 .faq-answer {
-  padding: 0 var(--space-md) var(--space-md);
+  padding: 0 var(--space-md) var(--space-sm);
 }
 
 .faq-answer p {
-  max-width: 72ch;
+  max-width: 68ch;
   color: var(--text-muted);
   line-height: 1.7;
 }
 
 .faq-empty {
-  margin-top: var(--space-lg);
   padding: var(--space-lg);
   border: 1px dashed var(--border);
   border-radius: var(--radius-md);
@@ -2339,86 +2629,143 @@ button {
 }
 
 .faq-empty a {
-  color: var(--accent-hover);
+  color: var(--link);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 /* ---------------------------------------------------------------- contact */
 
-.contact-channels {
-  padding-block: var(--section-y);
+/* A single compact block: copy and contact details left, form right. There is
+   no page hero here, so the section clears the fixed nav itself. */
+.contact-compact {
+  /* The banner above already carries generous bottom padding, so this opens
+     tighter than a standalone section would. */
+  padding-top: clamp(40px, 5vw, 72px);
+  padding-bottom: var(--section-y);
   background: var(--bg);
 }
 
-.channel-grid {
+.contact-compact-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+  gap: clamp(var(--space-lg), 5vw, var(--space-2xl));
+  align-items: start;
 }
 
-.channel-card {
+/* Two-line heading, as in the reference: the question in ink, the invitation
+   beneath it. */
+.contact-intro h2 {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3xs);
-  padding: var(--space-lg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  transition: transform 220ms var(--ease), border-color 220ms var(--ease);
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.22;
+  text-wrap: balance;
 }
 
-.channel-card:hover,
-.channel-card:focus-within {
-  transform: translateY(-6px);
-  border-color: var(--accent);
+.contact-intro-lede {
+  margin-top: var(--space-sm);
+  max-width: 42ch;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
 }
 
-.channel-icon {
+/* Rows, not cards: the same four channels in a fraction of the height. */
+.contact-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  list-style: none;
+}
+
+.contact-rows li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.contact-row-icon {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  margin-bottom: var(--space-2xs);
-  border-radius: var(--radius-sm);
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: var(--radius-pill);
   background: var(--surface-alt);
+  border: 1px solid var(--border);
   color: var(--accent);
+  transition: background-color 200ms var(--ease), color 200ms var(--ease);
 }
 
-.channel-icon svg {
-  width: 22px;
-  height: 22px;
+.contact-rows li:hover .contact-row-icon {
+  background: var(--accent);
+  color: var(--white);
 }
 
-.channel-card h3 {
+.contact-row-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.contact-row-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.contact-row-label {
   color: var(--text-muted);
-  font-family: var(--font-display);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
 
-.channel-card a,
-.channel-value {
+.contact-row-text a,
+.contact-row-value {
   font-family: var(--font-display);
   font-size: 1.02rem;
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.4;
   overflow-wrap: anywhere;
 }
 
-.channel-card a {
-  color: var(--accent-hover);
+.contact-row-text a {
+  color: var(--link);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
-.channel-note {
-  margin-top: var(--space-3xs);
+.contact-row-note {
   color: var(--text-muted);
-  font-size: 0.86rem;
+  font-size: 0.82rem;
+}
+
+.contact-intro-links {
+  margin-top: var(--space-lg);
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.contact-intro-links a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* The form card */
+.contact-form-card {
+  padding: clamp(var(--space-md), 2.6vw, var(--space-xl));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--glass-shadow);
 }
 
 .contact-form-band {
@@ -2449,7 +2796,7 @@ button {
 }
 
 .contact-form-copy a {
-  color: var(--accent-hover);
+  color: var(--link);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -2524,20 +2871,59 @@ button {
   line-height: 1.5;
 }
 
+.form-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-height: 56px;
+  padding: 6px var(--space-md) 6px 6px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--white);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  transition: background-color 200ms var(--ease), transform 200ms var(--ease);
+}
+
+.form-submit:hover {
+  background: var(--accent-hover);
+}
+
+.form-submit:active {
+  transform: translateY(1px);
+}
+
+.form-submit-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.form-submit-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
 .form-actions {
   grid-column: 1 / -1;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-sm);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2xs);
   margin-top: var(--space-2xs);
 }
 
 .form-note,
 .form-status {
-  flex: 1 1 16rem;
   color: var(--text-muted);
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   line-height: 1.5;
 }
 
@@ -2650,7 +3036,7 @@ button {
 }
 
 .deletion-note a {
-  color: var(--accent-hover);
+  color: var(--link);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -2707,18 +3093,29 @@ button {
 /* Support-page grids and the contents rail collapse together. */
 @media (max-width: 1040px) {
   .legal-grid,
-  .contact-form-grid {
+  .contact-form-grid,
+  .contact-compact-grid,
+  .faq-layout {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Stacked, the rail is just a header — sticking it would cover the list. */
+  .faq-rail-inner {
+    position: static;
+  }
+
+  .faq {
+    padding-top: calc(var(--nav-h) + var(--space-lg));
+  }
+
+  .contact-compact {
+    padding-top: calc(var(--nav-h) + var(--space-lg));
   }
 
   /* Above the prose rather than beside it, so it stops being sticky. */
   .legal-toc {
     position: static;
     max-height: none;
-  }
-
-  .channel-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .deletion-step-grid {
@@ -2732,12 +3129,7 @@ button {
   }
 
   .faq-controls {
-    flex-direction: column;
     align-items: stretch;
-  }
-
-  .faq-tabs {
-    justify-content: center;
   }
 
   .faq-search {
@@ -2755,10 +3147,6 @@ button {
 }
 
 @media (max-width: 620px) {
-  .channel-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .support-form {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2782,9 +3170,14 @@ button {
     gap: var(--space-lg);
   }
 
-  .founder-grid,
-  .partner-card-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Faces above the cards once there is no room for two columns of columns. */
+  .founders-split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .founder-faces {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -2793,20 +3186,19 @@ button {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .contact-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .page-hero {
+    .page-hero {
     padding-top: calc(var(--nav-h) + var(--space-lg));
     padding-bottom: var(--space-xl);
   }
 }
 
 @media (max-width: 620px) {
-  .founder-grid,
-  .partner-card-grid {
+  .founder-cards {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .founder-faces {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .story-stats {
@@ -2999,16 +3391,6 @@ button {
 
   .feature-grid {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .feature-lg {
-    grid-column: span 1;
-    padding: var(--space-md);
-  }
-
-  .feature-watermark {
-    width: 120px;
-    height: 120px;
   }
 
   .partner {
@@ -3206,7 +3588,7 @@ button {
     /* The route draws in step with the scroll rather than on a timer. The
        first selector matches the timed rule's specificity and comes later,
        so it wins wherever this block applies. */
-    [data-reveal-ready] .step-map.is-revealed .route-drawn,
+    [data-reveal-ready] .step-map[data-revealed] .route-drawn,
     [data-reveal-ready] .route-drawn {
       animation: route-draw linear both;
       animation-duration: auto;

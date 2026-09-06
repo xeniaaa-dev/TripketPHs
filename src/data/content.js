@@ -189,84 +189,100 @@ export const TESTIMONIALS = [
 ]
 
 /**
- * The marquee on the home page uses `name` + `src`; the partners page also
- * renders `blurb`. Descriptions are the shipping lines' own copy, as published
- * on tripketph.com/partners.
+ * The marquee on the home page uses `name` + `src`; the partners carousel also
+ * renders `blurb` and `ship`. Descriptions and vessel photography are the
+ * shipping lines' own, as published on tripketph.com/partners — the photos are
+ * served locally rather than hot-linked from that site's storage bucket.
  */
 export const PARTNER_LOGOS = [
   {
     name: 'Medallion Transport Inc.',
     src: '/assets/optimized/partners/MedallionTransport.webp',
+    ship: '/assets/tripket-partners/ships/MedallionTransport.jpg',
     blurb: 'We provide convenient two-way routes connecting Cebu and Bato.',
   },
   {
     name: 'Montenegro Shipping Lines, Inc.',
     src: '/assets/optimized/partners/MontenegroShippingLinesInc.webp',
+    ship: '/assets/tripket-partners/ships/MontenegroShippingLinesInc.jpg',
     blurb: 'Pioneer in serving Filipino pasahero since 1978.',
   },
   {
     name: 'Aleson Shipping Lines, Inc',
     src: '/assets/optimized/partners/AlesonShippingLinesInc.webp',
+    ship: '/assets/tripket-partners/ships/AlesonShippingLinesInc.jpg',
     blurb: 'Come and experience a Cebu-Bohol and Dipolog-Dumaguete daily destination via Sea Jet.',
   },
   {
     name: '2GO Travel',
     src: '/assets/optimized/partners/2Go.webp',
+    ship: '/assets/tripket-partners/ships/2Go.jpg',
     blurb: 'Leading ships, wide routes, Luzon connection.',
   },
   {
     name: 'Fast Cat',
     src: '/assets/optimized/partners/FastCat.webp',
+    ship: '/assets/tripket-partners/ships/FastCat.jpg',
     blurb: 'Fast Cat facilitates safe, efficient, and convenient travel by connecting the islands of the Philippines through their reliable ferry services.',
   },
   {
     name: 'Lite Shipping Corporation',
     src: '/assets/optimized/partners/LiteShippingCorporation.webp',
+    ship: '/assets/tripket-partners/ships/LiteShippingCorporation.jpg',
     blurb: 'Lite Shipping Corporation played a pioneering role in establishing and promoting diverse routes throughout the Visayas region.',
   },
   {
     name: 'Cokaliong Shipping Lines',
     src: '/assets/optimized/partners/CokaliongShippingLines.webp',
+    ship: '/assets/tripket-partners/ships/CokaliongShippingLines.jpg',
     blurb: 'Explore Visayas and Mindanao\'s hidden treasures with Cokaliong\'s captivating sailings.',
   },
   {
     name: 'OceanJet',
     src: '/assets/optimized/partners/OceanJet.webp',
+    ship: '/assets/tripket-partners/ships/OceanJet.jpg',
     blurb: 'Bacolod, Batangas, Calapan, Cebu, Dumaguete, Iloilo, Larena, Ormoc, Siquijor, and Tagbilaran.',
   },
   {
     name: 'SuperCat',
     src: '/assets/optimized/partners/SuperCat.webp',
+    ship: '/assets/tripket-partners/ships/SuperCat.jpg',
     blurb: 'Affordable, secure, high-quality transportation for budget-conscious travellers.',
   },
   {
     name: 'Starlite Ferries',
     src: '/assets/optimized/partners/starliteFerries.webp',
+    ship: '/assets/tripket-partners/ships/starliteFerries.jpg',
     blurb: 'Starlite Ferries has emerged as a prominent figure in the realm of sea transportation.',
   },
   {
     name: 'Trans-Asia Shipping Lines',
     src: '/assets/optimized/partners/transasia.webp',
+    ship: '/assets/tripket-partners/ships/transasia.jpg',
     blurb: 'With its roots in Cebu and unmatched expertise in the Philippines, Trans-Asia Shipping Lines holds a distinct position in the industry.',
   },
   {
     name: 'Maayo Shipping Incorporation',
     src: '/assets/optimized/partners/MaayoShippingIncorporation.webp',
+    ship: '/assets/tripket-partners/ships/MaayoShippingIncorporation.jpg',
     blurb: 'Serving the Sibulan-Liloan and Tampi-Bato routes between Negros Oriental and Cebu.',
   },
   {
     name: 'Kho Shipping Lines',
     src: '/assets/optimized/partners/KhoShippingLines.webp',
+    ship: '/assets/tripket-partners/ships/KhoShippingLines.jpg',
     blurb: 'A reliable ferry service offering a range of options for travellers to reach beautiful island destinations, with a focus on flexibility, convenience, and quality service.',
   },
   {
     name: 'HS Star Marine Shipping',
     src: '/assets/optimized/partners/HsStarMarineShipping.webp',
+    ship: '/assets/tripket-partners/ships/HsStarMarineShipping.jpg',
     blurb: 'HS Star Marine Shipping Corporation, also operating as Anika Shipping Line.',
   },
   {
     name: 'Evaristo and Sons',
     src: '/assets/optimized/partners/evaristoAndSons.webp',
+    ship: '/assets/tripket-partners/ships/evaristoAndSons.jpg',
     blurb: 'Fast craft and RORO ferry company offering daily trips from Surigao City to Dapa, Siargao Island and vice versa.',
   },
 ]
@@ -357,28 +373,40 @@ export const ABOUT_CONTACT = [
   { label: 'Contact us', value: 'support@tripketph.com', href: 'mailto:support@tripketph.com' },
 ]
 
-/** Founder names, roles and quotes exactly as published on the live About page. */
+/**
+ * Founder names, roles and quotes exactly as published on the live About page.
+ *
+ * `photo` is the portrait shown in the faces column, taken from the images
+ * tripketph.com/about uses for each founder. Allan's stays null: the live site
+ * serves `placeholder-male.jpg` there — a generic grey silhouette, not him — so
+ * the monogram is used instead of a stand-in stranger. Set `photo` to a real
+ * headshot (square or portrait crop) and it takes over with no other change.
+ */
 export const FOUNDERS = [
   {
     initials: 'AM',
+    photo: null,
     name: 'Allan Bennett Yap Uy Matiao',
     role: 'CEO / Co-Founder',
     quote: 'Tripket PH is the future of booking.',
   },
   {
     initials: 'IU',
+    photo: '/assets/founders/irwin.jpg',
     name: 'Irwin Noel Ramas-Uypitching',
     role: 'CEO / Co-Founder',
     quote: 'Building connections, one route at a time.',
   },
   {
     initials: 'SC',
+    photo: '/assets/founders/sherwin.jpg',
     name: 'Sherwin Caraig',
     role: 'CEO / Co-Founder',
     quote: 'The best way to predict the future is to create it.',
   },
   {
     initials: 'AT',
+    photo: '/assets/founders/arvin.jpg',
     name: 'Arvin Tia',
     role: 'CEO / Co-Founder',
     quote: 'Design the future, one blueprint at a time.',
@@ -409,4 +437,51 @@ export const PARTNERS_CTA = {
   title: 'Become a Tripket PH partner',
   body:
     'Join our network and connect your shipping line to thousands of passengers booking online every day.',
+}
+
+
+/**
+ * Per-route document metadata. Without this every page shares the index.html
+ * title and description, so search results and shared links are identical for
+ * all eight routes.
+ */
+export const PAGE_META = {
+  '/': {
+    title: 'Tripket PH — Online Ticket & Cargo Booking in the Philippines',
+    description:
+      'Book ferry tickets and cargo shipments online with Tripket PH — the all-in-one platform for Philippine transportation ticketing.',
+  },
+  '/about': {
+    title: 'About Us — Tripket PH',
+    description:
+      'Tripket PH is a Philippine-based online ticketing and cargo shipping platform making inter-island travel seamless for every Filipino.',
+  },
+  '/partners': {
+    title: 'Our Shipping Partners — Tripket PH',
+    description:
+      'Tripket PH is trusted by leading Philippine shipping lines, with routes across Luzon, Visayas, and Mindanao.',
+  },
+  '/support/contact': {
+    title: 'Contact Us — Tripket PH',
+    description:
+      'Get in touch with the Tripket PH support team about a booking, a payment, cargo shipping, or a partnership.',
+  },
+  '/support/faq': {
+    title: 'Frequently Asked Questions — Tripket PH',
+    description:
+      'Answers to common questions about booking, payments, rebooking, refunds, and the Tripket PH client dashboard.',
+  },
+  '/support/privacy': {
+    title: 'Privacy Policy — Tripket PH',
+    description: 'How Tripket PH collects, uses, and protects your personal information.',
+  },
+  '/support/terms': {
+    title: 'Terms of Service — Tripket PH',
+    description: 'Terms and conditions governing your use of the Tripket PH platform.',
+  },
+  '/support/account-deletion-request': {
+    title: 'Request Account Deletion — Tripket PH',
+    description:
+      'Ask Tripket PH to delete your account and the personal information attached to it.',
+  },
 }

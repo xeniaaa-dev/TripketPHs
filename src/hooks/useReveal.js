@@ -12,9 +12,10 @@ const READY_ATTR = 'revealReady'
  * this hook sets on mount — so if the script never runs, or the browser has no
  * IntersectionObserver, every element simply stays visible.
  *
- * `routeKey` re-runs the effect on a client-side page change. Without it the
- * observer would only ever know about the elements present on first render,
- * and every section of a newly rendered page would stay stuck at opacity 0.
+ * `routeKey` re-runs the effect on a client-side page change. Within a page,
+ * content that appears later — an FAQ tab switch, a filtered list — is picked
+ * up by a MutationObserver, because anything the IntersectionObserver never
+ * saw would stay stuck at opacity 0.
  */
 export default function useReveal(routeKey) {
   useEffect(() => {
@@ -29,7 +30,10 @@ export default function useReveal(routeKey) {
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue
-          entry.target.classList.add('is-revealed')
+          // A data attribute, not a class: React owns `className` and rewrites
+          // it wholesale on re-render, which would silently strip a class added
+          // here and send an already-revealed element back to opacity 0.
+          entry.target.dataset.revealed = 'true'
           observer.unobserve(entry.target)
         }
       },
@@ -37,7 +41,30 @@ export default function useReveal(routeKey) {
       { rootMargin: '0px 0px -15% 0px', threshold: 0 },
     )
 
-    for (const el of document.querySelectorAll(`[${REVEAL_ATTR}]`)) observer.observe(el)
+    // Already-revealed elements keep their attribute and need no re-observing.
+    function observeWithin(scope) {
+      for (const el of scope.querySelectorAll(`[${REVEAL_ATTR}]`)) {
+        if (!el.dataset.revealed) observer.observe(el)
+      }
+    }
+
+    observeWithin(document)
+
+    // Elements rendered after mount (tab panels, search results) were never
+    // handed to the IntersectionObserver, so they would never reveal.
+    let mutationObserver
+    if (typeof MutationObserver !== 'undefined') {
+      mutationObserver = new MutationObserver((records) => {
+        for (const record of records) {
+          for (const node of record.addedNodes) {
+            if (node.nodeType !== Node.ELEMENT_NODE) continue
+            if (node.matches(`[${REVEAL_ATTR}]`) && !node.dataset.revealed) observer.observe(node)
+            observeWithin(node)
+          }
+        }
+      })
+      mutationObserver.observe(document.body, { childList: true, subtree: true })
+    }
 
     // If the user turns reduced motion on mid-session, drop the effect entirely.
     const onPreferenceChange = (event) => {
@@ -49,6 +76,7 @@ export default function useReveal(routeKey) {
 
     return () => {
       observer.disconnect()
+      mutationObserver?.disconnect()
       reducedMotion?.removeEventListener?.('change', onPreferenceChange)
       delete root.dataset[READY_ATTR]
     }

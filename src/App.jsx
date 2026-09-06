@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage'
 import PartnersPage from './pages/PartnersPage'
 import PrivacyPage from './pages/PrivacyPage'
 import TermsPage from './pages/TermsPage'
+import useDocumentMeta from './hooks/useDocumentMeta'
 import useReveal from './hooks/useReveal'
 import useRouter from './hooks/useRouter'
 import useStuck from './hooks/useStuck'
@@ -28,6 +29,7 @@ export default function App() {
   const { theme, toggleTheme } = useTheme()
   const { ref: sentinelRef, isStuck } = useStuck()
   const path = useRouter()
+  useDocumentMeta(path)
   useReveal(path)
 
   const Page = PAGES[path] ?? HomePage

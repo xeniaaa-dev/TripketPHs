@@ -1,4 +1,5 @@
-import { ArrowRight, Mail, MapPin, Quote } from 'lucide-react'
+import { ArrowRight, Mail, MapPin } from 'lucide-react'
+import Founders from '../components/Founders'
 import PageHero from '../components/PageHero'
 import WaveRule from '../components/WaveRule'
 import {
@@ -7,7 +8,6 @@ import {
   ABOUT_HERO,
   ABOUT_PILLARS,
   ABOUT_STORY,
-  FOUNDERS,
   PARTNER_LOGOS,
   ROUTES,
 } from '../data/content'
@@ -22,26 +22,6 @@ function Pillar({ icon: Icon, title, body }) {
       </span>
       <h3>{title}</h3>
       <p>{body}</p>
-    </li>
-  )
-}
-
-function Founder({ initials, name, role, quote }) {
-  return (
-    <li className="founder" data-reveal>
-      <figure>
-        <span className="avatar" aria-hidden="true">
-          {initials}
-        </span>
-        <figcaption className="founder-person">
-          <strong>{name}</strong>
-          <span>{role}</span>
-        </figcaption>
-        <blockquote>
-          <Quote className="founder-quote-mark" aria-hidden="true" />
-          {quote}
-        </blockquote>
-      </figure>
     </li>
   )
 }
@@ -80,6 +60,26 @@ export default function AboutPage() {
             <h2 id="story-heading" data-reveal>
               {ABOUT_STORY.title}
             </h2>
+
+            {/* Office and email live here rather than in a section of their
+                own: two short rows beside the story instead of two large
+                cards under it. */}
+            <ul className="contact-rows story-contact" data-reveal>
+              {ABOUT_CONTACT.map(({ label, value, href }, index) => {
+                const Icon = CONTACT_ICONS[index] ?? MapPin
+                return (
+                  <li key={label}>
+                    <span className="contact-row-icon" aria-hidden="true">
+                      <Icon />
+                    </span>
+                    <span className="contact-row-text">
+                      <span className="contact-row-label">{label}</span>
+                      {href ? <a href={href}>{value}</a> : <span className="contact-row-value">{value}</span>}
+                    </span>
+                  </li>
+                )
+              })}
+            </ul>
           </div>
           <div className="story-body" data-reveal="right">
             <p>{ABOUT_STORY.body}</p>
@@ -101,46 +101,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="founders" aria-labelledby="founders-heading">
-        <div className="container">
-          <div className="section-head is-centered" data-reveal>
-            <p className="eyebrow">The team</p>
-            <h2 id="founders-heading">
-              Meet the <span className="accent">founders</span>
-            </h2>
-          </div>
-          <ul className="founder-grid">
-            {FOUNDERS.map((founder) => (
-              <Founder key={founder.name} {...founder} />
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="contact-band" aria-labelledby="contact-heading">
-        <div className="container">
-          <div className="section-head is-centered" data-reveal>
-            <p className="eyebrow">Find us</p>
-            <h2 id="contact-heading">
-              Based in <span className="accent">Dumaguete</span>
-            </h2>
-          </div>
-          <ul className="contact-grid">
-            {ABOUT_CONTACT.map(({ label, value, href }, index) => {
-              const Icon = CONTACT_ICONS[index] ?? MapPin
-              return (
-                <li className="contact-card" key={label} data-reveal>
-                  <span className="contact-icon" aria-hidden="true">
-                    <Icon />
-                  </span>
-                  <h3>{label}</h3>
-                  {href ? <a href={href}>{value}</a> : <p>{value}</p>}
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      </section>
+      <Founders />
 
       <section className="page-cta" aria-labelledby="about-cta-heading">
         <div className="container page-cta-inner" data-reveal="scale">

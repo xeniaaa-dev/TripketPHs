@@ -1,13 +1,11 @@
 import { FEATURES, SECTION_LABELS } from '../data/content'
 
-const FEATURED = FEATURES.filter((feature) => feature.featured)
-const SUPPORTING = FEATURES.filter((feature) => !feature.featured)
-
-function FeatureTile({ icon: Icon, title, copy, large = false }) {
+function FeatureTile({ icon: Icon, title, copy, featured = false }) {
   return (
-    <li className={large ? 'feature feature-lg' : 'feature'} data-reveal>
-      {large ? <Icon className="feature-watermark" aria-hidden="true" /> : null}
-      <span className="feature-icon">
+    <li className="feature" data-reveal>
+      {/* The two product lines (tickets and cargo) keep a warmer badge, so the
+          business hierarchy survives the move to an even grid. */}
+      <span className={featured ? 'feature-icon is-primary' : 'feature-icon'}>
         <Icon aria-hidden="true" />
       </span>
       <h3>{title}</h3>
@@ -20,7 +18,7 @@ export default function Features() {
   return (
     <section className="features" id="features" aria-labelledby="features-heading">
       <div className="container">
-        <div className="section-head" data-reveal>
+        <div className="section-head is-centered" data-reveal>
           <p className="eyebrow">{SECTION_LABELS.features}</p>
           <h2 id="features-heading">
             Everything you need to <span className="accent">book and ship</span>
@@ -30,11 +28,9 @@ export default function Features() {
           </p>
         </div>
 
+        {/* Even 3x2 grid in the order the capabilities are published. */}
         <ul className="feature-grid">
-          {FEATURED.map((feature) => (
-            <FeatureTile key={feature.title} {...feature} large />
-          ))}
-          {SUPPORTING.map((feature) => (
+          {FEATURES.map((feature) => (
             <FeatureTile key={feature.title} {...feature} />
           ))}
         </ul>

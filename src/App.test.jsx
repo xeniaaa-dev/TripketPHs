@@ -149,21 +149,30 @@ test('the mobile navigation toggle reports its state', async () => {
   )
 })
 
-test('promotes the two product lines to featured bento tiles', () => {
+test('marks the two product lines while keeping the feature grid even', () => {
   render(<App />)
 
   const featured = FEATURES.filter((feature) => feature.featured).map((f) => f.title)
   expect(featured).toEqual(['Ticket Booking', 'Cargo Shipping'])
 
-  featured.forEach((title) => {
-    const tile = screen.getByRole('heading', { level: 3, name: title }).closest('li')
-    expect(tile).toHaveClass('feature-lg')
-  })
+  // Every card is the same size now, so the product lines are distinguished by
+  // their badge rather than by spanning extra columns.
+  const tiles = document.querySelectorAll('.feature-grid > li')
+  expect(tiles).toHaveLength(FEATURES.length)
+  tiles.forEach((tile) => expect(tile).not.toHaveClass('feature-lg'))
 
-  FEATURES.filter((feature) => !feature.featured).forEach(({ title }) => {
+  FEATURES.forEach(({ title, featured: isFeatured }) => {
     const tile = screen.getByRole('heading', { level: 3, name: title }).closest('li')
-    expect(tile).not.toHaveClass('feature-lg')
+    const badge = tile.querySelector('.feature-icon')
+    expect(badge.classList.contains('is-primary')).toBe(Boolean(isFeatured))
   })
+})
+
+test('the feature cards are rendered in the published order', () => {
+  render(<App />)
+
+  const titles = [...document.querySelectorAll('.feature-grid h3')].map((h) => h.textContent)
+  expect(titles).toEqual(FEATURES.map((feature) => feature.title))
 })
 
 test('shows the derived carrier count as a proof line', () => {

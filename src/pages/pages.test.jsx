@@ -82,10 +82,21 @@ test('the about page carries the mission, vision, values and every founder', () 
     expect(screen.getByText(body)).toBeInTheDocument()
   })
 
-  FOUNDERS.forEach(({ name, quote }) => {
-    expect(screen.getByText(name)).toBeInTheDocument()
-    expect(screen.getByText(quote)).toBeInTheDocument()
+  // The split layout shows each founder twice: once in the faces gallery and
+  // once in the detail card beside it. The quote appears only in the card.
+  const faces = document.querySelector('.founder-faces')
+  const cards = document.querySelector('.founder-cards')
+
+  FOUNDERS.forEach(({ name, role, quote }) => {
+    expect(screen.getAllByText(name)).toHaveLength(2)
+    expect(within(faces).getByText(name)).toBeInTheDocument()
+    expect(within(cards).getByText(name)).toBeInTheDocument()
+    expect(within(cards).getByText(quote)).toBeInTheDocument()
+    expect(within(faces).getAllByText(role).length).toBeGreaterThan(0)
   })
+
+  // The gallery repeats what the cards already say, so it is not announced.
+  expect(faces).toHaveAttribute('aria-hidden', 'true')
 
   expect(screen.getByText(/mats place, hibbard avenue/i)).toBeInTheDocument()
   expect(screen.getByRole('link', { name: 'support@tripketph.com' })).toHaveAttribute(
@@ -94,18 +105,63 @@ test('the about page carries the mission, vision, values and every founder', () 
   )
 })
 
-test('the partners page lists every shipping line with its description', () => {
+test('the partners carousel carries every shipping line, its blurb and its vessel', () => {
   window.history.pushState({}, '', '/partners')
   render(<App />)
 
-  const grid = document.querySelector('.partner-card-grid')
-  expect(grid.children).toHaveLength(PARTNER_LOGOS.length)
+  const track = document.querySelector('.p-track')
+  expect(track.children).toHaveLength(PARTNER_LOGOS.length)
 
-  PARTNER_LOGOS.forEach(({ name, blurb }) => {
-    expect(within(grid).getByRole('heading', { level: 3, name })).toBeInTheDocument()
-    expect(within(grid).getByText(blurb)).toBeInTheDocument()
-    expect(within(grid).getByRole('img', { name })).toBeInTheDocument()
+  PARTNER_LOGOS.forEach(({ name, blurb, ship, src }) => {
+    expect(within(track).getByRole('heading', { level: 3, name })).toBeInTheDocument()
+    expect(within(track).getByText(blurb)).toBeInTheDocument()
+    // The vessel photo carries the alt text; the logo beside it is decorative.
+    const photo = within(track).getByRole('img', { name: `${name} vessel` })
+    expect(photo).toHaveAttribute('src', ship)
+    expect(track.querySelector(`img[src="${src}"]`)).toHaveAttribute('alt', '')
   })
+})
+
+test('every partner has a vessel photo bundled with the site', () => {
+  PARTNER_LOGOS.forEach(({ name, ship }) => {
+    expect(ship, `${name} is missing a vessel photo`).toBeTruthy()
+    // Served from our own /public, not hot-linked from tripketph.com storage.
+    expect(ship.startsWith('/assets/')).toBe(true)
+  })
+})
+
+test('a partner card reveals the rest of its description on demand', async () => {
+  const user = userEvent.setup()
+  window.history.pushState({}, '', '/partners')
+  render(<App />)
+
+  const track = document.querySelector('.p-track')
+  const first = within(track).getAllByRole('button', { name: /learn more/i })[0]
+  const card = first.closest('.p-card')
+
+  expect(first).toHaveAttribute('aria-expanded', 'false')
+  expect(card).not.toHaveClass('is-expanded')
+  expect(document.getElementById(first.getAttribute('aria-controls'))).toBeInTheDocument()
+
+  await user.click(first)
+  expect(card).toHaveClass('is-expanded')
+  expect(within(card).getByRole('button', { name: /show less/i })).toHaveAttribute(
+    'aria-expanded',
+    'true',
+  )
+})
+
+test('the carousel exposes labelled prev/next controls, disabled at the start', () => {
+  window.history.pushState({}, '', '/partners')
+  render(<App />)
+
+  const prev = screen.getByRole('button', { name: /previous partners/i })
+  const next = screen.getByRole('button', { name: /next partners/i })
+
+  // jsdom has no layout, so the track never scrolls; prev must still start off.
+  expect(prev).toBeDisabled()
+  expect(next).toBeInTheDocument()
+  expect(document.querySelector('.p-track')).toHaveAttribute('tabindex', '0')
 })
 
 test('every partner has a description', () => {

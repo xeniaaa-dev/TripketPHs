@@ -1,4 +1,7 @@
+import { Ship } from 'lucide-react'
 import { JOURNEY_STEPS, SECTION_LABELS } from '../data/content'
+
+const ROUTE_D = 'M4 40C220 4 400 76 720 40s500-36 716 0'
 
 /**
  * The connector is drawn as a sailing route rather than a straight rule: a
@@ -7,18 +10,19 @@ import { JOURNEY_STEPS, SECTION_LABELS } from '../data/content'
  * depend on the real geometry. Decorative, and hidden once the steps stack.
  */
 function RoutePath() {
-  const d = 'M4 40C220 4 400 76 720 40s500-36 716 0'
-
   return (
-    <svg
-      className="route-path"
-      viewBox="0 0 1440 80"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path className="route-guide" d={d} />
-      <path className="route-drawn" d={d} pathLength="100" />
+    /* Scales uniformly (no preserveAspectRatio="none") so the ferry riding the
+       path is not squashed horizontally along with it. */
+    <svg className="route-path" viewBox="0 0 1440 80" aria-hidden="true" focusable="false">
+      <path className="route-guide" d={ROUTE_D} />
+      <path className="route-drawn" d={ROUTE_D} pathLength="100" />
+
+      {/* Sails the same curve via CSS offset-path — see .route-ship. A nested
+          <svg> keeps the icon in its own viewport, so it stays upright and
+          crisp while the group beneath it is moved and rotated. */}
+      <g className="route-ship">
+        <Ship x="-24" y="-24" width="48" height="48" />
+      </g>
     </svg>
   )
 }

@@ -3393,13 +3393,23 @@ button {
     );
   }
 
+  /* The veil has to keep working all the way to the bottom edge. It used to
+     fall to alpha 0.14, which over this photograph's sunlit water and its
+     near-white sun glitter left a patch measuring L=0.73 (#dededd) - a light
+     band on an otherwise dark page, ending in a hard seam against the trust
+     bar. The floor now holds at 0.56, which peaks at L~0.19 and so matches
+     the desktop dark hero's own peak of L=0.25 rather than running 3x
+     brighter than it. The ferry still reads as a cropped detail below the
+     copy, per docs/Tripket-branding.md, but as a dark one. Light mode is
+     untouched: a bright photograph belongs against a cream page. */
   :root[data-theme='dark'] {
     --hero-scrim: linear-gradient(
       180deg,
       rgba(22, 17, 13, 0.97) 0%,
-      rgba(22, 17, 13, 0.94) 56%,
-      rgba(22, 17, 13, 0.58) 80%,
-      rgba(22, 17, 13, 0.14) 96%
+      rgba(22, 17, 13, 0.95) 50%,
+      rgba(22, 17, 13, 0.82) 72%,
+      rgba(22, 17, 13, 0.62) 90%,
+      rgba(22, 17, 13, 0.56) 100%
     );
   }
 

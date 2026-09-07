@@ -13,9 +13,16 @@ beforeEach(() => {
   window.history.pushState({}, '', '/')
 })
 
-const go = (path) => {
+/**
+ * Renders the app at a path and waits for the route to arrive. Pages are
+ * code-split, so a route's component resolves a microtask after render and
+ * every query would otherwise run against the empty Suspense placeholder.
+ * Waiting on the <h1> is the cheapest proof the real page mounted.
+ */
+const go = async (path) => {
   window.history.pushState({}, '', path)
   render(<App />)
+  await screen.findByRole('heading', { level: 1 })
 }
 
 test('every link in the Support dropdown resolves to its own page', async () => {
@@ -30,18 +37,20 @@ test('every link in the Support dropdown resolves to its own page', async () => 
     await user.click(within(menu).getByRole('link', { name: label }))
 
     expect(window.location.pathname, `${label} should route to ${href}`).toBe(href)
-    // A real page, not the home-page fallback.
+    // Wait for the route's chunk first, then prove it is a real page and not
+    // the home-page fallback. Checking the absence before the chunk lands
+    // would pass trivially against the empty Suspense placeholder.
+    await screen.findByRole('heading', { level: 1 })
     expect(
       screen.queryByRole('heading', { level: 1, name: /the new tripket ph is here/i }),
     ).not.toBeInTheDocument()
-    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
 
     view.unmount()
   }
 })
 
-test('the contact page lists every real contact channel', () => {
-  go('/support/contact')
+test('the contact page lists every real contact channel', async () => {
+  await go('/support/contact')
 
   expect(screen.getByRole('heading', { level: 1, name: /contact us/i })).toBeInTheDocument()
   CONTACT_CHANNELS.forEach(({ value }) => {
@@ -55,7 +64,7 @@ test('the contact page lists every real contact channel', () => {
 
 test('the subject is a free-text field, and an empty one leaves no dangling colon', async () => {
   const user = userEvent.setup()
-  go('/support/contact')
+  await go('/support/contact')
 
   const subject = screen.getByLabelText('Subject')
   expect(subject.tagName).toBe('INPUT')
@@ -86,7 +95,7 @@ test('the subject is a free-text field, and an empty one leaves no dangling colo
 
 test('the contact form composes a real email rather than faking a send', async () => {
   const user = userEvent.setup()
-  go('/support/contact')
+  await go('/support/contact')
 
   await user.type(screen.getByLabelText('Name'), 'Maria Santos')
   await user.type(screen.getByLabelText('Email'), 'maria@example.com')
@@ -101,7 +110,7 @@ test('the contact form composes a real email rather than faking a send', async (
 
 test('no internal review note is carried on the FAQ data or the page', async () => {
   const user = userEvent.setup()
-  go('/support/faq')
+  await go('/support/faq')
 
   // Outstanding policy questions are tracked as `TODO: Confirm with Tripket`
   // comments in src/data/faq.js, which the build strips. Nothing may reach the
@@ -120,7 +129,7 @@ test('no internal review note is carried on the FAQ data or the page', async () 
 
 test('the partner answers are labelled and scoped away from the passenger app', async () => {
   const user = userEvent.setup()
-  go('/support/faq')
+  await go('/support/faq')
 
   const partners = FAQ_AUDIENCES.find((a) => a.id === 'shipping')
   expect(partners.label).toBe('For Shipping Line Partners')
@@ -130,8 +139,8 @@ test('the partner answers are labelled and scoped away from the passenger app', 
   expect(partners.note).toMatch(/do not describe features of the passenger booking app/i)
 })
 
-test('booking and ticket answers match the live web app', () => {
-  go('/support/faq')
+test('booking and ticket answers match the live web app', async () => {
+  await go('/support/faq')
 
   const answer = (fragment) => {
     const item = FAQ_AUDIENCES.flatMap((a) => a.groups.flatMap((g) => g.items))
@@ -156,7 +165,7 @@ test('booking and ticket answers match the live web app', () => {
 
 test('the FAQ renders both audiences and switches between them', async () => {
   const user = userEvent.setup()
-  go('/support/faq')
+  await go('/support/faq')
 
   const [passengers, shipping] = FAQ_AUDIENCES
 
@@ -179,7 +188,7 @@ test('the FAQ renders both audiences and switches between them', async () => {
 
 test('an FAQ answer is collapsed until its question is activated', async () => {
   const user = userEvent.setup()
-  go('/support/faq')
+  await go('/support/faq')
 
   const first = FAQ_AUDIENCES[0].groups[0].items[0]
   const trigger = screen.getByRole('button', { name: new RegExp(first.q, 'i') })
@@ -196,7 +205,7 @@ test('an FAQ answer is collapsed until its question is activated', async () => {
 
 test('the FAQ search filters questions and reports the count', async () => {
   const user = userEvent.setup()
-  go('/support/faq')
+  await go('/support/faq')
 
   const total = FAQ_AUDIENCES[0].groups.reduce((n, g) => n + g.items.length, 0)
   expect(screen.getByRole('status')).toHaveTextContent(`${total} answers`)
@@ -212,8 +221,8 @@ test('the FAQ search filters questions and reports the count', async () => {
   expect(screen.getByText(/no answers matched that search/i)).toBeInTheDocument()
 })
 
-test('the privacy policy renders every section and a matching contents list', () => {
-  go('/support/privacy')
+test('the privacy policy renders every section and a matching contents list', async () => {
+  await go('/support/privacy')
 
   const toc = document.querySelector('.legal-toc')
   PRIVACY_DOC.sections.forEach(({ id, title }) => {
@@ -223,8 +232,8 @@ test('the privacy policy renders every section and a matching contents list', ()
   })
 })
 
-test('the terms of service renders every clause', () => {
-  go('/support/terms')
+test('the terms of service renders every clause', async () => {
+  await go('/support/terms')
 
   expect(TERMS_DOC.sections.length).toBeGreaterThanOrEqual(20)
   TERMS_DOC.sections.forEach(({ id, title }) => {
@@ -233,8 +242,8 @@ test('the terms of service renders every clause', () => {
   })
 })
 
-test('the account deletion page states what is removed and what is kept', () => {
-  go('/support/account-deletion-request')
+test('the account deletion page states what is removed and what is kept', async () => {
+  await go('/support/account-deletion-request')
 
   expect(
     screen.getByRole('heading', { level: 1, name: /request account deletion/i }),
@@ -249,7 +258,7 @@ test('the account deletion page states what is removed and what is kept', () => 
 
 test('the deletion request form asks for the account identifiers', async () => {
   const user = userEvent.setup()
-  go('/support/account-deletion-request')
+  await go('/support/account-deletion-request')
 
   await user.type(screen.getByLabelText(/full name on the account/i), 'Ana Reyes')
   await user.type(screen.getByLabelText(/email address on the account/i), 'ana@example.com')
@@ -260,7 +269,7 @@ test('the deletion request form asks for the account identifiers', async () => {
 
 test('the Support trigger is marked current while on a support page', async () => {
   const user = userEvent.setup()
-  go('/support/faq')
+  await go('/support/faq')
 
   const trigger = screen.getByRole('button', { name: 'Support' })
   expect(trigger).toHaveClass('is-current')

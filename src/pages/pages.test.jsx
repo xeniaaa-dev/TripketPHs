@@ -15,8 +15,21 @@ beforeEach(() => {
   window.history.pushState({}, '', '/')
 })
 
-test('the home page renders at the root path', () => {
-  render(<App />)
+/**
+ * Renders the app at a path and waits for the route to arrive. Pages are
+ * code-split, so a route's component resolves a microtask after render and
+ * every query would otherwise run against the empty Suspense placeholder.
+ * Waiting on the <h1> is the cheapest proof the real page mounted.
+ */
+const go = async (path) => {
+  window.history.pushState({}, '', path)
+  const view = render(<App />)
+  await screen.findByRole('heading', { level: 1 })
+  return view
+}
+
+test('the home page renders at the root path', async () => {
+  await go('/')
   expect(
     screen.getByRole('heading', { level: 1, name: /the new tripket ph is here/i }),
   ).toBeInTheDocument()
@@ -24,12 +37,12 @@ test('the home page renders at the root path', () => {
 
 test('clicking About in the nav renders the about page without a reload', async () => {
   const user = userEvent.setup()
-  render(<App />)
+  await go('/')
 
   await user.click(screen.getAllByRole('link', { name: 'About' })[0])
 
   expect(window.location.pathname).toBe('/about')
-  expect(screen.getByRole('heading', { level: 1, name: /about tripket ph/i })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { level: 1, name: /about tripket ph/i })).toBeInTheDocument()
   expect(
     screen.getByText(/philippine-based online ticketing and cargo shipping platform/i),
   ).toBeInTheDocument()
@@ -37,7 +50,7 @@ test('clicking About in the nav renders the about page without a reload', async 
 
 test('Home in the nav routes back to the home page from another route', async () => {
   const user = userEvent.setup()
-  render(<App />)
+  await go('/')
 
   await user.click(screen.getAllByRole('link', { name: 'About' })[0])
   expect(window.location.pathname).toBe('/about')
@@ -53,8 +66,8 @@ test('Home in the nav routes back to the home page from another route', async ()
   ).toBeInTheDocument()
 })
 
-test('Home stays an in-page scroll anchor while already on the home page', () => {
-  render(<App />)
+test('Home stays an in-page scroll anchor while already on the home page', async () => {
+  await go('/')
 
   const home = screen.getAllByRole('link', { name: 'Home' })[0]
   expect(home).toHaveAttribute('href', ROUTES.top)
@@ -63,19 +76,18 @@ test('Home stays an in-page scroll anchor while already on the home page', () =>
 
 test('clicking Partners in the nav renders the partners page', async () => {
   const user = userEvent.setup()
-  render(<App />)
+  await go('/')
 
   await user.click(screen.getAllByRole('link', { name: 'Partners' })[0])
 
   expect(window.location.pathname).toBe('/partners')
   expect(
-    screen.getByRole('heading', { level: 1, name: /trusted by shipping lines nationwide/i }),
+    await screen.findByRole('heading', { level: 1, name: /trusted by shipping lines nationwide/i }),
   ).toBeInTheDocument()
 })
 
-test('the about page carries the mission, vision, values and every founder', () => {
-  window.history.pushState({}, '', '/about')
-  render(<App />)
+test('the about page carries the mission, vision, values and every founder', async () => {
+  await go('/about')
 
   ABOUT_PILLARS.forEach(({ title, body }) => {
     expect(screen.getByRole('heading', { level: 3, name: title })).toBeInTheDocument()
@@ -105,9 +117,8 @@ test('the about page carries the mission, vision, values and every founder', () 
   )
 })
 
-test('the partners carousel carries every shipping line, its blurb and its vessel', () => {
-  window.history.pushState({}, '', '/partners')
-  render(<App />)
+test('the partners carousel carries every shipping line, its blurb and its vessel', async () => {
+  await go('/partners')
 
   const track = document.querySelector('.p-track')
   expect(track.children).toHaveLength(PARTNER_LOGOS.length)
@@ -122,7 +133,7 @@ test('the partners carousel carries every shipping line, its blurb and its vesse
   })
 })
 
-test('every partner has a vessel photo bundled with the site', () => {
+test('every partner has a vessel photo bundled with the site', async () => {
   PARTNER_LOGOS.forEach(({ name, ship }) => {
     expect(ship, `${name} is missing a vessel photo`).toBeTruthy()
     // Served from our own /public, not hot-linked from tripketph.com storage.
@@ -132,8 +143,7 @@ test('every partner has a vessel photo bundled with the site', () => {
 
 test('a partner card reveals the rest of its description on demand', async () => {
   const user = userEvent.setup()
-  window.history.pushState({}, '', '/partners')
-  render(<App />)
+  await go('/partners')
 
   const track = document.querySelector('.p-track')
   const first = within(track).getAllByRole('button', { name: /learn more/i })[0]
@@ -151,9 +161,8 @@ test('a partner card reveals the rest of its description on demand', async () =>
   )
 })
 
-test('the carousel track is keyboard reachable and holds one slide per partner', () => {
-  window.history.pushState({}, '', '/partners')
-  render(<App />)
+test('the carousel track is keyboard reachable and holds one slide per partner', async () => {
+  await go('/partners')
 
   const track = document.querySelector('.p-track')
   expect(track).toHaveAttribute('tabindex', '0')
@@ -161,9 +170,8 @@ test('the carousel track is keyboard reachable and holds one slide per partner',
   expect(track).toHaveAccessibleName(new RegExp(`${PARTNER_LOGOS.length} shipping line`))
 })
 
-test('the carousel hides its controls when there is nothing to scroll', () => {
-  window.history.pushState({}, '', '/partners')
-  render(<App />)
+test('the carousel hides its controls when there is nothing to scroll', async () => {
+  await go('/partners')
 
   // jsdom reports no layout, so the track measures as unscrollable — the same
   // state a real browser reaches when every card already fits. Dead arrows and
@@ -173,7 +181,7 @@ test('the carousel hides its controls when there is nothing to scroll', () => {
   expect(document.querySelector('.p-controls')).not.toBeInTheDocument()
 })
 
-test('every partner has a description', () => {
+test('every partner has a description', async () => {
   PARTNER_LOGOS.forEach(({ name, blurb }) => {
     expect(blurb, `${name} is missing a blurb`).toBeTruthy()
   })
@@ -181,7 +189,7 @@ test('every partner has a description', () => {
 
 test('the nav marks the current page and the browser back button returns home', async () => {
   const user = userEvent.setup()
-  render(<App />)
+  await go('/')
 
   await user.click(screen.getAllByRole('link', { name: 'Partners' })[0])
   expect(screen.getAllByRole('link', { name: 'Partners' })[0]).toHaveAttribute(
@@ -198,9 +206,8 @@ test('the nav marks the current page and the browser back button returns home', 
   ).toBeInTheDocument()
 })
 
-test('links this project does not own are left as real navigations', () => {
-  window.history.pushState({}, '', '/partners')
-  render(<App />)
+test('links this project does not own are left as real navigations', async () => {
+  await go('/partners')
 
   // The support pages and admin dashboard live outside this project; the
   // router must not swallow those clicks and pretend they routed.
@@ -211,9 +218,8 @@ test('links this project does not own are left as real navigations', () => {
   expect(admin).toHaveAttribute('href', ROUTES.admin)
 })
 
-test('an unknown path falls back to the home page', () => {
-  window.history.pushState({}, '', '/does-not-exist')
-  render(<App />)
+test('an unknown path falls back to the home page', async () => {
+  await go('/does-not-exist')
 
   expect(
     screen.getByRole('heading', { level: 1, name: /the new tripket ph is here/i }),

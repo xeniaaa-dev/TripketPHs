@@ -1,28 +1,28 @@
+import { Suspense, lazy } from 'react'
 import Header from './components/Header'
 import SiteFooter from './components/SiteFooter'
-import AboutPage from './pages/AboutPage'
-import AccountDeletionPage from './pages/AccountDeletionPage'
-import ContactPage from './pages/ContactPage'
-import FaqPage from './pages/FaqPage'
 import HomePage from './pages/HomePage'
-import PartnersPage from './pages/PartnersPage'
-import PrivacyPage from './pages/PrivacyPage'
-import TermsPage from './pages/TermsPage'
 import useDocumentMeta from './hooks/useDocumentMeta'
 import useReveal from './hooks/useReveal'
 import useRouter from './hooks/useRouter'
 import useStuck from './hooks/useStuck'
 import useTheme from './hooks/useTheme'
 
-const PAGES = {
-  '/': HomePage,
-  '/about': AboutPage,
-  '/partners': PartnersPage,
-  '/support/contact': ContactPage,
-  '/support/faq': FaqPage,
-  '/support/privacy': PrivacyPage,
-  '/support/terms': TermsPage,
-  '/support/account-deletion-request': AccountDeletionPage,
+/**
+ * The home page is bundled with the shell because it is the landing route for
+ * almost all traffic — code-splitting it would only add a round trip before
+ * the hero can paint. Every other page is fetched on demand, so a visitor who
+ * never opens the legal pages never downloads the 34-item FAQ, the two long
+ * legal documents, or the partner carousel.
+ */
+const LAZY_PAGES = {
+  '/about': lazy(() => import('./pages/AboutPage')),
+  '/partners': lazy(() => import('./pages/PartnersPage')),
+  '/support/contact': lazy(() => import('./pages/ContactPage')),
+  '/support/faq': lazy(() => import('./pages/FaqPage')),
+  '/support/privacy': lazy(() => import('./pages/PrivacyPage')),
+  '/support/terms': lazy(() => import('./pages/TermsPage')),
+  '/support/account-deletion-request': lazy(() => import('./pages/AccountDeletionPage')),
 }
 
 export default function App() {
@@ -32,7 +32,7 @@ export default function App() {
   useDocumentMeta(path)
   useReveal(path)
 
-  const Page = PAGES[path] ?? HomePage
+  const Page = path === '/' ? HomePage : LAZY_PAGES[path] ?? HomePage
 
   return (
     <div className="page" id="top">
@@ -47,7 +47,15 @@ export default function App() {
       {/* tabIndex lets useRouter move focus here on a client-side page change,
           so the change is announced instead of happening silently. */}
       <main id="main-content" tabIndex={-1}>
-        <Page />
+        {/* The placeholder reserves height so the footer does not jump up and
+            back while a page chunk is in flight. It is deliberately blank
+            rather than a spinner: chunks are small and same-origin, so a
+            spinner would usually be a flash. The route change is already
+            announced by the focus move in useRouter and the title update in
+            useDocumentMeta. */}
+        <Suspense fallback={<div className="route-pending" aria-hidden="true" />}>
+          <Page />
+        </Suspense>
       </main>
 
       <SiteFooter />

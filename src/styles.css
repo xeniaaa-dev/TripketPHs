@@ -688,6 +688,17 @@ button {
   cursor: pointer;
 }
 
+/* Height held for a page chunk that is still in flight. It has to be at least
+   a full viewport: at 70vh the footer sat inside the fold and then jumped when
+   the real content mounted, which measured a 0.30 layout shift on every
+   code-split route. A full viewport keeps the footer below the fold, so
+   nothing visible moves when the page arrives. Every real page is far taller
+   than this, so the footer only ever moves further down. */
+.route-pending {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
 /* ------------------------------------------------------------------ hero */
 
 /* Full-bleed photographic stage: the sea runs edge to edge for the whole

@@ -29,7 +29,7 @@ function LogoGroup({ cloned = false }) {
               {/* Eager: the track extends past the viewport horizontally, so
                   lazy loading would leave blank badges scrolling into view. The
                   optimized logos together weigh under 90 KB. */}
-              <img src={src} alt="" width="96" height="96" decoding="async" />
+              <img src={src} alt="" width="96" height="96" decoding="async" draggable={false} />
             </span>
             <span className="partner-name">{name}</span>
           </li>

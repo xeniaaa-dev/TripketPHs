@@ -297,8 +297,14 @@ button {
    always covers the full width without ever showing an edge. */
 .wave-rule {
   display: block;
-  width: 106%;
-  margin-inline: -3%;
+  /* Overhangs the frame by 4% a side. The scroll drift moves it by 3% of its
+     own width (~47px at 1440), so the overhang has to be the larger of the
+     two or an extreme of the drift exposes an edge. */
+  width: 108%;
+  /* The global `svg { max-width: 100% }` reset would clamp this back to the
+     frame width, shifting the wave left instead of overhanging both sides. */
+  max-width: none;
+  margin-inline: -4%;
   height: 48px;
   fill: none;
   stroke: var(--wave-stroke);
@@ -774,7 +780,11 @@ button {
   margin-top: var(--space-md);
   max-width: 42ch;
   color: var(--text-muted);
-  font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+  /* Anchored so the fluid term actually engages on phones: a bare `1.6vw`
+     middle only overtook the floor past 1020px, so every handset rendered the
+     1.02rem minimum flat. This curve still reaches the 1.2rem cap at exactly
+     1200px like the original, so nothing at desktop width shifts. */
+  font-size: clamp(1.06rem, 1.0125rem + 0.25vw, 1.2rem);
 }
 
 .hero-actions {
@@ -854,9 +864,26 @@ button {
   animation: marquee-scroll 120s linear infinite;
 }
 
-.marquee:hover .marquee-track,
+/* Keyboard focus still pauses the row so it can be read, but hover does not:
+   pointer users kept freezing it by accident just moving across the section. */
 .marquee:focus-within .marquee-track {
   animation-play-state: paused;
+}
+
+/* Logos are decoration, not content to pull out of the page. The row is also
+   non-selectable: it never stops moving, so a press-and-sweep only ever
+   produced an accidental selection spanning several carrier names. The names
+   stay in the DOM, so screen readers still announce each carrier once. */
+.marquee {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.marquee img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
 }
 
 .marquee-group {
@@ -1454,6 +1481,12 @@ button {
   padding-top: var(--space-sm);
   border-top: 1px solid rgba(255, 248, 238, 0.14);
   color: var(--footer-muted);
+}
+
+/* The copyright line was left at the UA default for `small` (0.833em), which
+   varies between browsers. Pinned to the same tier as the other micro-labels. */
+.footer-bottom small {
+  font-size: 0.86rem;
 }
 
 .social-links {
@@ -3374,19 +3407,46 @@ button {
      cropped detail beneath it, per docs/Tripket-branding.md. */
   .hero {
     align-items: stretch;
+    /* Content-height rather than a locked viewport. `min-height: 100svh` plus
+       a fixed 300px photo band left 190-680px of empty water under the CTA on
+       tall handsets, and on short ones (320x568, iPhone SE) it pushed the hero
+       to 116-137% of the screen. The floor keeps the stage from looking stubby
+       in landscape; anything taller comes from the copy itself. */
+    min-height: 32rem;
   }
 
   .hero-photo {
     object-position: 80% 58%;
   }
 
+  /* The band under the copy is now proportional to the screen and capped, so a
+     1200px-tall viewport no longer reserves the same slab as an 844px one. The
+     trust bar is meant to break the fold here, the way tripketph.com does. */
   .hero-inner {
-    padding-block: calc(var(--nav-h) + var(--space-md)) clamp(180px, 34vh, 300px);
+    padding-block: calc(var(--nav-h) + var(--space-md)) clamp(120px, 22vh, 210px);
   }
 
-  .hero-copy,
-  .hero-lede {
+  /* Matched to the desktop curve at this breakpoint (both land on ~46px at
+     860px) so the headline grows with the handset instead of sitting on the
+     2.4rem floor from 320px all the way to 700px. */
+  .hero h1 {
+    font-size: clamp(2.5rem, 0.62rem + 6.4vw, 2.9rem);
+  }
+
+  .hero-badge {
+    font-size: 0.9rem;
+  }
+
+  .hero-copy {
     max-width: none;
+  }
+
+  /* Released from the 42ch desktop cap so it can use a narrow screen, but
+     still capped: `none` let the line run the full 768-860px of an iPad
+     portrait or a phone in landscape. Below ~430px this is wider than the
+     column, so phones are unaffected. */
+  .hero-lede {
+    max-width: 46ch;
   }
 
   .step-list {
@@ -3413,8 +3473,39 @@ button {
 }
 
 @media (max-width: 620px) {
+  /* Micro-label tier. On desktop these tracked labels sit at 0.76-0.82rem,
+     which reads as 12.2-13.1px on a phone - the smallest text on the page and
+     the main reason the mobile layout felt undersized next to tripketph.com.
+     Nudged up only here, so the approved desktop scale is untouched. Numeric
+     badges (.step-number) and avatar initials are deliberately excluded: they
+     are glyphs inside fixed-size pills, not text to be read. */
+  .eyebrow,
+  .pill-eyebrow,
+  .contact-row-note,
+  .form-hint,
+  .form-note,
+  .form-status {
+    font-size: 0.86rem;
+  }
+
+  .contact-row-label,
+  .partner-name,
+  .founder-face-role,
+  .legal-toc-heading,
+  .faq-group > h2 {
+    font-size: 0.84rem;
+  }
+
   .hero-actions .button {
     flex: 1 1 100%;
+  }
+
+  /* The ghost action is a link, not a filled button, so once it stretches to
+     the full column its centred label floats away from the left edge that the
+     headline, lede and primary CTA all share. */
+  .hero-actions .button-ghost {
+    justify-content: flex-start;
+    padding-inline: 0;
   }
 
   .feature-grid {
@@ -3440,6 +3531,19 @@ button {
   }
 }
 
+/* Landscape phones and Android split-screen leave only 340-460px of height.
+   Both the nav clearance and the photo band tighten so less of an already
+   short viewport is spent on empty water. */
+@media (max-width: 926px) and (max-height: 460px) and (orientation: landscape) {
+  .hero {
+    min-height: 0;
+  }
+
+  .hero-inner {
+    padding-block: calc(var(--nav-h) + var(--space-2xs)) clamp(72px, 20vh, 120px);
+  }
+}
+
 @media (max-width: 400px) {
   /* Reclaim the space between the three pill controls before the row wraps. */
   .nav-shell {
@@ -3449,6 +3553,24 @@ button {
 
   .brand {
     font-size: 1.12rem;
+  }
+
+  /* At 320px the headline takes a third line, which pushed the CTA 29px below
+     the fold on a 568px-tall screen. Tightening the rhythm recovers 44px and
+     gets the button back on the first screen, without shrinking any type -
+     360px and 390px handsets are far more common than 320px and must not lose
+     headline size to pay for this. */
+  .hero-badge {
+    margin-bottom: var(--space-sm);
+  }
+
+  .hero-lede {
+    margin-top: var(--space-sm);
+  }
+
+  .hero-actions {
+    gap: var(--space-xs);
+    margin-top: var(--space-md);
   }
 }
 

@@ -73,6 +73,11 @@ test('every primary CTA points at the new web app', () => {
   ]
   expect(primaryCtas.length).toBeGreaterThanOrEqual(2)
   primaryCtas.forEach((link) => expect(link).toHaveAttribute('href', ROUTES.book))
+
+  // Regression: ROUTES.book was '#' for a while, so every "Book Now" on all
+  // eight pages did nothing. Pin it to an absolute URL.
+  expect(ROUTES.book).toBe('https://app.tripketph.com/')
+  expect(ROUTES.book.startsWith('https://')).toBe(true)
   expect(screen.getAllByRole('link', { name: /learn more/i })[0]).toHaveAttribute('href', '#features')
 })
 
@@ -149,22 +154,17 @@ test('the mobile navigation toggle reports its state', async () => {
   )
 })
 
-test('marks the two product lines while keeping the feature grid even', () => {
+test('every feature card renders identically', () => {
   render(<App />)
 
-  const featured = FEATURES.filter((feature) => feature.featured).map((f) => f.title)
-  expect(featured).toEqual(['Ticket Booking', 'Cargo Shipping'])
-
-  // Every card is the same size now, so the product lines are distinguished by
-  // their badge rather than by spanning extra columns.
-  const tiles = document.querySelectorAll('.feature-grid > li')
+  const tiles = [...document.querySelectorAll('.feature-grid > li')]
   expect(tiles).toHaveLength(FEATURES.length)
-  tiles.forEach((tile) => expect(tile).not.toHaveClass('feature-lg'))
 
-  FEATURES.forEach(({ title, featured: isFeatured }) => {
-    const tile = screen.getByRole('heading', { level: 3, name: title }).closest('li')
-    const badge = tile.querySelector('.feature-icon')
-    expect(badge.classList.contains('is-primary')).toBe(Boolean(isFeatured))
+  // No card carries an emphasis variant: a warmer badge on two of them read as
+  // a stuck hover state, since hover is exactly what turns a badge warm.
+  tiles.forEach((tile) => {
+    expect(tile.className).toBe('feature')
+    expect(tile.querySelector('.feature-icon').className).toBe('feature-icon')
   })
 })
 

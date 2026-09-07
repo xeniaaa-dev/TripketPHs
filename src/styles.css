@@ -972,12 +972,6 @@ button {
   gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
 }
 
-/* The two product lines keep a warmer badge so the business hierarchy still
-   reads on an even grid. */
-.feature-icon.is-primary {
-  background: var(--peach);
-}
-
 /* ----------------------------------------------------------------- steps */
 
 .steps {

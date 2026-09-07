@@ -1,11 +1,9 @@
 import { FEATURES, SECTION_LABELS } from '../data/content'
 
-function FeatureTile({ icon: Icon, title, copy, featured = false }) {
+function FeatureTile({ icon: Icon, title, copy }) {
   return (
     <li className="feature" data-reveal>
-      {/* The two product lines (tickets and cargo) keep a warmer badge, so the
-          business hierarchy survives the move to an even grid. */}
-      <span className={featured ? 'feature-icon is-primary' : 'feature-icon'}>
+      <span className="feature-icon">
         <Icon aria-hidden="true" />
       </span>
       <h3>{title}</h3>

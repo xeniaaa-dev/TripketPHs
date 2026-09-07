@@ -37,9 +37,9 @@ export const ROUTES = {
   about: '/about',
   partners: '/partners',
   app: '/apps/tripket-ph',
-  // TODO: point at the new Tripket web app once the live URL is confirmed.
-  // Every "Book Now" CTA reads from here, so this is the only line to change.
-  book: '#',
+  // The v2 web app. Every "Book Now" CTA and the hero's launch button read
+  // from here, so this is the only line to change.
+  book: 'https://app.tripketph.com/',
   admin: '/admin',
   contact: '/support/contact',
   faq: '/support/faq',
@@ -91,11 +91,7 @@ export const SECTION_LABELS = {
   partner: 'For shipping lines',
 }
 
-/**
- * `featured: true` promotes an item to a large bento tile. The two flagged
- * items are the actual product lines (passenger tickets and cargo), so the
- * layout mirrors the business rather than treating all six as equal.
- */
+/** Rendered as an even grid of identical cards, in this order. */
 export const FEATURES = [
   {
     icon: CreditCard,
@@ -105,7 +101,6 @@ export const FEATURES = [
   {
     icon: Ticket,
     title: 'Ticket Booking',
-    featured: true,
     copy: 'Book ferry and bus tickets from anywhere, anytime, in just a few taps.',
   },
   {
@@ -121,7 +116,6 @@ export const FEATURES = [
   {
     icon: Package,
     title: 'Cargo Shipping',
-    featured: true,
     copy: 'Ship cargo and freight with trusted Philippine shipping line partners.',
   },
   {

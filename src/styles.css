@@ -2838,16 +2838,6 @@ button {
   text-underline-offset: 3px;
 }
 
-.contact-form-shell {
-  padding: clamp(var(--space-md), 2.4vw, var(--space-lg));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  background: var(--glass-bg-strong);
-  box-shadow: var(--glass-shadow);
-  -webkit-backdrop-filter: blur(14px) saturate(1.06);
-  backdrop-filter: blur(14px) saturate(1.06);
-}
-
 /* ------------------------------------------------------------ form fields */
 
 .support-form {

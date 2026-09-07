@@ -127,7 +127,7 @@ export default function AccountDeletionPage() {
             </p>
           </div>
 
-          <div className="contact-form-shell" data-reveal="right">
+          <div className="contact-form-card" data-reveal="right">
             <SupportForm
               fields={FIELDS}
               subjectPrefix="Account deletion request"

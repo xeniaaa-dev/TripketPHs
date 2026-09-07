@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowRight } from 'lucide-react'
-import { HERO, HERO_CTA_LABEL, ROUTES } from '../data/content'
+import { HERO, PRIMARY_CTA_LABEL, ROUTES } from '../data/content'
 
 export default function Hero() {
   return (
@@ -31,7 +31,7 @@ export default function Hero() {
           <p className="hero-lede">{HERO.copy}</p>
           <div className="hero-actions">
             <a className="button button-primary button-lg" href={ROUTES.book}>
-              {HERO_CTA_LABEL}
+              {PRIMARY_CTA_LABEL}
               <ArrowRight aria-hidden="true" />
             </a>
             <a className="button button-ghost button-lg" href={ROUTES.features}>

@@ -4,8 +4,7 @@ import { beforeEach, expect, test } from 'vitest'
 import App from './App'
 import {
   FEATURES,
-  HERO_CTA_LABEL,
-  NAV_CTA_LABEL,
+  PRIMARY_CTA_LABEL,
   ROUTES,
   JOURNEY_STEPS,
   PARTNER_BENEFITS,
@@ -67,10 +66,8 @@ test('announces the v2 launch and retires the old version', () => {
 test('every primary CTA points at the new web app', () => {
   render(<App />)
 
-  const primaryCtas = [
-    ...screen.getAllByRole('link', { name: NAV_CTA_LABEL }),
-    ...screen.getAllByRole('link', { name: HERO_CTA_LABEL }),
-  ]
+  // The header pill and the hero button now share one label.
+  const primaryCtas = screen.getAllByRole('link', { name: PRIMARY_CTA_LABEL })
   expect(primaryCtas.length).toBeGreaterThanOrEqual(2)
   primaryCtas.forEach((link) => expect(link).toHaveAttribute('href', ROUTES.book))
 

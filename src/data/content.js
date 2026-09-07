@@ -77,12 +77,10 @@ export const HERO = {
 }
 
 /**
- * The two filled orange CTAs. The header keeps a plain action verb because it
- * is the persistent, always-visible control; the hero carries the launch
- * announcement instead. Both point at `ROUTES.book`.
+ * Label on the filled orange CTA, shared by the header pill and the hero so
+ * the two cannot drift apart. Both point at `ROUTES.book`.
  */
-export const NAV_CTA_LABEL = 'Book Now'
-export const HERO_CTA_LABEL = 'v2 is now available'
+export const PRIMARY_CTA_LABEL = 'Book Now'
 
 export const SECTION_LABELS = {
   features: 'What you get',

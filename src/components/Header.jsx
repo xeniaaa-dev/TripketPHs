@@ -1,7 +1,7 @@
 import { ArrowRight, ChevronDown, Menu, Moon, Sun, X } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Brand from './Brand'
-import { NAV_CTA_LABEL, PRIMARY_NAV, ROUTES, SUPPORT_NAV } from '../data/content'
+import { PRIMARY_CTA_LABEL, PRIMARY_NAV, ROUTES, SUPPORT_NAV } from '../data/content'
 
 export default function Header({ theme, onToggleTheme, isStuck = false, path = '/' }) {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -119,7 +119,7 @@ export default function Header({ theme, onToggleTheme, isStuck = false, path = '
               <ArrowRight aria-hidden="true" />
             </a>
             <a className="button button-primary" href={ROUTES.book} onClick={closeAll}>
-              {NAV_CTA_LABEL}
+              {PRIMARY_CTA_LABEL}
               <ArrowRight aria-hidden="true" />
             </a>
           </div>

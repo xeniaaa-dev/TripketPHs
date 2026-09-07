@@ -1,5 +1,14 @@
 import { PARTNER_LOGOS } from '../data/content'
 
+/**
+ * The loop translates the track by exactly -50%, so one group has to be wider
+ * than the viewport or the seam becomes a visible gap. With only a handful of
+ * partners the list is repeated until it is wide enough; with twenty or more it
+ * is used as-is.
+ */
+const TARGET_LOGOS_PER_GROUP = 20
+const REPEATS = Math.max(1, Math.ceil(TARGET_LOGOS_PER_GROUP / PARTNER_LOGOS.length))
+
 function LogoGroup({ cloned = false }) {
   return (
     <ul
@@ -7,17 +16,25 @@ function LogoGroup({ cloned = false }) {
       aria-label={cloned ? undefined : 'Tripket PH shipping line partners'}
       aria-hidden={cloned || undefined}
     >
-      {PARTNER_LOGOS.map(({ name, src }) => (
-        <li className="partner" key={name}>
-          <span className="partner-badge">
-            {/* Eager: the track extends past the viewport horizontally, so lazy
-                loading would leave blank badges scrolling into view. All 15
-                optimized logos together weigh under 90 KB. */}
-            <img src={src} alt="" width="96" height="96" decoding="async" />
-          </span>
-          <span className="partner-name">{name}</span>
-        </li>
-      ))}
+      {Array.from({ length: REPEATS }, (_, pass) =>
+        PARTNER_LOGOS.map(({ name, src }) => (
+          <li
+            className="partner"
+            key={`${pass}-${name}`}
+            /* Only the first pass is announced, so each carrier is read once
+               however many times it is repeated for width. */
+            aria-hidden={pass > 0 || undefined}
+          >
+            <span className="partner-badge">
+              {/* Eager: the track extends past the viewport horizontally, so
+                  lazy loading would leave blank badges scrolling into view. The
+                  optimized logos together weigh under 90 KB. */}
+              <img src={src} alt="" width="96" height="96" decoding="async" />
+            </span>
+            <span className="partner-name">{name}</span>
+          </li>
+        )),
+      )}
     </ul>
   )
 }

@@ -2548,6 +2548,19 @@ button {
 
 /* ---- the answer list */
 
+/* Scope note above the partner answers, so they are not read as passenger
+   app features. */
+.faq-scope-note {
+  margin-bottom: var(--space-md);
+  padding: var(--space-xs) var(--space-sm);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
 .faq-group + .faq-group {
   margin-top: var(--space-md);
 }

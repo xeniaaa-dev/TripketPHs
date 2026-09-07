@@ -68,6 +68,61 @@ test('the contact form composes a real email rather than faking a send', async (
   expect(status).toHaveTextContent(/support@tripketph\.com/i)
 })
 
+test('no internal review note is carried on the FAQ data or the page', async () => {
+  const user = userEvent.setup()
+  go('/support/faq')
+
+  // Outstanding policy questions are tracked as `TODO: Confirm with Tripket`
+  // comments in src/data/faq.js, which the build strips. Nothing may reach the
+  // data objects, and so nothing can reach the page.
+  const items = FAQ_AUDIENCES.flatMap((a) => a.groups.flatMap((g) => g.items))
+  items.forEach((item) => {
+    expect(Object.keys(item).sort()).toEqual(['a', 'q'])
+    expect(item.a).not.toMatch(/Confirm with Tripket|TODO/i)
+  })
+
+  for (const tab of FAQ_AUDIENCES) {
+    await user.click(screen.getByRole('tab', { name: tab.label }))
+    expect(document.body.textContent).not.toMatch(/Confirm with Tripket|TODO/i)
+  }
+})
+
+test('the partner answers are labelled and scoped away from the passenger app', async () => {
+  const user = userEvent.setup()
+  go('/support/faq')
+
+  const partners = FAQ_AUDIENCES.find((a) => a.id === 'shipping')
+  expect(partners.label).toBe('For Shipping Line Partners')
+
+  await user.click(screen.getByRole('tab', { name: partners.label }))
+  expect(screen.getByText(partners.note)).toBeInTheDocument()
+  expect(partners.note).toMatch(/do not describe features of the passenger booking app/i)
+})
+
+test('booking and ticket answers match the live web app', () => {
+  go('/support/faq')
+
+  const answer = (fragment) => {
+    const item = FAQ_AUDIENCES.flatMap((a) => a.groups.flatMap((g) => g.items))
+      .find((i) => i.q.toLowerCase().includes(fragment))
+    expect(item, `no FAQ item matching "${fragment}"`).toBeTruthy()
+    return item.a
+  }
+
+  // Verified against app.tripketph.com: origin, destination, travel date.
+  expect(answer('how to book tickets online')).toMatch(/origin/i)
+  expect(answer('how to book tickets online')).toMatch(/destination/i)
+  expect(answer('how to book tickets online')).toMatch(/travel date/i)
+
+  // "My Tickets" replaces the old "virtual ticket wallet".
+  expect(answer('receive my ticket')).toMatch(/My Tickets/)
+  expect(answer('status of my booking')).toMatch(/My Tickets/)
+  FAQ_AUDIENCES.flatMap((a) => a.groups.flatMap((g) => g.items)).forEach(({ q, a }) => {
+    expect(a, `"${q}" still says virtual ticket wallet`).not.toMatch(/virtual ticket wallet/i)
+    expect(a, `"${q}" still asks for a screenshot`).not.toMatch(/screenshot/i)
+  })
+})
+
 test('the FAQ renders both audiences and switches between them', async () => {
   const user = userEvent.setup()
   go('/support/faq')

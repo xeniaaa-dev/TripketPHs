@@ -151,17 +151,26 @@ test('a partner card reveals the rest of its description on demand', async () =>
   )
 })
 
-test('the carousel exposes labelled prev/next controls, disabled at the start', () => {
+test('the carousel track is keyboard reachable and holds one slide per partner', () => {
   window.history.pushState({}, '', '/partners')
   render(<App />)
 
-  const prev = screen.getByRole('button', { name: /previous partners/i })
-  const next = screen.getByRole('button', { name: /next partners/i })
+  const track = document.querySelector('.p-track')
+  expect(track).toHaveAttribute('tabindex', '0')
+  expect(track.children).toHaveLength(PARTNER_LOGOS.length)
+  expect(track).toHaveAccessibleName(new RegExp(`${PARTNER_LOGOS.length} shipping line`))
+})
 
-  // jsdom has no layout, so the track never scrolls; prev must still start off.
-  expect(prev).toBeDisabled()
-  expect(next).toBeInTheDocument()
-  expect(document.querySelector('.p-track')).toHaveAttribute('tabindex', '0')
+test('the carousel hides its controls when there is nothing to scroll', () => {
+  window.history.pushState({}, '', '/partners')
+  render(<App />)
+
+  // jsdom reports no layout, so the track measures as unscrollable — the same
+  // state a real browser reaches when every card already fits. Dead arrows and
+  // a permanent "01 / 01" should not be rendered.
+  expect(screen.queryByRole('button', { name: /previous partners/i })).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: /next partners/i })).not.toBeInTheDocument()
+  expect(document.querySelector('.p-controls')).not.toBeInTheDocument()
 })
 
 test('every partner has a description', () => {

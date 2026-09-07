@@ -186,7 +186,39 @@ export const TESTIMONIALS = [
  * shipping lines' own, as published on tripketph.com/partners — the photos are
  * served locally rather than hot-linked from that site's storage bucket.
  */
+/**
+ * The shipping lines currently live on Tripket PH. The home-page marquee, the
+ * partners carousel and every "N shipping lines onboard" count read from this
+ * array, so adding a partner here is the only change needed — move an entry up
+ * from INACTIVE_PARTNER_LOGOS below and it appears everywhere.
+ */
 export const PARTNER_LOGOS = [
+  {
+    name: 'OceanJet',
+    src: '/assets/optimized/partners/OceanJet.webp',
+    ship: '/assets/tripket-partners/ships/OceanJet.jpg',
+    blurb: 'Bacolod, Batangas, Calapan, Cebu, Dumaguete, Iloilo, Larena, Ormoc, Siquijor, and Tagbilaran.',
+  },
+  {
+    name: 'HS Star Marine Shipping',
+    src: '/assets/optimized/partners/HsStarMarineShipping.webp',
+    ship: '/assets/tripket-partners/ships/HsStarMarineShipping.jpg',
+    blurb: 'HS Star Marine Shipping Corporation, also operating as Anika Shipping Line.',
+  },
+  {
+    name: 'Maayo Shipping Incorporation',
+    src: '/assets/optimized/partners/MaayoShippingIncorporation.webp',
+    ship: '/assets/tripket-partners/ships/MaayoShippingIncorporation.jpg',
+    blurb: 'Serving the Sibulan-Liloan and Tampi-Bato routes between Negros Oriental and Cebu.',
+  },
+]
+
+/**
+ * Not currently active, so not rendered anywhere. Kept with their logos, vessel
+ * photography and descriptions intact so a partner can be restored by moving
+ * its entry into PARTNER_LOGOS above.
+ */
+export const INACTIVE_PARTNER_LOGOS = [
   {
     name: 'Medallion Transport Inc.',
     src: '/assets/optimized/partners/MedallionTransport.webp',
@@ -230,12 +262,6 @@ export const PARTNER_LOGOS = [
     blurb: 'Explore Visayas and Mindanao\'s hidden treasures with Cokaliong\'s captivating sailings.',
   },
   {
-    name: 'OceanJet',
-    src: '/assets/optimized/partners/OceanJet.webp',
-    ship: '/assets/tripket-partners/ships/OceanJet.jpg',
-    blurb: 'Bacolod, Batangas, Calapan, Cebu, Dumaguete, Iloilo, Larena, Ormoc, Siquijor, and Tagbilaran.',
-  },
-  {
     name: 'SuperCat',
     src: '/assets/optimized/partners/SuperCat.webp',
     ship: '/assets/tripket-partners/ships/SuperCat.jpg',
@@ -254,22 +280,10 @@ export const PARTNER_LOGOS = [
     blurb: 'With its roots in Cebu and unmatched expertise in the Philippines, Trans-Asia Shipping Lines holds a distinct position in the industry.',
   },
   {
-    name: 'Maayo Shipping Incorporation',
-    src: '/assets/optimized/partners/MaayoShippingIncorporation.webp',
-    ship: '/assets/tripket-partners/ships/MaayoShippingIncorporation.jpg',
-    blurb: 'Serving the Sibulan-Liloan and Tampi-Bato routes between Negros Oriental and Cebu.',
-  },
-  {
     name: 'Kho Shipping Lines',
     src: '/assets/optimized/partners/KhoShippingLines.webp',
     ship: '/assets/tripket-partners/ships/KhoShippingLines.jpg',
     blurb: 'A reliable ferry service offering a range of options for travellers to reach beautiful island destinations, with a focus on flexibility, convenience, and quality service.',
-  },
-  {
-    name: 'HS Star Marine Shipping',
-    src: '/assets/optimized/partners/HsStarMarineShipping.webp',
-    ship: '/assets/tripket-partners/ships/HsStarMarineShipping.jpg',
-    blurb: 'HS Star Marine Shipping Corporation, also operating as Anika Shipping Line.',
   },
   {
     name: 'Evaristo and Sons',

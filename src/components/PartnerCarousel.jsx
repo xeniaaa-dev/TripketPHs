@@ -46,11 +46,14 @@ export default function PartnerCarousel() {
   const [atEnd, setAtEnd] = useState(false)
   const [page, setPage] = useState(0)
   const [pageCount, setPageCount] = useState(1)
+  const [scrollable, setScrollable] = useState(false)
 
   const measure = useCallback(() => {
     const track = trackRef.current
     if (!track) return
     const max = track.scrollWidth - track.clientWidth
+    // Few enough cards to fit in one view: the controls would all be dead.
+    setScrollable(max > 1)
     // The track carries a few px of padding so hover shadows are not clipped,
     // and scroll-snap rests the first card against it — so at-rest scrollLeft
     // is a small non-zero number, not 0. A page step is hundreds of px, so
@@ -121,6 +124,7 @@ export default function PartnerCarousel() {
           ))}
         </ul>
 
+        {scrollable ? (
         <div className="p-controls">
           <p className="p-progress" role="status" aria-live="polite">
             {String(page + 1).padStart(2, '0')}
@@ -149,6 +153,7 @@ export default function PartnerCarousel() {
             </button>
           </div>
         </div>
+        ) : null}
       </div>
     </section>
   )

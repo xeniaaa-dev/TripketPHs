@@ -140,6 +140,10 @@ export default function FaqPage() {
             aria-labelledby={`${uid}-tab-${audience.id}`}
             tabIndex={-1}
           >
+            {audience.note ? (
+              <p className="faq-scope-note">{audience.note}</p>
+            ) : null}
+
             {groups.length === 0 ? (
               <p className="faq-empty">
                 No answers matched that search. Try a different word, or{' '}

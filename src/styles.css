@@ -60,7 +60,6 @@
   --wave-stroke: rgba(244, 90, 22, 0.28);
   /* Testimonials: frosted cards over a warm, faintly gridded ground. */
   --testimonial-ground: linear-gradient(168deg, var(--sand) 0%, var(--cream) 46%, var(--sand) 100%);
-  --grid-line: rgba(228, 214, 198, 0.85);
   --glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.62));
   --glass-bg-strong: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(255, 252, 246, 0.86));
   --glass-border: rgba(255, 255, 255, 0.95);
@@ -128,7 +127,6 @@
   --nav-current: #ff8a4d;
   --link: #ff8a4d;
   --testimonial-ground: linear-gradient(168deg, #241a13 0%, #16110d 48%, #241a13 100%);
-  --grid-line: rgba(255, 248, 238, 0.09);
   --glass-bg: linear-gradient(180deg, rgba(255, 248, 238, 0.1), rgba(255, 248, 238, 0.035));
   --glass-bg-strong: linear-gradient(180deg, rgba(255, 248, 238, 0.17), rgba(255, 248, 238, 0.06));
   --glass-border: rgba(255, 248, 238, 0.18);
@@ -1180,10 +1178,10 @@ button {
 
 /* ---------------------------------------------------------- testimonials */
 
-/* Composition follows the supplied reference: a centred heading over a faintly
-   gridded ground, and three equal frosted cards that lead with the person
-   rather than the quote. The reference's blue/violet palette is deliberately
-   not carried over — docs/Tripket-branding.md rules out a competing blue or
+/* Composition follows the supplied reference: a centred heading over a plain
+   warm ground, and three equal frosted cards that lead with the person rather
+   than the quote. The reference's blue/violet palette is deliberately not
+   carried over — docs/Tripket-branding.md rules out a competing blue or
    purple, so the glass sits on Tripket's warm neutrals instead. */
 .testimonials {
   position: relative;
@@ -1191,22 +1189,6 @@ button {
   background: var(--testimonial-ground);
   border-block: 1px solid var(--border);
   overflow: hidden;
-  isolation: isolate;
-}
-
-/* The grid fades out towards the edges, so it reads as depth behind the cards
-   rather than as a table drawn across the section. */
-.testimonials::before {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background-image: linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size: clamp(56px, 7vw, 120px) clamp(56px, 7vw, 120px);
-  -webkit-mask-image: radial-gradient(ellipse 72% 56% at 50% 32%, #000 12%, transparent 78%);
-  mask-image: radial-gradient(ellipse 72% 56% at 50% 32%, #000 12%, transparent 78%);
-  pointer-events: none;
 }
 
 .testimonials .section-head {

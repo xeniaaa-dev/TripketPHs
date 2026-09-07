@@ -2276,7 +2276,11 @@ button {
   border-top: 1px solid var(--border);
 }
 
-.page-cta-inner {
+/* Selector is deliberately more specific than `.container`: this element
+   carries both classes, and the `.container { max-width }` override in the
+   >=1600px block below is declared later at equal specificity, which used to
+   win and stretch the card to 1698px around a 46ch column of text. */
+.page-cta > .page-cta-inner {
   max-width: 46rem;
   padding: clamp(var(--space-lg), 4vw, var(--space-xl));
   border: 1px solid var(--border);
@@ -3521,14 +3525,6 @@ button {
     flex: 1 1 100%;
   }
 
-  /* The ghost action is a link, not a filled button, so once it stretches to
-     the full column its centred label floats away from the left edge that the
-     headline, lede and primary CTA all share. */
-  .hero-actions .button-ghost {
-    justify-content: flex-start;
-    padding-inline: 0;
-  }
-
   .feature-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -3638,6 +3634,12 @@ button {
 
   .container {
     max-width: clamp(1240px, 78vw, 1760px);
+  }
+
+  /* Grows just enough for the heading to stay on one line at this
+     breakpoint's larger --h2-md, rather than following the container. */
+  .page-cta > .page-cta-inner {
+    max-width: 62rem;
   }
 
   .nav-shell {

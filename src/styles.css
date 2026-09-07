@@ -542,8 +542,9 @@ button {
   transition: color 180ms var(--ease);
 }
 
-.nav-link:hover {
-  color: var(--text);
+.nav-link:hover,
+.nav-link:focus-visible {
+  color: var(--accent-secondary);
 }
 
 .nav-link.is-current {
@@ -598,9 +599,13 @@ button {
   transition: background-color 180ms var(--ease), color 180ms var(--ease);
 }
 
-.support-menu a:hover {
-  background: var(--surface-alt);
-  color: var(--text);
+/* Same hover orange as the nav links. The background stays close to the menu
+   surface — the sand tint this used to swap to reads worse behind #F97316
+   (2.29:1) than the lighter one does (2.66:1). */
+.support-menu a:hover,
+.support-menu a:focus-visible {
+  background: var(--bg);
+  color: var(--accent-secondary);
 }
 
 .nav-actions {

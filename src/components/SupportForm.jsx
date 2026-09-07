@@ -21,10 +21,10 @@ export default function SupportForm({ fields, subjectPrefix, submitLabel = 'Send
   function onSubmit(event) {
     event.preventDefault()
 
-    const subjectField = fields.find((field) => field.name === 'subject')
-    const subject = subjectField
-      ? `${subjectPrefix}: ${values.subject ?? subjectField.options?.[0] ?? ''}`
-      : subjectPrefix
+    // The subject line is the prefix, plus whatever the visitor typed. An
+    // empty field leaves the prefix alone rather than a trailing colon.
+    const typedSubject = (values.subject ?? '').trim()
+    const subject = typedSubject ? `${subjectPrefix}: ${typedSubject}` : subjectPrefix
 
     const body = fields
       .filter((field) => field.name !== 'subject')

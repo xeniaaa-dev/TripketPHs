@@ -40,14 +40,6 @@ export const CONTACT_CHANNELS = [
   },
 ]
 
-export const CONTACT_SUBJECTS = [
-  'Booking enquiry',
-  'Payment or refund',
-  'Cargo shipping',
-  'Partnership',
-  'Something else',
-]
-
 /* =========================================================================
    ACCOUNT DELETION
 

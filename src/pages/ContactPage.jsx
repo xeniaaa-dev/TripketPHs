@@ -1,6 +1,6 @@
 import PageHero from '../components/PageHero'
 import SupportForm from '../components/SupportForm'
-import { CONTACT_CHANNELS, CONTACT_HERO, CONTACT_SUBJECTS } from '../data/support'
+import { CONTACT_CHANNELS, CONTACT_HERO } from '../data/support'
 import { ROUTES } from '../data/content'
 
 const FIELDS = [
@@ -12,7 +12,7 @@ const FIELDS = [
     autoComplete: 'email',
     placeholder: 'juan@example.com',
   },
-  { name: 'subject', label: 'Subject', options: CONTACT_SUBJECTS, wide: true },
+  { name: 'subject', label: 'Subject', wide: true, placeholder: 'What is this about?' },
   { name: 'message', label: 'Message', rows: 5, wide: true, placeholder: 'Type your message…' },
 ]
 

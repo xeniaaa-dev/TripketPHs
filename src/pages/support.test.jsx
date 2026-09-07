@@ -53,6 +53,37 @@ test('the contact page lists every real contact channel', () => {
   )
 })
 
+test('the subject is a free-text field, and an empty one leaves no dangling colon', async () => {
+  const user = userEvent.setup()
+  go('/support/contact')
+
+  const subject = screen.getByLabelText('Subject')
+  expect(subject.tagName).toBe('INPUT')
+  expect(document.querySelectorAll('.support-form select')).toHaveLength(0)
+
+  // Capture the mailto the form composes instead of navigating to it.
+  const composed = []
+  const original = Object.getOwnPropertyDescriptor(window, 'location')
+  Object.defineProperty(window, 'location', {
+    configurable: true,
+    value: { set href(v) { composed.push(v) }, get href() { return 'http://localhost/' } },
+  })
+
+  try {
+    await user.type(screen.getByLabelText('Name'), 'Maria Santos')
+    await user.click(screen.getByRole('button', { name: /send message/i }))
+    expect(decodeURIComponent(composed.at(-1))).toContain('subject=Tripket PH enquiry&')
+
+    await user.type(subject, 'Refund for booking 1234')
+    await user.click(screen.getByRole('button', { name: /send message/i }))
+    expect(decodeURIComponent(composed.at(-1))).toContain(
+      'subject=Tripket PH enquiry: Refund for booking 1234&',
+    )
+  } finally {
+    if (original) Object.defineProperty(window, 'location', original)
+  }
+})
+
 test('the contact form composes a real email rather than faking a send', async () => {
   const user = userEvent.setup()
   go('/support/contact')

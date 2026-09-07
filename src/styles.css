@@ -289,8 +289,16 @@ button {
 
 /* ------------------------------------------------------------- wave rule */
 
+.wave-rule-frame {
+  overflow: hidden;
+}
+
+/* Wider than the frame, offset back by half the excess: the +/-3% drift then
+   always covers the full width without ever showing an edge. */
 .wave-rule {
-  width: 100%;
+  display: block;
+  width: 106%;
+  margin-inline: -3%;
   height: 48px;
   fill: none;
   stroke: var(--wave-stroke);
@@ -450,6 +458,7 @@ button {
   border: 1px solid var(--nav-border);
   border-radius: var(--radius-pill);
   background: var(--nav-bg);
+  -webkit-backdrop-filter: blur(18px) saturate(1.08);
   backdrop-filter: blur(18px) saturate(1.08);
   box-shadow: var(--nav-shadow);
   transition: background-color 220ms var(--ease), box-shadow 220ms var(--ease),
@@ -1031,13 +1040,24 @@ button {
 
 /* The ferry rides the same curve the line draws. offset-path takes the path in
    the SVG's own user units, so it tracks the route at every width without any
-   measuring in JavaScript. */
+   measuring in JavaScript.
+ *
+ * Hidden unless the browser supports it: without offset-path the group is
+ * never moved onto the route and the ferry would sit stranded at the SVG
+ * origin rather than simply not animating. */
 .route-ship {
-  offset-path: path('M4 40C220 4 400 76 720 40s500-36 716 0');
-  offset-rotate: auto;
-  offset-distance: 0%;
-  color: var(--accent);
-  animation: route-sail 18s linear 1300ms infinite;
+  display: none;
+}
+
+@supports (offset-path: path('M0 0')) {
+  .route-ship {
+    display: block;
+    offset-path: path('M4 40C220 4 400 76 720 40s500-36 716 0');
+    offset-rotate: auto;
+    offset-distance: 0%;
+    color: var(--accent);
+    animation: route-sail 18s linear 1300ms infinite;
+  }
 }
 
 .route-ship svg {
@@ -1183,6 +1203,7 @@ button {
   border-radius: var(--radius-lg);
   background: var(--glass-bg);
   box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: blur(14px) saturate(1.06);
   backdrop-filter: blur(14px) saturate(1.06);
   transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
     background 220ms var(--ease);
@@ -1375,8 +1396,11 @@ button {
   --focus-ring: var(--cream);
 }
 
-.site-footer .wave-rule {
+.site-footer .wave-rule-frame {
   margin-bottom: var(--space-lg);
+}
+
+.site-footer .wave-rule {
   stroke: rgba(255, 248, 238, 0.16);
 }
 
@@ -1821,6 +1845,7 @@ button {
   border-radius: var(--radius-lg);
   background: var(--glass-bg);
   box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: blur(14px) saturate(1.06);
   backdrop-filter: blur(14px) saturate(1.06);
   transition: transform 240ms var(--ease), box-shadow 240ms var(--ease),
     background 240ms var(--ease), border-color 240ms var(--ease);
@@ -2812,6 +2837,7 @@ button {
   border-radius: var(--radius-lg);
   background: var(--glass-bg-strong);
   box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: blur(14px) saturate(1.06);
   backdrop-filter: blur(14px) saturate(1.06);
 }
 

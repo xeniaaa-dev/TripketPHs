@@ -53,7 +53,8 @@ export default function PartnerMarquee() {
 
       {/* One continuous row. The clone is what makes the loop seamless: the
           track scrolls exactly one group's width, then snaps back invisibly.
-          Motion stops on hover and on keyboard focus, and prefers-reduced-motion
+          Motion stops on keyboard focus, but deliberately not on hover -
+          pointer users kept freezing the row by accident. prefers-reduced-motion
           replaces the scroller with a static grid (see styles.css). */}
       <div className="marquee">
         <div className="marquee-track">

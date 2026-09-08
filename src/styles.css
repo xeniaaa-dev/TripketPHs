@@ -2929,6 +2929,21 @@ button {
   line-height: 1.5;
 }
 
+/* Validation message. Uses the link colour rather than a new red token: it is
+   the one hue in the palette already carried for contrast on both grounds,
+   and docs/Tripket-branding.md does not define a danger colour. Never colour
+   alone - the field also gets aria-invalid and takes focus. */
+.form-error {
+  color: var(--link);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.form-row input[aria-invalid='true'] {
+  border-color: var(--link);
+}
+
 .form-submit {
   display: inline-flex;
   align-items: center;
@@ -3490,6 +3505,7 @@ button {
   .pill-eyebrow,
   .contact-row-note,
   .form-hint,
+  .form-error,
   .form-note,
   .form-status {
     font-size: 0.86rem;

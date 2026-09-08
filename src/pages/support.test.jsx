@@ -62,6 +62,80 @@ test('the contact page lists every real contact channel', async () => {
   )
 })
 
+test('the contact form carries exactly the five API fields, in order', async () => {
+  await go('/support/contact')
+
+  const controls = [...document.querySelectorAll('.support-form input, .support-form textarea')]
+  expect(controls.map((c) => c.name)).toEqual(['name', 'email', 'mobile', 'subject', 'message'])
+
+  // Mobile is the only optional one, and the only one that advertises a format.
+  const mobile = screen.getByLabelText(/mobile number/i)
+  expect(mobile).not.toBeRequired()
+  expect(mobile.type).toBe('tel')
+  expect(screen.getByText('Format: +639xxxxxxxxx')).toBeInTheDocument()
+  controls
+    .filter((c) => c.name !== 'mobile')
+    .forEach((c) => expect(c, `${c.name} should be required`).toBeRequired())
+})
+
+test('a mobile number in the wrong format blocks the submission and says why', async () => {
+  const user = userEvent.setup()
+  await go('/support/contact')
+
+  const composed = []
+  const original = Object.getOwnPropertyDescriptor(window, 'location')
+  Object.defineProperty(window, 'location', {
+    configurable: true,
+    value: { set href(v) { composed.push(v) }, get href() { return 'http://localhost/' } },
+  })
+
+  try {
+    const mobile = screen.getByLabelText(/mobile number/i)
+    await user.type(screen.getByLabelText('Name'), 'Maria Santos')
+    await user.type(mobile, '09171234567')
+    await user.click(screen.getByRole('button', { name: /send message/i }))
+
+    // Nothing composed, the field is flagged, and the reason is announced.
+    expect(composed).toHaveLength(0)
+    expect(mobile).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByText(/use the format \+639xxxxxxxxx/i)).toBeInTheDocument()
+    expect(mobile).toHaveFocus()
+
+    // Correcting it clears the error and lets the mailto through with the number.
+    await user.clear(mobile)
+    await user.type(mobile, '+639171234567')
+    expect(mobile).not.toHaveAttribute('aria-invalid')
+    await user.click(screen.getByRole('button', { name: /send message/i }))
+    expect(decodeURIComponent(composed.at(-1))).toContain('Mobile number: +639171234567')
+  } finally {
+    if (original) Object.defineProperty(window, 'location', original)
+  }
+})
+
+test('an empty optional mobile is left out of the message entirely', async () => {
+  const user = userEvent.setup()
+  await go('/support/contact')
+
+  const composed = []
+  const original = Object.getOwnPropertyDescriptor(window, 'location')
+  Object.defineProperty(window, 'location', {
+    configurable: true,
+    value: { set href(v) { composed.push(v) }, get href() { return 'http://localhost/' } },
+  })
+
+  try {
+    await user.type(screen.getByLabelText('Name'), 'Maria Santos')
+    await user.type(screen.getByLabelText('Message'), 'Where is my ticket?')
+    await user.click(screen.getByRole('button', { name: /send message/i }))
+
+    const body = decodeURIComponent(composed.at(-1))
+    expect(body).toContain('Name: Maria Santos')
+    expect(body).not.toContain('Mobile number:')
+  } finally {
+    if (original) Object.defineProperty(window, 'location', original)
+  }
+})
+
 test('the subject is a free-text field, and an empty one leaves no dangling colon', async () => {
   const user = userEvent.setup()
   await go('/support/contact')

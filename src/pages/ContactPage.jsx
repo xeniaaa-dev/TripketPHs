@@ -3,6 +3,8 @@ import SupportForm from '../components/SupportForm'
 import { CONTACT_CHANNELS, CONTACT_HERO } from '../data/support'
 import { ROUTES } from '../data/content'
 
+/* Mirrors the contact API's own field list and order. `mobile` is the only
+   optional one, and the only one with a format to enforce. */
 const FIELDS = [
   { name: 'name', label: 'Name', autoComplete: 'name', placeholder: 'Juan Dela Cruz' },
   {
@@ -11,6 +13,19 @@ const FIELDS = [
     type: 'email',
     autoComplete: 'email',
     placeholder: 'juan@example.com',
+  },
+  {
+    name: 'mobile',
+    label: 'Mobile number',
+    type: 'tel',
+    optional: true,
+    autoComplete: 'tel',
+    inputMode: 'tel',
+    placeholder: '+639171234567',
+    // Philippine mobile numbers in E.164: +63, then 9, then nine digits.
+    pattern: '^\\+639\\d{9}$',
+    patternMessage: 'Use the format +639xxxxxxxxx — a plus sign, 639, then nine more digits.',
+    hint: 'Format: +639xxxxxxxxx',
   },
   { name: 'subject', label: 'Subject', wide: true, placeholder: 'What is this about?' },
   { name: 'message', label: 'Message', rows: 5, wide: true, placeholder: 'Type your message…' },

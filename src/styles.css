@@ -823,11 +823,6 @@ button {
 
 /* ------------------------------------------------------------- trust bar */
 
-.trust-bar {
-  padding-block: var(--section-y);
-  background: var(--bg);
-}
-
 .trust-head {
   margin-bottom: var(--space-lg);
   text-align: center;
@@ -1390,6 +1385,28 @@ button {
   height: 18px;
   flex: none;
   color: var(--accent);
+}
+
+/* The carriers, merged into the bottom of the partner band. A hairline keeps
+   them legible as a distinct beat within the pitch without reintroducing the
+   separate strip this used to be. */
+.partner-cta-trust {
+  margin-top: clamp(var(--space-lg), 5vw, var(--space-2xl));
+  padding-top: clamp(var(--space-lg), 4vw, var(--space-xl));
+  border-top: 1px solid rgba(255, 248, 238, 0.16);
+}
+
+/* .partner-name is --text-muted, which is near-black in the light theme and
+   so would be invisible against this band. The section sets `color: cream`,
+   but that rule is more specific than inheritance. */
+.partner-cta-trust .partner-name {
+  color: rgba(255, 248, 238, 0.72);
+}
+
+/* The white badge needs a warmer ring here than the light theme's --border,
+   which reads as a hard grey edge against the photograph. */
+.partner-cta-trust .partner-badge {
+  border-color: rgba(255, 248, 238, 0.22);
 }
 
 .cta-actions {

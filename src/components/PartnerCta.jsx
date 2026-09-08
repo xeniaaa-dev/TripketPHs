@@ -1,9 +1,12 @@
 import { ArrowRight, Check } from 'lucide-react'
+import PartnerMarquee from './PartnerMarquee'
 import { PARTNER_BENEFITS, ROUTES, SECTION_LABELS } from '../data/content'
 
 export default function PartnerCta() {
   return (
-    <section className="partner-cta" aria-labelledby="partner-cta-heading">
+    /* Carries the #partners id the trust bar used to own, so any existing
+       deep link still lands on the carriers. */
+    <section className="partner-cta" id="partners" aria-labelledby="partner-cta-heading">
       {/* Same optimized hero asset, so it is already in cache — the only
           full-bleed dark moment on the page, marking the B2B ask as a
           different surface from the consumer sections above it. */}
@@ -47,6 +50,8 @@ export default function PartnerCta() {
           </a>
         </div>
       </div>
+
+      <PartnerMarquee />
     </section>
   )
 }

@@ -1,7 +1,6 @@
 import Features from '../components/Features'
 import Hero from '../components/Hero'
 import PartnerCta from '../components/PartnerCta'
-import PartnerMarquee from '../components/PartnerMarquee'
 import Schedule from '../components/Schedule'
 import Steps from '../components/Steps'
 import Testimonials from '../components/Testimonials'
@@ -17,10 +16,9 @@ export default function HomePage() {
       <Features />
       <Steps />
       <Testimonials />
-      {/* The carrier logos now close the page, directly under the partner
-          pitch they belong with, rather than opening it under the hero. */}
+      {/* The carrier logos are part of PartnerCta now, inside the same dark
+          band as the pitch they support. */}
       <PartnerCta />
-      <PartnerMarquee />
     </>
   )
 }

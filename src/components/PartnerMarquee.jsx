@@ -41,11 +41,16 @@ function LogoGroup({ cloned = false }) {
 
 export default function PartnerMarquee() {
   return (
-    <section className="trust-bar" id="partners" aria-labelledby="trust-heading">
+    /* Not a section of its own any more: it renders inside the partner band,
+       so the carriers read as evidence for the pitch above them instead of as
+       an unexplained strip between that band and the footer. The heading is an
+       h3 for the same reason - it is subordinate to "Join Tripket PH as a
+       shipping partner", which labels the section. */
+    <div className="partner-cta-trust">
       <div className="container trust-head" data-reveal>
-        <h2 className="eyebrow" id="trust-heading">
+        <h3 className="eyebrow" id="trust-heading">
           Trusted by leading Philippine shipping lines
-        </h2>
+        </h3>
         <p className="trust-stat">
           <strong>{PARTNER_LOGOS.length}</strong> Philippine shipping lines onboard
         </p>
@@ -62,6 +67,6 @@ export default function PartnerMarquee() {
           <LogoGroup cloned />
         </div>
       </div>
-    </section>
+    </div>
   )
 }

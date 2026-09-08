@@ -34,7 +34,7 @@ test('renders the brand, landmarks, and hero campaign copy', () => {
   ).toBeInTheDocument()
 })
 
-test('stacks the eight sections of the live page in order', () => {
+test('stacks the page sections in order, with the carriers inside the partner band', () => {
   render(<App />)
 
   const headings = screen
@@ -45,13 +45,26 @@ test('stacks the eight sections of the live page in order', () => {
   expect(text).toEqual(
     expect.arrayContaining([
       expect.stringMatching(/the new tripket ph is here/i),
-      expect.stringMatching(/trusted by leading philippine shipping lines/i),
       expect.stringMatching(/everything you need to book and ship/i),
       expect.stringMatching(/book your trip in 3 easy steps/i),
       expect.stringMatching(/loved by travelers across the philippines/i),
       expect.stringMatching(/join tripket ph as a shipping partner/i),
     ]),
   )
+
+  // The carriers are not a section of their own any more. The heading is an h3
+  // nested inside the partner band, under the h2 that labels that band - which
+  // is what keeps the merged block from reading as a stray strip.
+  const partners = document.getElementById('partners')
+  expect(partners).toContainElement(
+    screen.getByRole('heading', {
+      level: 3,
+      name: /trusted by leading philippine shipping lines/i,
+    }),
+  )
+  expect(
+    within(partners).getByRole('heading', { level: 2, name: /join tripket ph as a shipping partner/i }),
+  ).toBeInTheDocument()
 })
 
 test('announces the v2 launch and retires the old version', () => {

@@ -19,9 +19,10 @@ coverage/
 *.lcov
 
 # Environment and secrets — never commit these
-.env
-.env.local
-.env.*.local
+# Every .env variant, so a stray `.env.production` holding TRIPKET_API_TOKEN
+# cannot be committed by accident. The checked-in example is exempt.
+.env*
+!.env.example
 *.pem
 *.key
 

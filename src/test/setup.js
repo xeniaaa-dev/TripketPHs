@@ -1,4 +1,24 @@
 import '@testing-library/jest-dom/vitest'
+import { beforeEach, vi } from 'vitest'
+
+// The schedule section fetches on mount. Without a stub, every test that
+// renders the home page would make a real request to a relative URL, which in
+// jsdom means an actual connection attempt to localhost — slow, and flaky
+// depending on whether anything happens to be listening. The default answer is
+// an empty, successful payload; tests that care about a specific state install
+// their own mock over the top.
+beforeEach(() => {
+  // Reset first: vi.spyOn hands back the existing spy when a function is
+  // already spied, so without this the call history accumulates across every
+  // test in a file and per-test call counts are meaningless.
+  const fetchSpy = vi.spyOn(globalThis, 'fetch')
+  fetchSpy.mockReset()
+  fetchSpy.mockResolvedValue({
+    ok: true,
+    status: 200,
+    json: async () => ({ date: 'today', count: 0, schedules: [] }),
+  })
+})
 
 // jsdom ships no matchMedia; the theme hook reads it for the system preference.
 if (!window.matchMedia) {

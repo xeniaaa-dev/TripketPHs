@@ -10,7 +10,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      {/* Empty for now — the schedule feed is still being designed. */}
+      {/* Live sailings, fetched through our own /api/schedules proxy. */}
       <Schedule />
       <WaveRule />
       <Features />

@@ -83,10 +83,27 @@ export const HERO = {
 export const PRIMARY_CTA_LABEL = 'Book Now'
 
 export const SECTION_LABELS = {
+  schedules: 'Departures',
   features: 'What you get',
   steps: 'How it works',
   testimonials: 'Why travellers stay',
   partner: 'For shipping lines',
+}
+
+/* =========================================================================
+   SCHEDULES — copy for the live sailing list under the hero. The trips
+   themselves come from the API at request time, so only the framing and the
+   three empty/error states live here.
+   ========================================================================= */
+
+export const SCHEDULES = {
+  headlineLead: "Today's ",
+  headlineAccent: 'departures',
+  lede: 'Live sailings from our partner shipping lines. Times are Philippine Standard Time.',
+  empty: 'No sailings are listed for today yet. Check the web app for the full timetable.',
+  emptyCta: 'Open the web app',
+  errorRetry: 'Try again',
+  loading: 'Loading today’s sailings…',
 }
 
 /** Rendered as an even grid of identical cards, in this order. */

@@ -56,10 +56,16 @@ test('the contact page lists every real contact channel', async () => {
   CONTACT_CHANNELS.forEach(({ value }) => {
     expect(screen.getByText(value)).toBeInTheDocument()
   })
-  expect(screen.getByRole('link', { name: '+63 976 341 2190' })).toHaveAttribute(
+  expect(screen.getByRole('link', { name: '+63 960 921 6651' })).toHaveAttribute(
     'href',
-    'tel:+639763412190',
+    'tel:+639609216651',
   )
+
+  /* The displayed number and the tel: target are two formats of one number, so
+     a typo in either is a call that goes to the wrong place. Derive one from
+     the other rather than trusting both literals. */
+  const mobile = CONTACT_CHANNELS.find((c) => c.label === 'Mobile')
+  expect(mobile.href).toBe(`tel:${mobile.value.replace(/\s/g, '')}`)
 })
 
 test('the contact form carries exactly the five API fields, in order', async () => {

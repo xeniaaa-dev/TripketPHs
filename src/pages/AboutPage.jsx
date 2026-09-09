@@ -14,13 +14,25 @@ import {
 
 const CONTACT_ICONS = [MapPin, Mail]
 
+/* Same water card as the home page's "What you get" tiles — see the shared
+   rule in styles.css. Decorative only: the copy is readable at rest, so
+   nothing is gated behind a hover that touch users do not have. */
 function Pillar({ icon: Icon, title, body }) {
   return (
     <li className="pillar" data-reveal>
-      <span className="pillar-icon" aria-hidden="true">
-        <Icon />
-      </span>
-      <h3>{title}</h3>
+      <div className="card-water" aria-hidden="true">
+        <svg className="card-wave" viewBox="0 0 240 24" preserveAspectRatio="none" focusable="false">
+          <path d="M0 14c30-10 60-10 90 0s60 10 90 0 40-7 60-3V24H0Z" />
+        </svg>
+      </div>
+
+      <div className="card-head">
+        <span className="pillar-icon" aria-hidden="true">
+          <Icon />
+        </span>
+        <h3>{title}</h3>
+      </div>
+
       <p>{body}</p>
     </li>
   )

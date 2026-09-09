@@ -1997,30 +1997,7 @@ button {
 .pillar-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
-}
-
-/* Card definition for the About pillars. The "What you get" tiles used to
-   share this and no longer do — they are a square water card now, defined
-   further down — and the sailing cards are built on the partner card. So this
-   is the pillars alone, and editing it no longer reaches either of them. */
-.pillar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
-  padding: var(--space-lg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  box-shadow: var(--shadow-sm);
-  transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
-    border-color 220ms var(--ease);
-}
-
-.pillar:hover {
-  transform: translateY(-6px);
-  border-color: var(--accent);
-  box-shadow: var(--shadow-md);
+  gap: clamp(var(--space-md), 2.6vw, var(--space-lg));
 }
 
 .pillar-icon,
@@ -2042,13 +2019,19 @@ button {
   height: 24px;
 }
 
-.pillar:hover .pillar-icon,
-/* ------------------------------------------------- what you get (squares) */
+/* ------------------------------------------------------- the water card */
 
 /* Landscape card whose orange water rises to fill it on hover, per the
    supplied reference — a single brand orange rather than its per-card
-   purple/teal. */
-.feature {
+   purple/teal. Shared by the home page's "What you get" tiles and the About
+   page's mission/vision/values pillars, so the two cannot drift apart. Only
+   the height differs, below: the pillars carry roughly twice the copy.
+
+   (The `.pillar:hover .pillar-icon,` selector that used to sit here was a
+   leftover from an earlier edit and had glued itself to this rule, so hovering
+   a pillar stretched its 52px icon chip to 230px. Removed with the rest.) */
+.feature,
+.pillar {
   position: relative;
   display: grid;
   /* The two rows meet exactly where the water's top edge rests, so the copy
@@ -2062,7 +2045,7 @@ button {
      left wide gutters on a large screen. This fills the row and stays
      landscape at every width: 350x215 on a phone, 373x230 at 1280 — near the
      373x232 of the original card — and 560x265 at 4K. */
-  height: clamp(215px, 18vw, 265px);
+  height: var(--card-h);
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -2073,7 +2056,18 @@ button {
     border-color 260ms var(--ease);
 }
 
-.feature:hover {
+.feature {
+  --card-h: clamp(215px, 18vw, 265px);
+}
+
+/* Taller: mission, vision and values run 124-132 characters against the
+   features' 64-70, so the copy needs another line or two of room. */
+.pillar {
+  --card-h: clamp(255px, 20vw, 300px);
+}
+
+.feature:hover,
+.pillar:hover {
   transform: translateY(-6px);
   border-color: var(--accent);
   box-shadow: var(--shadow-md);
@@ -2083,7 +2077,7 @@ button {
    flip with it: the copy sits on this, and cream on #f97316 is 2.7:1, which
    fails AA. Ink on light orange measures better than cream on dark ever did,
    so the swap costs nothing in legibility. Both stops are brand tokens. */
-.feature-water {
+.card-water {
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -2094,15 +2088,17 @@ button {
 
 /* Hover for pointers, focus-within so a keyboard reaching a card inside the
    grid gets the same state. */
-.feature:hover .feature-water,
-.feature:focus-within .feature-water {
+.feature:hover .card-water,
+.feature:focus-within .card-water,
+.pillar:hover .card-water,
+.pillar:focus-within .card-water {
   transform: translateY(0);
 }
 
 /* Sits on the water's top edge and travels with it, so the crest stays
    attached to the surface as it rises. The dark half of the pair, so the
    waterline reads as a band against the lighter body below it. */
-.feature-wave {
+.card-wave {
   position: absolute;
   bottom: 100%;
   left: 0;
@@ -2111,7 +2107,7 @@ button {
   fill: var(--tripket-orange-dark);
 }
 
-.feature-head {
+.card-head {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2123,24 +2119,28 @@ button {
 
 /* A step down from the shared .pillar sizes: the card is 272px across now, so
    a 1.3rem title on a 52px chip would leave the copy nothing to sit in. */
-.feature .feature-icon {
+.feature .feature-icon,
+.pillar .pillar-icon {
   width: 44px;
   height: 44px;
   margin-bottom: 0;
 }
 
-.feature .feature-icon svg {
+.feature .feature-icon svg,
+.pillar .pillar-icon svg {
   width: 22px;
   height: 22px;
 }
 
-.feature h3 {
+.feature h3,
+.pillar h3 {
   font-size: 1.1rem;
   line-height: 1.25;
   transition: color 260ms var(--ease);
 }
 
-.feature p {
+.feature p,
+.pillar p {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2155,12 +2155,16 @@ button {
 /* Once the light water covers the title it has to be ink: a no-op in the
    light theme, a flip from cream in the dark one. */
 .feature:hover h3,
-.feature:focus-within h3 {
+.feature:focus-within h3,
+.pillar:hover h3,
+.pillar:focus-within h3 {
   color: var(--ink);
 }
 
 .feature:hover .feature-icon,
-.feature:focus-within .feature-icon {
+.feature:focus-within .feature-icon,
+.pillar:hover .pillar-icon,
+.pillar:focus-within .pillar-icon {
   transform: translateY(-2px) rotate(-6deg);
   /* Solid white with the dark orange mark: a translucent cream chip
      disappeared against the light water. */
@@ -2168,16 +2172,11 @@ button {
   color: var(--tripket-orange-dark);
 }
 
-.pillar h3,
-.feature h3 {
+/* Family and balance for both; the size comes from the water-card rule. */
+.feature h3,
+.pillar h3 {
   font-family: var(--font-display);
-  font-size: 1.3rem;
   text-wrap: balance;
-}
-
-.pillar p {
-  color: var(--text-muted);
-  line-height: 1.6;
 }
 
 /* ---------------------------------------------------------------- story */
@@ -4186,26 +4185,33 @@ button {
   }
 
   .feature:hover,
+  .pillar:hover,
   .partner:hover .partner-badge {
     transform: none;
   }
 
   /* Half a card of colour sliding upwards is a lot of movement, so the water
      stays put. Nothing is lost: the copy is already readable at rest. */
-  .feature:hover .feature-water,
-  .feature:focus-within .feature-water {
+  .feature:hover .card-water,
+  .feature:focus-within .card-water,
+  .pillar:hover .card-water,
+  .pillar:focus-within .card-water {
     transform: translateY(52%);
   }
 
   /* Since the water has not risen, the cream-on-orange treatment would be
      cream on white — invisible. The resting colours have to hold too. */
   .feature:hover h3,
-  .feature:focus-within h3 {
+  .feature:focus-within h3,
+  .pillar:hover h3,
+  .pillar:focus-within h3 {
     color: var(--text);
   }
 
   .feature:hover .feature-icon,
-  .feature:focus-within .feature-icon {
+  .feature:focus-within .feature-icon,
+  .pillar:hover .pillar-icon,
+  .pillar:focus-within .pillar-icon {
     background: var(--surface-alt);
     color: var(--accent);
     transform: none;

@@ -7,13 +7,13 @@ function FeatureTile({ icon: Icon, title, copy }) {
           on hover, but every word on the card is already readable at rest, so
           nothing is gated behind a gesture that touch and keyboard users do
           not have. */}
-      <div className="feature-water" aria-hidden="true">
-        <svg className="feature-wave" viewBox="0 0 240 24" preserveAspectRatio="none" focusable="false">
+      <div className="card-water" aria-hidden="true">
+        <svg className="card-wave" viewBox="0 0 240 24" preserveAspectRatio="none" focusable="false">
           <path d="M0 14c30-10 60-10 90 0s60 10 90 0 40-7 60-3V24H0Z" />
         </svg>
       </div>
 
-      <div className="feature-head">
+      <div className="card-head">
         <span className="feature-icon">
           <Icon aria-hidden="true" />
         </span>

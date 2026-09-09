@@ -2,7 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
-      "_comment": "The SPA catch-all must not swallow the serverless routes. Vercel checks the filesystem before applying rewrites, so /api would probably survive anyway, but the negative lookahead makes it explicit rather than dependent on routing order.",
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
@@ -12,7 +11,6 @@
       "source": "/(.*)",
       "headers": [
         {
-          "_comment": "script-src carries no 'unsafe-inline'. The one inline script is the pre-paint theme bootstrap in index.html, pinned by hash instead; a test recomputes that hash and fails if the script is edited without updating this value. style-src does allow 'unsafe-inline', because that same script assigns documentElement.style.colorScheme, which counts as a style attribute. That is a narrow cost: there is no dangerouslySetInnerHTML anywhere and React escapes all output, so there is no HTML-injection path to exploit it. connect-src is 'self' only, which is possible because the browser talks to /api/schedules rather than to the upstream API directly.",
           "key": "Content-Security-Policy",
           "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'sha256-8MUrKg8g7OT8g9Rq1j8c7AoXwgoATZzwUdAVMk6ayQM='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; upgrade-insecure-requests"
         },

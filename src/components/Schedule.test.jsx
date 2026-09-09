@@ -1,7 +1,9 @@
+import fs from 'node:fs'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vi } from 'vitest'
 import Schedule from './Schedule'
+import { CARRIER_LOGOS, INACTIVE_PARTNER_LOGOS, PARTNER_LOGOS } from '../data/content'
 
 const LEG = {
   id: 'leg-1',
@@ -29,7 +31,7 @@ test('asks our own route, never the schedules API directly', async () => {
   const url = String(globalThis.fetch.mock.calls[0][0])
   expect(url.startsWith('/api/schedules?')).toBe(true)
   expect(url).toContain('date=today')
-  expect(url).toContain('pageLimit=10')
+  expect(url).toContain('pageLimit=100')
   // No upstream host may appear in anything the browser runs.
   expect(url).not.toMatch(/tripket\.test|https?:\/\//)
 })
@@ -71,6 +73,319 @@ test('leaves out fields the API did not return', async () => {
   expect(within(row).getByText(/Cebu/)).toBeInTheDocument()
   expect(row.textContent).not.toMatch(/undefined|NaN|seats left/)
   expect(row.querySelector('.sailing-vessel')).toBeNull()
+})
+
+test('shows the carrier’s own logo, from our own assets', async () => {
+  answer({ schedules: [{ ...LEG, operatorCode: 'OJ' }] })
+  render(<Schedule />)
+
+  const row = await screen.findByRole('listitem')
+  const logo = row.querySelector('.sailing-logo img')
+  expect(logo).toHaveAttribute('src', CARRIER_LOGOS.OJ.src)
+  // Same origin: the row must not hotlink the API's media host, because the
+  // CSP allows images from 'self' only.
+  expect(logo.getAttribute('src')).toMatch(/^\/assets\//)
+  // The operator name is the adjacent text, so the logo stays decorative
+  // rather than having a screen reader announce the carrier twice.
+  expect(logo).toHaveAttribute('alt', '')
+  expect(within(row).getByText(/MV Ocean Jet 1 · OceanJet/)).toBeInTheDocument()
+})
+
+test('falls back to a plain crest for a carrier we have no artwork for', async () => {
+  answer({ schedules: [{ ...LEG, operatorCode: 'ZZ' }] })
+  render(<Schedule />)
+
+  const row = await screen.findByRole('listitem')
+  expect(row.querySelector('.sailing-logo')).toBeNull()
+  // The media box is still there, so the card keeps its neighbours' height.
+  expect(row.querySelector('.sailing-media.is-blank')).toBeInTheDocument()
+  expect(row.querySelector('.sailing-media img')).toBeNull()
+  // Still names the operator, artwork or not.
+  expect(within(row).getByText(/MV Ocean Jet 1 · OceanJet/)).toBeInTheDocument()
+})
+
+test('shows the carrier’s vessel photography, unlabelled', async () => {
+  answer({ schedules: [{ ...LEG, operatorCode: 'OJ' }] })
+  render(<Schedule />)
+
+  const row = await screen.findByRole('listitem')
+  const photo = row.querySelector('.sailing-media > img')
+  expect(photo).toHaveAttribute('src', CARRIER_LOGOS.OJ.ship)
+  expect(photo).toHaveAttribute('loading', 'lazy')
+  /* alt="" rather than the vessel name: the photo is one of the line's ships,
+     not necessarily the one working this leg, so naming it would assert
+     something the API never said. */
+  expect(photo).toHaveAttribute('alt', '')
+})
+
+test('the route reads as a heading under the section', async () => {
+  answer({ schedules: [{ ...LEG, operatorCode: 'OJ' }] })
+  render(<Schedule />)
+
+  await screen.findByRole('listitem')
+  const [heading] = screen.getAllByRole('heading', { level: 3 })
+  /* Matched on text, not on the accessible name: dom-accessibility-api trims
+     each text node before concatenating, so under jsdom the name comes out
+     "CebutoTagbilaran". Chrome's own accessibility tree was checked directly
+     over CDP and reports "Cebu to Tagbilaran" — the markup is right and it is
+     the jsdom name computation that is lossy, so asserting on it here would
+     be testing the shim. */
+  expect(heading).toHaveTextContent(/Cebu.*to Tagbilaran/)
+  // The arrow is decoration and must stay out of the announced name.
+  expect(heading.querySelector('[aria-hidden="true"]')).toHaveTextContent('→')
+})
+
+/** Filename without its extension, for comparing an asset across encodings. */
+const stem = (src) => src.split('/').pop().replace(/\.[^.]+$/, '')
+
+test('every carrier logo and photo maps to an asset this project ships', () => {
+  const logos = fs.readdirSync('public/assets/optimized/partners')
+  const ships = fs.readdirSync('public/assets/optimized/ships')
+
+  for (const [code, carrier] of Object.entries(CARRIER_LOGOS)) {
+    expect(logos, `logo for ${code} (${carrier.name})`).toContain(carrier.src.split('/').pop())
+    expect(ships, `photo for ${code} (${carrier.name})`).toContain(carrier.ship.split('/').pop())
+  }
+})
+
+/**
+ * The four codes the schedules API actually sends, pinned to the carrier each
+ * one belongs to. Showing one shipping line's logo against another's sailing
+ * misattributes a real company, so this is checked rather than assumed — a
+ * mistyped code in content.js fails here instead of shipping.
+ */
+test('each operator code belongs to the right shipping line', () => {
+  expect(CARRIER_LOGOS.OJ.name).toBe('OceanJet')
+  expect(CARRIER_LOGOS.MS.name).toBe('Maayo Shipping Incorporation')
+  expect(CARRIER_LOGOS.HS.name).toBe('HS Star Marine Shipping')
+  expect(CARRIER_LOGOS.CS.name).toBe('Cokaliong Shipping Lines')
+
+  // Each maps to its own distinct file — no two carriers share a logo.
+  const files = Object.values(CARRIER_LOGOS).map((c) => c.src)
+  expect(new Set(files).size).toBe(files.length)
+})
+
+/**
+ * CARRIER_LOGOS is written out by hand so that the home page does not import
+ * the partner arrays at runtime (see the comment on it in content.js). That
+ * hand-copying is what this guards: the logo a carrier shows in a sailing row
+ * must stay the one it shows in the trust bar, and importing both arrays here
+ * costs nothing because tests are not bundled.
+ */
+test('every carrier logo still matches its partner entry', () => {
+  const partners = [...PARTNER_LOGOS, ...INACTIVE_PARTNER_LOGOS]
+
+  for (const [code, carrier] of Object.entries(CARRIER_LOGOS)) {
+    const partner = partners.find((p) => p.code === code)
+    expect(partner, `no partner entry carries code ${code}`).toBeDefined()
+    expect(carrier.name, `name drifted for ${code}`).toBe(partner.name)
+    expect(carrier.src, `logo drifted for ${code}`).toBe(partner.src)
+    /* Stem, not the whole path: the sailing cards use a WebP re-encode of the
+       partner carousel's JPEG (optimized/ships/), so the paths differ by
+       design while the carrier must not. */
+    expect(stem(carrier.ship), `ship photo drifted for ${code}`).toBe(stem(partner.ship))
+  }
+
+  // And every coded partner is reachable, so adding a code above without a
+  // line in CARRIER_LOGOS does not silently leave that carrier logo-less.
+  for (const partner of partners.filter((p) => p.code)) {
+    expect(CARRIER_LOGOS, `${partner.name} has a code but no logo entry`).toHaveProperty(partner.code)
+  }
+})
+
+/** A leg on a given route at a given Manila hour, for building fixtures. */
+function leg(id, origin, destination, hour, line) {
+  const [operator, operatorCode, vessel] = line
+  return {
+    id,
+    origin,
+    destination,
+    // Manila is UTC+8, so 08:00Z reads as 4:00 PM.
+    departsAt: `2026-09-08T${String(hour).padStart(2, '0')}:00:00.000Z`,
+    vessel,
+    operator,
+    operatorCode,
+  }
+}
+
+const OJ = ['Oceanjet', 'OJ', 'Oceanjet']
+const MS = ['Maayo Shipping', 'MS', 'Vessel 1']
+const CS = ['Cokaliong Shipping', 'CS', 'MV Filipinas']
+
+/**
+ * Shaped like the real day: one busy route running repeatedly, a couple of
+ * quieter ones, and two lines with a single route each. Nine departures across
+ * five routes, so grouping, filtering and the counts are all exercised.
+ */
+const MIXED = [
+  leg('oj-1', 'Cebu', 'Tagbilaran', 1, OJ),
+  leg('oj-2', 'Cebu', 'Tagbilaran', 3, OJ),
+  leg('oj-3', 'Cebu', 'Tagbilaran', 5, OJ),
+  leg('oj-4', 'Tagbilaran', 'Cebu', 2, OJ),
+  leg('oj-5', 'Tagbilaran', 'Cebu', 4, OJ),
+  leg('oj-6', 'Cebu', 'Ormoc', 6, OJ),
+  leg('ms-1', 'Sibulan', 'Liloan', 1, MS),
+  leg('ms-2', 'Sibulan', 'Liloan', 7, MS),
+  leg('cs-1', 'Cebu', 'Nasipit', 8, CS),
+]
+
+test('offers a chip per shipping line that is actually sailing, busiest first', async () => {
+  answer({ schedules: MIXED })
+  render(<Schedule />)
+
+  await screen.findAllByRole('listitem')
+  const group = screen.getByRole('group', { name: /filter sailings by shipping line/i })
+  const labels = within(group)
+    .getAllByRole('button')
+    .map((b) => b.textContent)
+
+  expect(labels[0]).toMatch(/all lines/i)
+  // Ordered by departures, not routes — and in our spelling, not the API's.
+  expect(labels[1]).toMatch(/OceanJet/)
+  expect(labels.join(' ')).toMatch(/Cokaliong Shipping Lines/)
+  // A line with no legs today gets no chip, so no chip can lead to an empty grid.
+  expect(labels.join(' ')).not.toMatch(/HS Star/)
+})
+
+test('one card per route, not per departure', async () => {
+  answer({ schedules: MIXED })
+  render(<Schedule />)
+
+  // Nine departures, five routes — five cards.
+  expect(await screen.findAllByRole('listitem')).toHaveLength(5)
+
+  const [busiest] = screen.getAllByRole('listitem')
+  expect(within(busiest).getByRole('heading', { level: 3 })).toHaveTextContent(/Cebu.*to Tagbilaran/)
+  // All three of that route's departures on the one card.
+  const times = [...busiest.querySelectorAll('.sailing-chip')].map((c) => c.textContent)
+  expect(times).toEqual(['9:00 AM', '11:00 AM', '1:00 PM'])
+})
+
+test('caps the times listed and says how many it held back', async () => {
+  // Eight departures on one route, two past the six a card prints.
+  answer({ schedules: Array.from({ length: 8 }, (_, i) => leg(`oj-${i}`, 'Cebu', 'Tagbilaran', i, OJ)) })
+  render(<Schedule />)
+
+  const row = await screen.findByRole('listitem')
+  expect(row.querySelectorAll('time')).toHaveLength(6)
+  expect(within(row).getByText('+2 more')).toBeInTheDocument()
+})
+
+test('keeps two vessels working the same route as separate cards', async () => {
+  answer({
+    schedules: [
+      leg('a', 'Bacolod', 'Iloilo', 1, ['Oceanjet', 'OJ', 'Oceanjet']),
+      leg('b', 'Bacolod', 'Iloilo', 1, ['Oceanjet', 'OJ', 'SS Fixed']),
+    ],
+  })
+  render(<Schedule />)
+
+  /* Same line, same crossing, same time, different ship — both are real and
+     bookable, so merging them would hide a sailing. */
+  const rows = await screen.findAllByRole('listitem')
+  expect(rows).toHaveLength(2)
+  expect(rows.map((r) => r.querySelector('.sailing-vessel').textContent)).toEqual([
+    'Oceanjet · Oceanjet',
+    'SS Fixed · Oceanjet',
+  ])
+})
+
+test('prices a multi-departure route "from", and drops the seat count', async () => {
+  answer({
+    schedules: [
+      { ...leg('a', 'Cebu', 'Tagbilaran', 1, OJ), fare: 900, currency: 'PHP', seatsAvailable: 12 },
+      { ...leg('b', 'Cebu', 'Tagbilaran', 3, OJ), fare: 640, currency: 'PHP', seatsAvailable: 30 },
+    ],
+  })
+  render(<Schedule />)
+
+  const row = await screen.findByRole('listitem')
+  // The cheapest of the two, marked as a floor rather than the price.
+  expect(within(row).getByText(/from/i)).toBeInTheDocument()
+  expect(row.querySelector('.sailing-fare').textContent).toMatch(/640/)
+  /* Seats belong to a departure, not to a route, so there is no honest single
+     number for the card — 42 seats "left" on a route running twice is a lie
+     either way you total it. */
+  expect(row.textContent).not.toMatch(/seats left/)
+})
+
+test('caps how many route cards render at once', async () => {
+  // Twelve distinct routes; the grid shows eight.
+  answer({
+    schedules: Array.from({ length: 12 }, (_, i) => leg(`oj-${i}`, 'Cebu', `Port ${i}`, i, OJ)),
+  })
+  render(<Schedule />)
+
+  expect(await screen.findAllByRole('listitem')).toHaveLength(8)
+})
+
+test('filters the grid down to one line, and back', async () => {
+  answer({ schedules: MIXED })
+  const user = userEvent.setup()
+  render(<Schedule />)
+
+  expect(await screen.findAllByRole('listitem')).toHaveLength(5)
+
+  await user.click(screen.getByRole('button', { name: /Maayo Shipping Incorporation/ }))
+
+  const rows = screen.getAllByRole('listitem')
+  expect(rows).toHaveLength(1)
+  expect(within(rows[0]).getByText(/Sibulan/)).toBeInTheDocument()
+  // Its two departures, both on the one card.
+  expect(rows[0].querySelectorAll('time')).toHaveLength(2)
+  expect(screen.getByRole('button', { name: /Maayo Shipping Incorporation/ })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+
+  await user.click(screen.getByRole('button', { name: /all lines/i }))
+  expect(screen.getAllByRole('listitem')).toHaveLength(5)
+})
+
+test('reconciles routes shown against the departures they hold', async () => {
+  answer({ schedules: MIXED })
+  const user = userEvent.setup()
+  render(<Schedule />)
+
+  await screen.findAllByRole('listitem')
+  /* Both numbers matter: without the departure count, a chip reading "6" next
+     to three cards looks broken. */
+  expect(screen.getByRole('status')).toHaveTextContent(/Showing 5 of 5 routes, covering 9 departures/i)
+
+  await user.click(screen.getByRole('button', { name: /OceanJet/ }))
+  expect(screen.getByRole('status')).toHaveTextContent(
+    /Showing 3 of 3 OceanJet routes, covering 6 departures/i,
+  )
+})
+
+test('no filter appears when every sailing is the same line', async () => {
+  answer({ schedules: [{ ...LEG, operatorCode: 'OJ' }] })
+  render(<Schedule />)
+
+  await screen.findByRole('listitem')
+  // One line is not a choice, and a control that cannot change anything is
+  // worse than no control.
+  expect(screen.queryByRole('group', { name: /filter sailings/i })).not.toBeInTheDocument()
+})
+
+test('the chips describe the data that actually arrived, after a retry', async () => {
+  answer({ error: 'Schedules are unavailable right now.', schedules: [] }, { ok: false, status: 502 })
+  const user = userEvent.setup()
+  render(<Schedule />)
+
+  // No data, so nothing to filter and no chips to offer.
+  await screen.findByText(/unavailable right now/i)
+  expect(screen.queryByRole('group', { name: /filter sailings/i })).not.toBeInTheDocument()
+
+  // Cokaliong has finished for the day by the time the retry lands.
+  answer({ schedules: MIXED.filter((row) => row.operatorCode !== 'CS') })
+  await user.click(screen.getByRole('button', { name: /try again/i }))
+
+  await screen.findAllByRole('listitem')
+  expect(screen.getByRole('button', { name: /OceanJet/ })).toBeInTheDocument()
+  // A chip for a line that is no longer in the data would filter to nothing.
+  expect(screen.queryByRole('button', { name: /Cokaliong/ })).not.toBeInTheDocument()
+  expect(screen.getByRole('status')).toHaveTextContent(/4 routes, covering 8 departures/i)
 })
 
 test('says so when there is nothing sailing today', async () => {

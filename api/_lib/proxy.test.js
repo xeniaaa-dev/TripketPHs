@@ -101,6 +101,27 @@ describe('response normalising', () => {
     expect(leg.departsAt).toBe(new Date(1788000000 * 1000).toISOString())
   })
 
+  test('carries the operator code through so the UI can find a local logo', () => {
+    const [leg] = normalizeSchedules([
+      {
+        origin_port: { name: 'Dumaguete City Port' },
+        destination_port: { name: 'Cebu City (Capital)' },
+        departure_ts: '2026-09-07T19:00:00.000000Z',
+        operator: { id: 2, name: 'Oceanjet', code: 'oj' },
+      },
+    ])
+    // Upper-cased, so a lookup does not depend on the upstream's casing.
+    expect(leg.operatorCode).toBe('OJ')
+  })
+
+  test('drops an operator code that is not a short token', () => {
+    const junk = (code) => normalizeSchedules([{ origin: 'A', destination: 'B', operator: { code } }])[0]
+    expect(junk('../../etc/passwd')).not.toHaveProperty('operatorCode')
+    expect(junk('a'.repeat(40))).not.toHaveProperty('operatorCode')
+    expect(junk('<script>')).not.toHaveProperty('operatorCode')
+    expect(junk('')).not.toHaveProperty('operatorCode')
+  })
+
   test('accepts nested {name} ports and an ISO departure', () => {
     const [leg] = normalizeSchedules([
       { from: { name: 'Iloilo' }, to: { name: 'Bacolod' }, departure_time: '2026-09-08T14:30:00Z' },
@@ -123,6 +144,72 @@ describe('response normalising', () => {
     expect(normalizeSchedules([null, 42, 'x'])).toEqual([])
     // a row with no endpoints and no time carries nothing worth showing
     expect(normalizeSchedules([{ vessel: 'MV Nothing' }])).toEqual([])
+  })
+
+  test('collapses rows that would render as the same sailing', () => {
+    const leg = {
+      origin_port: { name: 'Cebu City (Capital)' },
+      destination_port: { name: 'Tagbilaran City (Capital)' },
+      departure_ts: '2026-09-08T22:00:00.000000Z',
+      vessel: { name: 'Oceanjet' },
+      operator: { name: 'Oceanjet', code: 'OJ' },
+    }
+    // Distinct ids and distinct fares — which is how a duplicate actually
+    // arrives, so neither may be enough to keep a second card.
+    const rows = normalizeSchedules([
+      { ...leg, id: 1, accommodations: [{ base_fare: 380 }] },
+      { ...leg, id: 2, accommodations: [{ base_fare: 640 }] },
+      { ...leg, id: 3 },
+    ])
+    expect(rows).toHaveLength(1)
+    // The first occurrence wins, so the upstream's own ordering survives.
+    expect(rows[0].id).toBe('1')
+  })
+
+  test('treats a departure seconds apart as the same one', () => {
+    const at = (ts) => ({
+      origin: 'Sibulan',
+      destination: 'Liloan',
+      departure_ts: ts,
+      vessel: 'Vessel 1',
+    })
+    // The cards render to the minute, so 06:00:00 and 06:00:20 are one
+    // departure as far as anyone reading the page can tell.
+    expect(normalizeSchedules([at('2026-09-08T06:00:00Z'), at('2026-09-08T06:00:20Z')])).toHaveLength(1)
+    expect(normalizeSchedules([at('2026-09-08T06:00:00Z'), at('2026-09-08T06:30:00Z')])).toHaveLength(2)
+  })
+
+  test('keeps two real sailings that only look alike', () => {
+    const shared = {
+      origin: 'Cebu',
+      destination: 'Tagbilaran',
+      departure_ts: '2026-09-08T22:00:00Z',
+      shipping_line_name: 'OceanJet',
+    }
+    // Two ships leaving the same port for the same place at the same time is
+    // ordinary, and both are bookable — collapsing them would hide a sailing.
+    const rows = normalizeSchedules([
+      { ...shared, vessel_name: 'Oceanjet 6' },
+      { ...shared, vessel_name: 'Oceanjet 8' },
+    ])
+    expect(rows).toHaveLength(2)
+    expect(rows.map((r) => r.vessel)).toEqual(['Oceanjet 6', 'Oceanjet 8'])
+  })
+
+  test('fills the requested count with distinct rows, not with duplicates', () => {
+    const dupe = { origin: 'A', destination: 'B', departure_ts: '2026-09-08T01:00:00Z' }
+    const payload = [
+      dupe,
+      dupe,
+      dupe,
+      { origin: 'A', destination: 'C', departure_ts: '2026-09-08T02:00:00Z' },
+      { origin: 'A', destination: 'D', departure_ts: '2026-09-08T03:00:00Z' },
+    ]
+    /* De-duplicating before the limit is what makes this 3 rather than 2: a
+       caller asking for three gets three distinct sailings, not three rows
+       that collapse. */
+    expect(normalizeSchedules(payload, 3)).toHaveLength(3)
+    expect(normalizeSchedules(payload, 3).map((r) => r.destination)).toEqual(['B', 'C', 'D'])
   })
 
   test('never returns more rows than asked for', () => {

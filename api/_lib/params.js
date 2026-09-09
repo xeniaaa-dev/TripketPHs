@@ -13,7 +13,14 @@ const SORT_COLUMNS = ['departure_ts', 'arrival_ts', 'price']
 const SORT_DIRECTIONS = ['asc', 'desc']
 
 export const PAGE_LIMIT_MIN = 1
-export const PAGE_LIMIT_MAX = 50
+/**
+ * The upstream's own ceiling — it answers 422 ("The page limit field must not
+ * be greater than 100") above this, so asking for more can only ever produce
+ * an error. Clamping to the same number means a caller cannot make us send a
+ * request that is guaranteed to fail, and cannot ask for more than one page of
+ * the upstream's data in one go either.
+ */
+export const PAGE_LIMIT_MAX = 100
 export const PAGE_LIMIT_DEFAULT = 10
 
 /** One member of `allowed`, or `fallback`. Never the caller's own string. */

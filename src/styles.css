@@ -949,8 +949,12 @@ button {
 
 /* --------------------------------------------------------------- schedule */
 
-/* Live sailings under the hero. The cards reuse the shared card definition
-   above, so they read as the same object as the feature tiles. */
+/* Live sailings under the hero. The cards are built on the partner card
+   (.p-card) rather than the flat feature tile: carrier photography and the
+   line's logo are the fastest way to recognise who is sailing, and reusing
+   that shape keeps a sailing and a partner reading as the same kind of
+   object. The measurements are duplicated rather than shared because the two
+   are free to diverge — a sailing card is denser and has no expanding body. */
 .schedule {
   padding-block: var(--section-y);
   background: var(--bg);
@@ -958,6 +962,76 @@ button {
 
 .schedule-panel {
   margin-top: var(--space-lg);
+}
+
+/* ---- filter by shipping line */
+
+.schedule-filter {
+  margin-top: var(--space-lg);
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2xs) var(--space-xs);
+}
+
+/* min-height 44px, not padding alone: these are the section's only tap
+   targets and they must clear the 44px floor whatever the label wraps to. */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 180ms var(--ease), border-color 180ms var(--ease),
+    background-color 180ms var(--ease);
+}
+
+.filter-chip:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* The selected chip is the one filled state in the section, so it cannot be
+   confused with the page's primary CTA further down. */
+.filter-chip.is-on {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.filter-chip-logo {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  object-fit: contain;
+}
+
+.filter-count {
+  padding: 0.05rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.filter-status {
+  margin-top: var(--space-sm);
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  text-align: center;
 }
 
 /* auto-fit rather than a fixed count: the number of sailings is decided by the
@@ -968,11 +1042,113 @@ button {
   gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
 }
 
+.sailing {
+  display: flex;
+}
+
+.sailing-card {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform 240ms var(--ease), box-shadow 240ms var(--ease),
+    border-color 240ms var(--ease);
+}
+
+.sailing-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+/* ---- media, with the logo badge overlapping its lower-left corner */
+
+.sailing-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  /* As a flex item this box's automatic minimum size is the photo's own
+     height, which would override aspect-ratio and give every card a different
+     media height, because the source photos have different ratios. */
+  flex: none;
+  min-height: 0;
+  background: var(--surface-alt);
+}
+
+.sailing-media > img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: cover;
+  transition: transform 500ms var(--ease-out);
+}
+
+.sailing-card:hover .sailing-media > img {
+  transform: scale(1.05);
+}
+
+/* A carrier we hold no photography for: the crest keeps the card the same
+   height as its neighbours instead of leaving a ragged grid. */
+.sailing-media.is-blank {
+  display: grid;
+  place-items: center;
+}
+
+.sailing-media.is-blank svg {
+  width: 34px;
+  height: 34px;
+  color: var(--accent);
+  opacity: 0.5;
+}
+
+.sailing-logo {
+  position: absolute;
+  left: var(--space-md);
+  bottom: calc(var(--space-sm) * -1);
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 7px;
+  border-radius: var(--radius-pill);
+  /* Not redefined for the dark theme on purpose: these are real brand marks
+     and most carry dark lettering, so they need their own light ground. */
+  background: var(--white);
+  box-shadow: 0 2px 4px rgba(23, 23, 23, 0.08), 0 10px 24px rgba(120, 72, 32, 0.16);
+}
+
+.sailing-logo img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: contain;
+}
+
+/* ---- body */
+
+.sailing-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  /* Top padding clears the badge hanging below the media. */
+  padding: calc(var(--space-sm) + var(--space-lg)) var(--space-md) var(--space-md);
+}
+
 .sailing-route {
   font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 700;
   line-height: 1.3;
+  /* Two lines reserved, so a one-line and a two-line route start their times
+     at the same height and the row stays aligned. */
+  min-height: 2.6em;
+  text-wrap: balance;
 }
 
 .sailing-time,
@@ -985,11 +1161,51 @@ button {
 }
 
 .sailing-time svg,
-.sailing-vessel svg {
+.sailing-vessel svg,
+.sailing-times svg {
   width: 16px;
   height: 16px;
   flex: none;
   color: var(--accent);
+}
+
+/* Every time this route runs, as a wrapping row of chips. The clock sits on
+   the first line rather than centred, because the row is often two lines
+   deep and a vertically centred icon then floats between them. */
+.sailing-times {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.3rem;
+  margin-top: var(--space-2xs);
+}
+
+.sailing-times svg {
+  /* Aligns the icon with the first chip's text rather than its box. */
+  margin-top: 0.28rem;
+}
+
+.sailing-chip {
+  padding: 0.12rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface-alt);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Not a time, so it reads as a count rather than another departure. */
+.sailing-chip.is-more {
+  border-style: dashed;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.sailing-from {
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
 /* Pushed to the bottom so the fare line sits level across cards whose route
@@ -1017,12 +1233,31 @@ button {
   font-size: 0.86rem;
 }
 
-/* Placeholders while the request is in flight. They hold the panel's height so
-   the sections below do not jump when the sailings arrive. */
+/* Placeholders while the request is in flight, holding the panel's height so
+   the sections below do not jump when the sailings arrive.
+   Built from the same two parts as a real card rather than one guessed
+   min-height: the media's 16/10 box scales with the column, and the body is a
+   constant 184px whatever the width, so the placeholder matches the card it
+   is standing in for at every breakpoint instead of only at one. */
 .sailing.is-skeleton {
-  min-height: 9.5rem;
-  border-style: dashed;
-  box-shadow: none;
+  flex-direction: column;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.sailing.is-skeleton::before {
+  content: '';
+  aspect-ratio: 16 / 10;
+  flex: none;
+  background: var(--surface-alt);
+}
+
+.sailing.is-skeleton::after {
+  content: '';
+  flex: none;
+  height: 11.5rem;
 }
 
 .sailing.is-skeleton:hover {
@@ -1772,11 +2007,12 @@ button {
   gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
 }
 
-/* One card definition for the About pillars, the home "What you get" tiles
-   and the sailing rows, so they cannot drift apart. */
+/* One card definition for the About pillars and the home "What you get"
+   tiles, so they cannot drift apart. The sailing cards used to share it, but
+   they carry the carrier's photography and logo now and are built on the
+   partner card instead — see .sailing-card. */
 .pillar,
-.feature,
-.sailing {
+.feature {
   display: flex;
   flex-direction: column;
   gap: var(--space-2xs);
@@ -1790,8 +2026,7 @@ button {
 }
 
 .pillar:hover,
-.feature:hover,
-.sailing:hover {
+.feature:hover {
   transform: translateY(-6px);
   border-color: var(--accent);
   box-shadow: var(--shadow-md);

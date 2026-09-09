@@ -104,6 +104,17 @@ export const SCHEDULES = {
   emptyCta: 'Open the web app',
   errorRetry: 'Try again',
   loading: 'Loading today’s sailings…',
+  filterLabel: 'Filter sailings by shipping line',
+  filterAll: 'All lines',
+  /* Shown under the filter row. Counts routes, because a card is a route now,
+     and reconciles them against the departures they hold — otherwise a chip
+     reading "85" next to six cards looks like a bug. Both numbers describe the
+     window the section actually fetched, not the whole timetable, which is why
+     nothing here claims to be "all of today". */
+  showingAll: (shown, routes, sailings) =>
+    `Showing ${shown} of ${routes} routes, covering ${sailings} departures`,
+  showingLine: (shown, routes, sailings, line) =>
+    `Showing ${shown} of ${routes} ${line} routes, covering ${sailings} departures`,
 }
 
 /** Rendered as an even grid of identical cards, in this order. */
@@ -212,18 +223,21 @@ export const TESTIMONIALS = [
 export const PARTNER_LOGOS = [
   {
     name: 'OceanJet',
+    code: 'OJ',
     src: '/assets/optimized/partners/OceanJet.webp',
     ship: '/assets/tripket-partners/ships/OceanJet.jpg',
     blurb: 'Bacolod, Batangas, Calapan, Cebu, Dumaguete, Iloilo, Larena, Ormoc, Siquijor, and Tagbilaran.',
   },
   {
     name: 'HS Star Marine Shipping',
+    code: 'HS',
     src: '/assets/optimized/partners/HsStarMarineShipping.webp',
     ship: '/assets/tripket-partners/ships/HsStarMarineShipping.jpg',
     blurb: 'HS Star Marine Shipping Corporation, also operating as Anika Shipping Line.',
   },
   {
     name: 'Maayo Shipping Incorporation',
+    code: 'MS',
     src: '/assets/optimized/partners/MaayoShippingIncorporation.webp',
     ship: '/assets/tripket-partners/ships/MaayoShippingIncorporation.jpg',
     blurb: 'Serving the Sibulan-Liloan and Tampi-Bato routes between Negros Oriental and Cebu.',
@@ -274,6 +288,7 @@ export const INACTIVE_PARTNER_LOGOS = [
   },
   {
     name: 'Cokaliong Shipping Lines',
+    code: 'CS',
     src: '/assets/optimized/partners/CokaliongShippingLines.webp',
     ship: '/assets/tripket-partners/ships/CokaliongShippingLines.jpg',
     blurb: 'Explore Visayas and Mindanao\'s hidden treasures with Cokaliong\'s captivating sailings.',
@@ -309,6 +324,47 @@ export const INACTIVE_PARTNER_LOGOS = [
     blurb: 'Fast craft and RORO ferry company offering daily trips from Surigao City to Dapa, Siargao Island and vice versa.',
   },
 ]
+
+/**
+ * Operator code -> the carrier's logo, for the live sailing rows. The API
+ * sends `operator.code` with every leg; a code that is not listed here falls
+ * back to the generic ship icon rather than a gap or a broken image.
+ *
+ * Written out rather than derived from the two arrays above, on purpose.
+ * Deriving it reads better but makes the home page import both arrays at
+ * runtime, and INACTIVE_PARTNER_LOGOS is otherwise dead code that Rollup
+ * drops entirely — mapping over it dragged twelve unused carriers and their
+ * blurbs into the main bundle. Consistency is enforced in
+ * Schedule.test.jsx instead, which checks every entry here still matches the
+ * partner entry carrying the same code. Cokaliong is included even though it
+ * sits in the inactive list: it is inactive in the trust bar yet actively
+ * sailing in the schedules API, and its rows still deserve its logo.
+ *
+ * To add a carrier: put its `code` on the partner entry above, then add the
+ * matching line here.
+ */
+export const CARRIER_LOGOS = {
+  OJ: {
+    name: 'OceanJet',
+    src: '/assets/optimized/partners/OceanJet.webp',
+    ship: '/assets/optimized/ships/OceanJet.webp',
+  },
+  MS: {
+    name: 'Maayo Shipping Incorporation',
+    src: '/assets/optimized/partners/MaayoShippingIncorporation.webp',
+    ship: '/assets/optimized/ships/MaayoShippingIncorporation.webp',
+  },
+  HS: {
+    name: 'HS Star Marine Shipping',
+    src: '/assets/optimized/partners/HsStarMarineShipping.webp',
+    ship: '/assets/optimized/ships/HsStarMarineShipping.webp',
+  },
+  CS: {
+    name: 'Cokaliong Shipping Lines',
+    src: '/assets/optimized/partners/CokaliongShippingLines.webp',
+    ship: '/assets/optimized/ships/CokaliongShippingLines.webp',
+  },
+}
 
 /**
  * Capability statements, deliberately free of commercial terms (rates,

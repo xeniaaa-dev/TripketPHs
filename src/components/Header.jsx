@@ -114,10 +114,6 @@ export default function Header({ theme, onToggleTheme, isStuck = false, path = '
           </ul>
 
           <div className="nav-actions">
-            <a className="button button-quiet" href={ROUTES.admin} onClick={closeAll}>
-              Admin Dashboard
-              <ArrowRight aria-hidden="true" />
-            </a>
             <a className="button button-primary" href={ROUTES.book} onClick={closeAll}>
               {PRIMARY_CTA_LABEL}
               <ArrowRight aria-hidden="true" />

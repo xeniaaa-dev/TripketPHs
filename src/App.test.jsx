@@ -47,7 +47,6 @@ test('stacks the page sections in order, with the carriers inside the partner ba
       expect.stringMatching(/the new tripket ph is here/i),
       expect.stringMatching(/everything you need to book and ship/i),
       expect.stringMatching(/book your trip in 3 easy steps/i),
-      expect.stringMatching(/loved by travelers across the philippines/i),
       expect.stringMatching(/join tripket ph as a shipping partner/i),
     ]),
   )
@@ -91,7 +90,7 @@ test('every primary CTA points at the new web app', () => {
   expect(screen.getAllByRole('link', { name: /learn more/i })[0]).toHaveAttribute('href', '#features')
 })
 
-test('renders every feature, step, testimonial, and partner exactly once', () => {
+test('renders every feature, step and partner exactly once', () => {
   render(<App />)
 
   FEATURES.forEach(({ title }) => {
@@ -100,10 +99,6 @@ test('renders every feature, step, testimonial, and partner exactly once', () =>
   JOURNEY_STEPS.forEach(({ title }) => {
     expect(screen.getByRole('heading', { level: 3, name: title })).toBeInTheDocument()
   })
-  TESTIMONIALS.forEach(({ name }) => {
-    expect(screen.getByText(name)).toBeInTheDocument()
-  })
-
   // One marquee row plus an aria-hidden clone: the clone must stay out of the
   // accessibility tree so every carrier is announced exactly once.
   const rows = screen.getAllByRole('list', { name: /shipping line partners/i })
@@ -200,16 +195,19 @@ test('renders steps as a numbered route with an accessible position', () => {
   })
 })
 
-test('gives one testimonial the featured treatment and states each rating', () => {
+test('the "why travellers stay" section is not on the page', () => {
   render(<App />)
 
-  const cells = document.querySelectorAll('.testimonial-cell')
-  expect(cells).toHaveLength(TESTIMONIALS.length)
-  expect(document.querySelectorAll('.testimonial-cell.is-featured')).toHaveLength(1)
-
-  TESTIMONIALS.forEach(({ rating, route }) => {
-    expect(screen.getAllByRole('img', { name: `Rated ${rating} out of 5` }).length).toBeGreaterThan(0)
-    expect(screen.getByText(new RegExp(route.replace('→', '.')))).toBeInTheDocument()
+  /* Hidden rather than deleted — Testimonials.jsx and the TESTIMONIALS copy
+     still exist, so this asserts the decision and stops the section coming
+     back unnoticed. It also keeps the placeholder names in that data, which
+     were never verified with Tripket, off the live page. */
+  expect(document.querySelector('.testimonials')).toBeNull()
+  expect(
+    screen.queryByRole('heading', { name: /loved by travelers across the philippines/i }),
+  ).not.toBeInTheDocument()
+  TESTIMONIALS.forEach(({ name }) => {
+    expect(screen.queryByText(name)).not.toBeInTheDocument()
   })
 })
 

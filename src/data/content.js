@@ -43,6 +43,8 @@ export const ROUTES = {
   // The full timetable in the web app. The departures section shows only the
   // next few routes and sends people here for the rest.
   schedule: 'https://app.tripketph.com/schedule',
+  // Kept, but nothing renders it now: the navbar's Admin Dashboard button was
+  // removed. It was a dead link anyway — /admin is not served by this project.
   admin: '/admin',
   contact: '/support/contact',
   faq: '/support/faq',

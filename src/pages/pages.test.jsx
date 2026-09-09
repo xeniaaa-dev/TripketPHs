@@ -209,13 +209,18 @@ test('the nav marks the current page and the browser back button returns home', 
 test('links this project does not own are left as real navigations', async () => {
   await go('/partners')
 
-  // The support pages and admin dashboard live outside this project; the
-  // router must not swallow those clicks and pretend they routed.
   const contact = screen.getAllByRole('link', { name: /contact us to partner/i })[0]
   expect(contact).toHaveAttribute('href', ROUTES.contact)
 
-  const admin = screen.getAllByRole('link', { name: /admin dashboard/i })[0]
-  expect(admin).toHaveAttribute('href', ROUTES.admin)
+  /* The web app is a different origin, so the router has to let this through
+     to a real navigation rather than swallowing the click. This took over from
+     the Admin Dashboard check when that button left the navbar. */
+  const app = screen.getAllByRole('link', { name: /book now/i })[0]
+  expect(app).toHaveAttribute('href', ROUTES.book)
+  expect(ROUTES.book.startsWith('https://')).toBe(true)
+
+  // And the navbar no longer offers the admin dashboard at all.
+  expect(screen.queryByRole('link', { name: /admin dashboard/i })).not.toBeInTheDocument()
 })
 
 test('an unknown path falls back to the home page', async () => {

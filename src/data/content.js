@@ -108,17 +108,6 @@ export const SCHEDULES = {
   errorRetry: 'Try again',
   loading: 'Loading today’s sailings…',
   seeMore: 'See all departures',
-  filterLabel: 'Filter sailings by shipping line',
-  filterAll: 'All lines',
-  /* Shown under the filter row. Counts routes, because a card is a route now,
-     and reconciles them against the departures they hold — otherwise a chip
-     reading "85" next to six cards looks like a bug. Both numbers describe the
-     window the section actually fetched, not the whole timetable, which is why
-     nothing here claims to be "all of today". */
-  showingAll: (shown, routes, sailings) =>
-    `Showing ${shown} of ${routes} routes, covering ${sailings} departures`,
-  showingLine: (shown, routes, sailings, line) =>
-    `Showing ${shown} of ${routes} ${line} routes, covering ${sailings} departures`,
 }
 
 /** Rendered as an even grid of identical cards, in this order. */

@@ -964,76 +964,6 @@ button {
   margin-top: var(--space-lg);
 }
 
-/* ---- filter by shipping line */
-
-.schedule-filter {
-  margin-top: var(--space-lg);
-}
-
-.filter-chips {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-2xs) var(--space-xs);
-}
-
-/* min-height 44px, not padding alone: these are the section's only tap
-   targets and they must clear the 44px floor whatever the label wraps to. */
-.filter-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.4rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text-muted);
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: color 180ms var(--ease), border-color 180ms var(--ease),
-    background-color 180ms var(--ease);
-}
-
-.filter-chip:hover {
-  border-color: var(--accent);
-  color: var(--text);
-}
-
-/* The selected chip is the one filled state in the section, so it cannot be
-   confused with the page's primary CTA further down. */
-.filter-chip.is-on {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--on-accent);
-}
-
-.filter-chip-logo {
-  width: 22px;
-  height: 22px;
-  flex: none;
-  border-radius: var(--radius-pill);
-  background: var(--white);
-  object-fit: contain;
-}
-
-.filter-count {
-  padding: 0.05rem 0.4rem;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, currentColor 14%, transparent);
-  font-size: 0.78rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.filter-status {
-  margin-top: var(--space-sm);
-  color: var(--text-muted);
-  font-size: 0.88rem;
-  text-align: center;
-}
-
 /* auto-fit rather than a fixed count: the number of sailings is decided by the
    API, so the row has to reflow for any of them without a media query. */
 .sailing-grid {
@@ -1196,11 +1126,32 @@ button {
   white-space: nowrap;
 }
 
-/* Not a time, so it reads as a count rather than another departure. */
+/* Not a time, so it reads as a count rather than another departure — and it is
+   the one link in the card, out to the full timetable. */
 .sailing-chip.is-more {
+  position: relative;
   border-style: dashed;
   background: transparent;
   color: var(--text-muted);
+  text-decoration: none;
+  transition: color 180ms var(--ease), border-color 180ms var(--ease);
+}
+
+/* The chip is deliberately small so it sits in a row of departure times, which
+   leaves it well under the 44px touch target the rest of the page keeps to.
+   This stretches the hit area to roughly 44px in both directions without
+   changing what is drawn, so a thumb has something to land on. */
+.sailing-chip.is-more::after {
+  content: '';
+  position: absolute;
+  inset: -11px -8px;
+}
+
+.sailing-chip.is-more:hover,
+.sailing-chip.is-more:focus-visible {
+  border-color: var(--accent);
+  border-style: solid;
+  color: var(--accent);
 }
 
 .sailing-from {

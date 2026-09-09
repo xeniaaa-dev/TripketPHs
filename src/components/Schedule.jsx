@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { AlertCircle, ArrowRight, Clock, Ship } from 'lucide-react'
 import useSchedules from '../hooks/useSchedules'
 import { CARRIER_LOGOS, ROUTES, SCHEDULES, SECTION_LABELS } from '../data/content'
@@ -16,10 +16,10 @@ const TIME = new Intl.DateTimeFormat('en-PH', {
 
 /**
  * Asked of the proxy, which clamps at the upstream's own ceiling of 100.
- * Deliberately far more than are shown, for two reasons: the filter can only
- * offer a line it has actually seen, and the quieter carriers sail late —
- * Cokaliong has one leg in a hundred — and each card now states how many
- * times its route runs, which is only true if we hold most of the day.
+ * Deliberately far more than are shown: each card counts how many times its
+ * route runs today and links the remainder as "+N more", and that count is
+ * only truthful while we hold most of the day. Fetching four routes' worth
+ * would make every card under-report.
  */
 const FETCH_LIMIT = 100
 
@@ -35,8 +35,6 @@ const VISIBLE_LIMIT = 4
  * make one card several times taller than its neighbours.
  */
 const TIMES_SHOWN = 6
-
-const ALL = 'all'
 
 function formatTime(instant) {
   if (!instant) return null
@@ -103,6 +101,7 @@ function RouteCard({ group }) {
     .filter((time) => time.label)
   const shown = times.slice(0, TIMES_SHOWN)
   const hidden = times.length - shown.length
+  const routeLabel = `${first.origin ?? 'Origin'} to ${first.destination ?? 'Destination'}`
 
   /* Across several departures the fare is a "from", and seats are per
      departure so there is no honest way to show one number for the group. */
@@ -156,7 +155,19 @@ function RouteCard({ group }) {
                   {time.label}
                 </time>
               ))}
-              {hidden > 0 ? <span className="sailing-chip is-more">+{hidden} more</span> : null}
+              {hidden > 0 ? (
+                /* Labelled, because "+7 more" read on its own — which is how a
+                   screen reader lists links — says nothing about where it goes
+                   or what it belongs to. The web app has no per-route deep
+                   link, so it points at the full timetable. */
+                <a
+                  className="sailing-chip is-more"
+                  href={ROUTES.schedule}
+                  aria-label={`See all ${times.length} departures for ${routeLabel} in the web app`}
+                >
+                  +{hidden} more
+                </a>
+              ) : null}
             </p>
           ) : null}
 
@@ -175,60 +186,13 @@ function RouteCard({ group }) {
   )
 }
 
-/**
- * The lines present in what the API returned, busiest first — not a hardcoded
- * list. A carrier that is not sailing today gets no chip, so the filter can
- * never offer a choice that leads to an empty grid.
- */
-function countLines(schedules) {
-  const byCode = new Map()
-
-  for (const leg of schedules) {
-    const code = leg.operatorCode
-    if (!code) continue
-    const seen = byCode.get(code)
-    if (seen) {
-      seen.count += 1
-    } else {
-      byCode.set(code, {
-        code,
-        // Our own spelling where we have it: the API sends "Oceanjet" and
-        // "HS Star Marine Shipping Corp", which sit awkwardly next to the
-        // rest of the page.
-        name: CARRIER_LOGOS[code]?.name ?? leg.operator ?? code,
-        count: 1,
-      })
-    }
-  }
-
-  return [...byCode.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
-}
-
 export default function Schedule() {
   const { status, schedules, error, retry } = useSchedules({
     date: 'today',
     pageLimit: FETCH_LIMIT,
   })
-  const [selected, setSelected] = useState(ALL)
 
-  const lines = useMemo(() => countLines(schedules), [schedules])
-
-  /* Read through what is actually available rather than trusted directly, so
-     a selection that no longer exists in the data resolves to "all lines"
-     during the same render instead of filtering the grid to nothing.
-     Defensive today: the only refetch is the manual retry, which is reachable
-     only from the error state, so a selection cannot currently outlive the
-     data it was made against. It becomes load-bearing the moment this section
-     gains a date switcher or refreshes on a timer — and costs nothing now. */
-  const active = lines.some((line) => line.code === selected) ? selected : ALL
-  const activeName = lines.find((line) => line.code === active)?.name
-
-  /* Keyed on the selection rather than on the filtered array: that array is
-     rebuilt every render, so a memo depending on it would never hit. */
-  const { routes, sailings } = useMemo(() => {
-    const matching = active === ALL ? schedules : schedules.filter((leg) => leg.operatorCode === active)
-    return { routes: groupByRoute(matching), sailings: matching.length }
-  }, [schedules, active])
+  const routes = useMemo(() => groupByRoute(schedules), [schedules])
 
   const visible = routes.slice(0, VISIBLE_LIMIT)
 
@@ -243,55 +207,6 @@ export default function Schedule() {
           </h2>
           <p className="section-lede">{SCHEDULES.lede}</p>
         </div>
-
-        {/* Only once there is something to filter: chips over a failed or empty
-            request would be controls that do nothing. */}
-        {status === 'ready' && lines.length > 1 ? (
-          <div className="schedule-filter">
-            <div className="filter-chips" role="group" aria-label={SCHEDULES.filterLabel}>
-              <button
-                type="button"
-                className={active === ALL ? 'filter-chip is-on' : 'filter-chip'}
-                aria-pressed={active === ALL}
-                onClick={() => setSelected(ALL)}
-              >
-                {SCHEDULES.filterAll}
-                <span className="filter-count">{schedules.length}</span>
-              </button>
-
-              {lines.map((line) => (
-                <button
-                  key={line.code}
-                  type="button"
-                  className={active === line.code ? 'filter-chip is-on' : 'filter-chip'}
-                  aria-pressed={active === line.code}
-                  onClick={() => setSelected(line.code)}
-                >
-                  {CARRIER_LOGOS[line.code] ? (
-                    <img
-                      className="filter-chip-logo"
-                      src={CARRIER_LOGOS[line.code].src}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : null}
-                  {line.name}
-                  <span className="filter-count">{line.count}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* Its own live region, separate from the grid below: the count is
-                the confirmation that a chip did something, and it is far
-                shorter to hear than eight re-announced cards. */}
-            <p className="filter-status" role="status" aria-live="polite">
-              {active === ALL
-                ? SCHEDULES.showingAll(visible.length, routes.length, sailings)
-                : SCHEDULES.showingLine(visible.length, routes.length, sailings, activeName)}
-            </p>
-          </div>
-        ) : null}
 
         {/* One live region for the whole panel, so a screen reader is told once
             that sailings loaded rather than once per row. */}

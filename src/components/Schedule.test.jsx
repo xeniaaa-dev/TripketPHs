@@ -229,30 +229,12 @@ const MIXED = [
   leg('cs-1', 'Cebu', 'Nasipit', 8, CS),
 ]
 
-test('offers a chip per shipping line that is actually sailing, busiest first', async () => {
-  answer({ schedules: MIXED })
-  render(<Schedule />)
-
-  await screen.findAllByRole('listitem')
-  const group = screen.getByRole('group', { name: /filter sailings by shipping line/i })
-  const labels = within(group)
-    .getAllByRole('button')
-    .map((b) => b.textContent)
-
-  expect(labels[0]).toMatch(/all lines/i)
-  // Ordered by departures, not routes — and in our spelling, not the API's.
-  expect(labels[1]).toMatch(/OceanJet/)
-  expect(labels.join(' ')).toMatch(/Cokaliong Shipping Lines/)
-  // A line with no legs today gets no chip, so no chip can lead to an empty grid.
-  expect(labels.join(' ')).not.toMatch(/HS Star/)
-})
-
 test('one card per route, not per departure', async () => {
   answer({ schedules: MIXED })
   render(<Schedule />)
 
-  // Nine departures, five routes — five cards.
-  expect(await screen.findAllByRole('listitem')).toHaveLength(5)
+  // Nine departures across five routes, and the grid shows four of them.
+  expect(await screen.findAllByRole('listitem')).toHaveLength(4)
 
   const [busiest] = screen.getAllByRole('listitem')
   expect(within(busiest).getByRole('heading', { level: 3 })).toHaveTextContent(/Cebu.*to Tagbilaran/)
@@ -310,17 +292,14 @@ test('prices a multi-departure route "from", and drops the seat count', async ()
 })
 
 test('caps how many route cards render at once', async () => {
-  // Twelve distinct routes; the grid shows five.
+  // Twelve distinct routes; the grid shows four.
   answer({
     schedules: Array.from({ length: 12 }, (_, i) => leg(`oj-${i}`, 'Cebu', `Port ${i}`, i, OJ)),
   })
   render(<Schedule />)
 
-  expect(await screen.findAllByRole('listitem')).toHaveLength(5)
-  /* No status line here on purpose: it belongs to the filter row, which does
-     not render when every route is the same carrier. The "See all departures"
-     link is what tells the visitor there is more. */
-  expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  expect(await screen.findAllByRole('listitem')).toHaveLength(4)
+  // The "See all departures" link is what tells the visitor there is more.
   expect(screen.getByRole('link', { name: /see all departures/i })).toBeInTheDocument()
 })
 
@@ -347,75 +326,6 @@ test('no way-out link when the section has nothing to show', async () => {
   // under an empty grid would be two CTAs pointing at the same product.
   await screen.findByText(/no sailings are listed for today/i)
   expect(screen.queryByRole('link', { name: /see all departures/i })).not.toBeInTheDocument()
-})
-
-test('filters the grid down to one line, and back', async () => {
-  answer({ schedules: MIXED })
-  const user = userEvent.setup()
-  render(<Schedule />)
-
-  expect(await screen.findAllByRole('listitem')).toHaveLength(5)
-
-  await user.click(screen.getByRole('button', { name: /Maayo Shipping Incorporation/ }))
-
-  const rows = screen.getAllByRole('listitem')
-  expect(rows).toHaveLength(1)
-  expect(within(rows[0]).getByText(/Sibulan/)).toBeInTheDocument()
-  // Its two departures, both on the one card.
-  expect(rows[0].querySelectorAll('time')).toHaveLength(2)
-  expect(screen.getByRole('button', { name: /Maayo Shipping Incorporation/ })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  )
-
-  await user.click(screen.getByRole('button', { name: /all lines/i }))
-  expect(screen.getAllByRole('listitem')).toHaveLength(5)
-})
-
-test('reconciles routes shown against the departures they hold', async () => {
-  answer({ schedules: MIXED })
-  const user = userEvent.setup()
-  render(<Schedule />)
-
-  await screen.findAllByRole('listitem')
-  /* Both numbers matter: without the departure count, a chip reading "6" next
-     to three cards looks broken. */
-  expect(screen.getByRole('status')).toHaveTextContent(/Showing 5 of 5 routes, covering 9 departures/i)
-
-  await user.click(screen.getByRole('button', { name: /OceanJet/ }))
-  expect(screen.getByRole('status')).toHaveTextContent(
-    /Showing 3 of 3 OceanJet routes, covering 6 departures/i,
-  )
-})
-
-test('no filter appears when every sailing is the same line', async () => {
-  answer({ schedules: [{ ...LEG, operatorCode: 'OJ' }] })
-  render(<Schedule />)
-
-  await screen.findByRole('listitem')
-  // One line is not a choice, and a control that cannot change anything is
-  // worse than no control.
-  expect(screen.queryByRole('group', { name: /filter sailings/i })).not.toBeInTheDocument()
-})
-
-test('the chips describe the data that actually arrived, after a retry', async () => {
-  answer({ error: 'Schedules are unavailable right now.', schedules: [] }, { ok: false, status: 502 })
-  const user = userEvent.setup()
-  render(<Schedule />)
-
-  // No data, so nothing to filter and no chips to offer.
-  await screen.findByText(/unavailable right now/i)
-  expect(screen.queryByRole('group', { name: /filter sailings/i })).not.toBeInTheDocument()
-
-  // Cokaliong has finished for the day by the time the retry lands.
-  answer({ schedules: MIXED.filter((row) => row.operatorCode !== 'CS') })
-  await user.click(screen.getByRole('button', { name: /try again/i }))
-
-  await screen.findAllByRole('listitem')
-  expect(screen.getByRole('button', { name: /OceanJet/ })).toBeInTheDocument()
-  // A chip for a line that is no longer in the data would filter to nothing.
-  expect(screen.queryByRole('button', { name: /Cokaliong/ })).not.toBeInTheDocument()
-  expect(screen.getByRole('status')).toHaveTextContent(/4 routes, covering 8 departures/i)
 })
 
 test('says so when there is nothing sailing today', async () => {

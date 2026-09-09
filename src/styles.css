@@ -3495,6 +3495,78 @@ button {
   color: var(--text);
 }
 
+/* Textarea gets the same treatment as an input. Both carry aria-invalid, so
+   both need the visible counterpart to it. */
+.form-row textarea[aria-invalid='true'] {
+  border-color: var(--link);
+}
+
+/* A failed send borrows the validation hue rather than introducing a danger
+   token the branding doc does not define, and is announced through role=alert
+   rather than by colour alone. */
+.form-status.is-error:not(:empty) {
+  border-color: var(--link);
+}
+
+/* The retry affordance inside a status message. A real button, because it
+   performs an action rather than navigating, styled as a link so it reads as
+   part of the sentence it sits in. */
+.form-link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--link);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* Google requires this attribution wherever the floating badge is hidden. */
+.form-legal {
+  grid-column: 1 / -1;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.form-legal a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* The badge floats over the bottom-right of every page it is on, across the
+   footer and the back-to-top control. Hidden here and replaced by the text in
+   .form-legal, which is the alternative Google's terms allow. visibility
+   rather than display, so the widget still initialises. */
+.grecaptcha-badge {
+  visibility: hidden;
+}
+
+/* Sending. The label changes to "Sending…" as well - the cursor and the muted
+   fill are not the only signal, and aria-busy carries it to a screen reader. */
+.form-submit:disabled {
+  cursor: progress;
+  opacity: 0.72;
+}
+
+.form-submit:disabled:hover {
+  background: var(--accent);
+}
+
+/* The honeypot. Positioned off-screen rather than display:none because more
+   scripts skip a field they can see is hidden, and this one only works if it
+   looks real to them. It is aria-hidden and tabIndex -1 in the markup, so it
+   is unreachable by keyboard and invisible to assistive tech - the two ways a
+   person could otherwise trip over it. */
+.form-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 /* ------------------------------------------------------- account deletion */
 
 .deletion-data {
@@ -3992,6 +4064,10 @@ button {
   .form-note,
   .form-status {
     font-size: 0.86rem;
+  }
+
+  .form-legal {
+    font-size: 0.8rem;
   }
 
   .contact-row-label,

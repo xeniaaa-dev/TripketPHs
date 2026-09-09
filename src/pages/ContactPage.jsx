@@ -3,8 +3,13 @@ import SupportForm from '../components/SupportForm'
 import { CONTACT_CHANNELS, CONTACT_HERO } from '../data/support'
 import { ROUTES } from '../data/content'
 
-/* Mirrors the contact API's own field list and order. `mobile` is the only
-   optional one, and the only one with a format to enforce. */
+/* Mirrors the inquiry API's own field list and order, taken from the
+   developer's own request definition for it. `mobile` is the only optional
+   one, and the only one with a format to enforce.
+
+   These names are the payload keys, so renaming one here changes what is
+   sent. `api/_lib/inquiry-fields.js` holds the same list server-side and
+   drops anything not on it, which is what keeps the two in step. */
 const FIELDS = [
   { name: 'name', label: 'Name', autoComplete: 'name', placeholder: 'Juan Dela Cruz' },
   {
@@ -76,7 +81,15 @@ export default function ContactPage() {
 
           <div className="contact-form-card" data-reveal="right">
             <h2 className="visually-hidden">Send us a message</h2>
-            <SupportForm fields={FIELDS} subjectPrefix="Tripket PH enquiry" />
+            <SupportForm
+              fields={FIELDS}
+              subjectPrefix="Tripket PH enquiry"
+              /* Posts to our own route, which forwards to the inquiry API.
+                 The action name is what the reCAPTCHA console groups the
+                 scores under, and what a verifier checks the token against.
+                 Falls back to the email composer if reCAPTCHA cannot load. */
+              submit={{ endpoint: '/api/inquiry', action: 'contact_submit' }}
+            />
           </div>
         </div>
       </section>

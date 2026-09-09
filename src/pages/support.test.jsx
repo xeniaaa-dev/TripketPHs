@@ -173,7 +173,13 @@ test('the subject is a free-text field, and an empty one leaves no dangling colo
   }
 })
 
-test('the contact form composes a real email rather than faking a send', async () => {
+/**
+ * The contact form posts to /api/inquiry when reCAPTCHA is available. There is
+ * no site key in the test environment, which is exactly the fallback this
+ * asserts: no send button that cannot work, and no pretence that anything was
+ * received. The posting path has its own file, contact-form.test.jsx.
+ */
+test('the contact form falls back to a real email when reCAPTCHA is absent', async () => {
   const user = userEvent.setup()
   await go('/support/contact')
 

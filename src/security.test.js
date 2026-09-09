@@ -115,6 +115,81 @@ test('vercel.json carries no keys Vercel’s schema will reject', () => {
   expect(Object.keys(vercel)).toEqual(expect.arrayContaining(['rewrites', 'headers']))
 })
 
+/**
+ * reCAPTCHA needs the policy widened, and this pins how far.
+ *
+ * `frame-src` is the one that catches people: v3 injects a hidden iframe, so
+ * without its own directive it falls back to default-src 'self' and is
+ * blocked — with nothing visible on the page to say why, because the failure
+ * is a console violation rather than an error the form can catch.
+ *
+ * The assertions are about the shape of the allowance, not just its presence:
+ * two named hosts, no wildcard, and no inline escape hatch smuggled in
+ * alongside them.
+ */
+test('the CSP allows reCAPTCHA and nothing wider', () => {
+  const directive = (name) =>
+    csp
+      .split(';')
+      .map((part) => part.trim())
+      .find((part) => part.startsWith(name + ' '))
+
+  const scriptSrc = directive('script-src')
+  expect(scriptSrc).toContain('https://www.google.com')
+  expect(scriptSrc).toContain('https://www.gstatic.com')
+
+  // The hidden iframe. Missing this is a silent failure.
+  expect(directive('frame-src')).toBe('frame-src https://www.google.com')
+
+  // The badge's own images, even though the badge itself is hidden by CSS.
+  expect(directive('img-src')).toContain('https://www.gstatic.com')
+
+  // Nothing broader crept in with them.
+  expect(csp).not.toContain('*.google.com')
+  for (const name of ['script-src', 'frame-src', 'img-src']) {
+    expect(directive(name), name).not.toContain('*')
+  }
+})
+
+/**
+ * The site key is public by design and belongs in the bundle. The secret is
+ * the opposite, and the two sit a few lines apart in `.env.example` — so the
+ * plausible mistake is renaming the secret to match its neighbour, which
+ * would ship a full captcha bypass to every visitor.
+ *
+ * There is no RECAPTCHA_SECRET_KEY in this project today. This is what keeps
+ * it that way if someone wires up the contingency path later.
+ */
+test('no reCAPTCHA secret can reach the browser', () => {
+  const src = fs
+    .readdirSync('src', { recursive: true })
+    .filter((f) => typeof f === 'string' && /\.jsx?$/.test(f) && !/\.test\.jsx?$/.test(f))
+    .map((f) => fs.readFileSync(`src/${f}`, 'utf8'))
+    .join('\n')
+
+  expect(src).not.toMatch(/RECAPTCHA_SECRET/i)
+  // siteverify is a server-side exchange. Its presence in client code would
+  // mean the secret is there too.
+  expect(src).not.toMatch(/siteverify/i)
+
+  // And the prefix that would publish it cannot appear in the file people copy.
+  expect(fs.readFileSync('.env.example', 'utf8')).not.toMatch(/VITE_RECAPTCHA_SECRET/i)
+})
+
+/**
+ * The submission route must not be cacheable. A CDN holding a POST response —
+ * or serving one visitor's back to another — is the failure that would
+ * actually matter, and it is one line away from the schedules route, which
+ * caches deliberately.
+ */
+test('the inquiry route sets no-store and offers no CORS', () => {
+  const handler = fs.readFileSync('api/inquiry.js', 'utf8')
+  expect(handler).toMatch(/'Cache-Control', 'no-store'/)
+  // Matched as a call, not a string: the handler's own comment explains why
+  // the header is absent, and naming it there is the point.
+  expect(handler).not.toMatch(/setHeader\(\s*'Access-Control-Allow-Origin'/)
+})
+
 test('no API host or credential is baked into the client bundle', () => {
   const src = fs
     .readdirSync('src', { recursive: true })
@@ -126,4 +201,7 @@ test('no API host or credential is baked into the client bundle', () => {
 
   expect(src).not.toMatch(/api\.tripket\.test/)
   expect(src).not.toMatch(/TRIPKET_API_BASE|TRIPKET_API_TOKEN/)
+  // The inquiry route's upstream path is server-side too: the client knows
+  // only the same-origin '/api/inquiry'.
+  expect(src).not.toMatch(/api\/inquiries/)
 })

@@ -6,6 +6,20 @@
  * `body` entries are paragraphs; `list` entries render as a bulleted list.
  */
 
+/* TODO: Confirm with Tripket — the contact form now loads Google reCAPTCHA
+   v3, which sends the visitor's IP address and interaction signals to Google
+   on every visit to /support/contact. The published policy this file
+   transcribes does not mention it.
+
+   Deliberately left as a comment rather than written into `sections` below:
+   this file is a transcription of Tripket PH's own published Privacy Policy,
+   and inventing a clause here would misrepresent what the company has
+   actually published. The disclosure belongs in the real document first.
+
+   The form itself already carries Google's required attribution and links to
+   their Privacy Policy and Terms — see `.form-legal` in SupportForm.jsx —
+   which satisfies Google's terms but is not a substitute for our own policy
+   saying what leaves the page. */
 export const PRIVACY_DOC = {
   eyebrow: 'Legal',
   title: 'Privacy Policy',

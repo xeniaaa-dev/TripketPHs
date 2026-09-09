@@ -1345,17 +1345,9 @@ button {
   border-block: 1px solid var(--border);
 }
 
-/* Columns are capped rather than filling the row. A square card is as tall as
-   it is wide, so letting it take a full third of the container made it 371px
-   tall against the old landscape card's 232px — and 452px at two columns. The
-   cap keeps the square shape without the section towering. */
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 17rem));
-  justify-content: center;
-  /* Wider than the old 16-24px. The cards are a fixed 272px now, so the gap
-     only widens the centred cluster — it cannot squeeze a card or force a
-     reflow, which is what kept it tight while the columns were fluid. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(var(--space-md), 2.6vw, var(--space-lg));
 }
 
@@ -2053,16 +2045,24 @@ button {
 .pillar:hover .pillar-icon,
 /* ------------------------------------------------- what you get (squares) */
 
-/* Square card whose orange water rises to fill it on hover, per the supplied
-   reference. Square rather than the reference's portrait rectangle, and a
-   single brand orange rather than its per-card purple/teal. */
+/* Landscape card whose orange water rises to fill it on hover, per the
+   supplied reference — a single brand orange rather than its per-card
+   purple/teal. */
 .feature {
   position: relative;
   display: grid;
   /* The two rows meet exactly where the water's top edge rests, so the copy
-     lands inside the water instead of floating in white space above it. */
+     lands inside the water instead of floating in white space above it. These
+     are percentages, which is why the height below has to be a definite
+     value: under `aspect-ratio` or an auto height they would resolve to auto
+     and the water would stop lining up with the copy. */
   grid-template-rows: 52% 48%;
-  aspect-ratio: 1;
+  /* Bounded height rather than a square aspect. A square that filled a third
+     of the container was 371px tall, and capping the columns to keep it small
+     left wide gutters on a large screen. This fills the row and stays
+     landscape at every width: 350x215 on a phone, 373x230 at 1280 — near the
+     373x232 of the original card — and 560x265 at 4K. */
+  height: clamp(215px, 18vw, 265px);
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -3772,7 +3772,7 @@ button {
 
 @media (max-width: 1100px) {
   .feature-grid {
-    grid-template-columns: repeat(2, minmax(0, 17rem));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -4007,11 +4007,8 @@ button {
     flex: 1 1 100%;
   }
 
-  /* Capped like the wider breakpoints. A full-width square is 558px tall at
-     620px and 432px at 480px, which made the section twice the height of the
-     old landscape cards; the cap keeps it near the previous footprint. */
   .feature-grid {
-    grid-template-columns: minmax(0, 17rem);
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .partner {

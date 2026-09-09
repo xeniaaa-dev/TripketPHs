@@ -23,8 +23,11 @@ const TIME = new Intl.DateTimeFormat('en-PH', {
  */
 const FETCH_LIMIT = 100
 
-/** Route cards rendered at once. Two rows on a wide screen. */
-const VISIBLE_LIMIT = 8
+/**
+ * Route cards rendered at once. The rest of the day lives in the web app,
+ * which the "See all departures" link below the grid points at.
+ */
+const VISIBLE_LIMIT = 4
 
 /**
  * Departure times printed on a card before the rest become "+N more". The
@@ -325,11 +328,23 @@ export default function Schedule() {
           ) : null}
 
           {status === 'ready' && visible.length > 0 ? (
-            <ul className="sailing-grid">
-              {visible.map((group) => (
-                <RouteCard key={group.key} group={group} />
-              ))}
-            </ul>
+            <>
+              <ul className="sailing-grid">
+                {visible.map((group) => (
+                  <RouteCard key={group.key} group={group} />
+                ))}
+              </ul>
+
+              {/* Quiet, not filled: the sticky header already carries the one
+                  orange Book Now, and a second filled button in the same
+                  viewport would compete with it. */}
+              <p className="schedule-more">
+                <a className="button button-quiet" href={ROUTES.schedule}>
+                  {SCHEDULES.seeMore}
+                  <ArrowRight aria-hidden="true" />
+                </a>
+              </p>
+            </>
           ) : null}
         </div>
       </div>

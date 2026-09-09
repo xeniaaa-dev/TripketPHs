@@ -3,7 +3,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vi } from 'vitest'
 import Schedule from './Schedule'
-import { CARRIER_LOGOS, INACTIVE_PARTNER_LOGOS, PARTNER_LOGOS } from '../data/content'
+import { CARRIER_LOGOS, INACTIVE_PARTNER_LOGOS, PARTNER_LOGOS, ROUTES } from '../data/content'
 
 const LEG = {
   id: 'leg-1',
@@ -310,13 +310,43 @@ test('prices a multi-departure route "from", and drops the seat count', async ()
 })
 
 test('caps how many route cards render at once', async () => {
-  // Twelve distinct routes; the grid shows eight.
+  // Twelve distinct routes; the grid shows five.
   answer({
     schedules: Array.from({ length: 12 }, (_, i) => leg(`oj-${i}`, 'Cebu', `Port ${i}`, i, OJ)),
   })
   render(<Schedule />)
 
-  expect(await screen.findAllByRole('listitem')).toHaveLength(8)
+  expect(await screen.findAllByRole('listitem')).toHaveLength(5)
+  /* No status line here on purpose: it belongs to the filter row, which does
+     not render when every route is the same carrier. The "See all departures"
+     link is what tells the visitor there is more. */
+  expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  expect(screen.getByRole('link', { name: /see all departures/i })).toBeInTheDocument()
+})
+
+test('offers a way through to the full timetable', async () => {
+  answer({ schedules: MIXED })
+  render(<Schedule />)
+
+  await screen.findAllByRole('listitem')
+  const cta = screen.getByRole('link', { name: /see all departures/i })
+  expect(cta).toHaveAttribute('href', ROUTES.schedule)
+  expect(cta.getAttribute('href')).toBe('https://app.tripketph.com/schedule')
+  /* Quiet rather than filled: the sticky header already carries the page's one
+     orange Book Now, and the branding allows a single dominant action per
+     viewport. */
+  expect(cta.className).toContain('button-quiet')
+  expect(cta.className).not.toContain('button-primary')
+})
+
+test('no way-out link when the section has nothing to show', async () => {
+  answer({ schedules: [] })
+  render(<Schedule />)
+
+  // The empty state carries its own "Open the web app" link; a second one
+  // under an empty grid would be two CTAs pointing at the same product.
+  await screen.findByText(/no sailings are listed for today/i)
+  expect(screen.queryByRole('link', { name: /see all departures/i })).not.toBeInTheDocument()
 })
 
 test('filters the grid down to one line, and back', async () => {

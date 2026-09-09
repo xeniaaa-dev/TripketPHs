@@ -40,6 +40,9 @@ export const ROUTES = {
   // The v2 web app. Every "Book Now" CTA and the hero's launch button read
   // from here, so this is the only line to change.
   book: 'https://app.tripketph.com/',
+  // The full timetable in the web app. The departures section shows only the
+  // next few routes and sends people here for the rest.
+  schedule: 'https://app.tripketph.com/schedule',
   admin: '/admin',
   contact: '/support/contact',
   faq: '/support/faq',
@@ -104,6 +107,7 @@ export const SCHEDULES = {
   emptyCta: 'Open the web app',
   errorRetry: 'Try again',
   loading: 'Loading today’s sailings…',
+  seeMore: 'See all departures',
   filterLabel: 'Filter sailings by shipping line',
   filterAll: 'All lines',
   /* Shown under the filter row. Counts routes, because a card is a route now,

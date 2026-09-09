@@ -1278,6 +1278,13 @@ button {
   }
 }
 
+/* The way out of a section that deliberately shows only the next few routes. */
+.schedule-more {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-lg);
+}
+
 /* Shared by the "nothing today" and "could not load" states. */
 .schedule-notice {
   display: flex;

@@ -30,6 +30,24 @@ export default function useDocumentMeta(path) {
       return el
     }, meta.description)
 
+    /* Only some routes ask to be hidden from search engines — currently the
+       placeholder refund policy. The tag has to be REMOVED again on every
+       other route, not just left in place: this is a single document that
+       never reloads, so a lingering noindex would follow the visitor around
+       and quietly de-index the whole site. */
+    const robots = document.head.querySelector('meta[name="robots"]')
+    if (meta.robots) {
+      if (robots) robots.setAttribute('content', meta.robots)
+      else {
+        const el = document.createElement('meta')
+        el.setAttribute('name', 'robots')
+        el.setAttribute('content', meta.robots)
+        document.head.appendChild(el)
+      }
+    } else if (robots) {
+      robots.remove()
+    }
+
     setMeta('link[rel="canonical"]', () => {
       const el = document.createElement('link')
       el.setAttribute('rel', 'canonical')

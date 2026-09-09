@@ -47,6 +47,7 @@ export const ROUTES = {
   // removed. It was a dead link anyway — /admin is not served by this project.
   admin: '/admin',
   contact: '/support/contact',
+  refunds: '/support/refund-policy',
   faq: '/support/faq',
   privacy: '/support/privacy',
   terms: '/support/terms',
@@ -62,6 +63,7 @@ export const PRIMARY_NAV = [
 export const SUPPORT_NAV = [
   { label: 'Contact Us', href: ROUTES.contact },
   { label: 'FAQ', href: ROUTES.faq },
+  { label: 'Refund Policy', href: ROUTES.refunds },
   { label: 'Privacy Policy', href: ROUTES.privacy },
   { label: 'Terms of Service', href: ROUTES.terms },
   { label: 'Account Deletion', href: ROUTES.accountDeletion },
@@ -544,6 +546,14 @@ export const PAGE_META = {
     title: 'Frequently Asked Questions — Tripket PH',
     description:
       'Answers to common questions about booking, payments, rebooking, refunds, and the Tripket PH client dashboard.',
+  },
+  '/support/refund-policy': {
+    title: 'Refund Policy — Tripket PH',
+    description: 'Tripket PH refund and cancellation policy.',
+    /* Placeholder copy must not be indexed: a search result quoting invented
+       refund terms is worse than no result. Delete this line when the real
+       policy lands. */
+    robots: 'noindex, nofollow',
   },
   '/support/privacy': {
     title: 'Privacy Policy — Tripket PH',

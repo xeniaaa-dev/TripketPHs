@@ -947,6 +947,41 @@ button {
   line-height: 1.35;
 }
 
+/* Callout for a document that is not final. Warm sand ground with an accent
+   edge, so it reads as a standing notice rather than an error. */
+.legal-notice {
+  margin-bottom: var(--space-xl);
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--surface-alt);
+}
+
+.legal-notice h2 {
+  margin-bottom: var(--space-2xs);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.legal-notice p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.legal-notice p + p {
+  margin-top: var(--space-2xs);
+}
+
+.legal-notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
 /* --------------------------------------------------------------- schedule */
 
 /* Live sailings under the hero. The cards are built on the partner card
@@ -1310,10 +1345,18 @@ button {
   border-block: 1px solid var(--border);
 }
 
+/* Columns are capped rather than filling the row. A square card is as tall as
+   it is wide, so letting it take a full third of the container made it 371px
+   tall against the old landscape card's 232px — and 452px at two columns. The
+   cap keeps the square shape without the section towering. */
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
+  grid-template-columns: repeat(3, minmax(0, 17rem));
+  justify-content: center;
+  /* Wider than the old 16-24px. The cards are a fixed 272px now, so the gap
+     only widens the centred cluster — it cannot squeeze a card or force a
+     reflow, which is what kept it tight while the columns were fluid. */
+  gap: clamp(var(--space-md), 2.6vw, var(--space-lg));
 }
 
 /* ----------------------------------------------------------------- steps */
@@ -2036,16 +2079,16 @@ button {
   box-shadow: var(--shadow-md);
 }
 
-/* Deep brand orange, not the vivid --tripket-orange-500: cream body copy on
-   #f97316 measures 2.7:1, well under AA. This gradient runs from 4.5:1 at its
-   lightest to 6.9:1 at its darkest, so the copy passes wherever it sits. The
-   vivid orange is kept for the crest, which carries no text. */
+/* The big wave is the light half now, the crest the dark one. The text had to
+   flip with it: the copy sits on this, and cream on #f97316 is 2.7:1, which
+   fails AA. Ink on light orange measures better than cream on dark ever did,
+   so the swap costs nothing in legibility. Both stops are brand tokens. */
 .feature-water {
   position: absolute;
   inset: 0;
   z-index: -1;
   transform: translateY(52%);
-  background: linear-gradient(180deg, var(--tripket-orange-dark) 0%, #9a3412 100%);
+  background: linear-gradient(180deg, var(--tripket-orange-500) 0%, var(--peach) 100%);
   transition: transform 460ms var(--ease);
 }
 
@@ -2057,14 +2100,15 @@ button {
 }
 
 /* Sits on the water's top edge and travels with it, so the crest stays
-   attached to the surface as it rises. */
+   attached to the surface as it rises. The dark half of the pair, so the
+   waterline reads as a band against the lighter body below it. */
 .feature-wave {
   position: absolute;
   bottom: 100%;
   left: 0;
   width: 100%;
   height: 22px;
-  fill: var(--tripket-orange-500);
+  fill: var(--tripket-orange-dark);
 }
 
 .feature-head {
@@ -2072,37 +2116,56 @@ button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-xs);
-  padding: var(--space-md);
+  gap: var(--space-2xs);
+  padding: var(--space-sm);
   text-align: center;
+}
+
+/* A step down from the shared .pillar sizes: the card is 272px across now, so
+   a 1.3rem title on a 52px chip would leave the copy nothing to sit in. */
+.feature .feature-icon {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 0;
+}
+
+.feature .feature-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.feature h3 {
+  font-size: 1.1rem;
+  line-height: 1.25;
+  transition: color 260ms var(--ease);
 }
 
 .feature p {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-sm) var(--space-md) var(--space-lg);
-  color: var(--cream);
+  padding: var(--space-2xs) var(--space-sm) var(--space-md);
+  /* --ink, not --text: --text is cream in the dark theme, and this copy is on
+     light orange in both. */
+  color: var(--ink);
   text-align: center;
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
-/* Ink at rest, cream once the water has covered it. */
-.feature h3 {
-  transition: color 260ms var(--ease);
-}
-
+/* Once the light water covers the title it has to be ink: a no-op in the
+   light theme, a flip from cream in the dark one. */
 .feature:hover h3,
 .feature:focus-within h3 {
-  color: var(--cream);
+  color: var(--ink);
 }
 
 .feature:hover .feature-icon,
 .feature:focus-within .feature-icon {
   transform: translateY(-2px) rotate(-6deg);
-  /* Translucent white rather than peach: the chip is on orange now. */
-  background: rgba(255, 248, 238, 0.16);
-  color: var(--cream);
+  /* Solid white with the dark orange mark: a translucent cream chip
+     disappeared against the light water. */
+  background: var(--white);
+  color: var(--tripket-orange-dark);
 }
 
 .pillar h3,
@@ -3709,7 +3772,7 @@ button {
 
 @media (max-width: 1100px) {
   .feature-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 17rem));
   }
 }
 
@@ -3944,8 +4007,11 @@ button {
     flex: 1 1 100%;
   }
 
+  /* Capped like the wider breakpoints. A full-width square is 558px tall at
+     620px and 432px at 480px, which made the section twice the height of the
+     old landscape cards; the cap keeps it near the previous footprint. */
   .feature-grid {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 17rem);
   }
 
   .partner {

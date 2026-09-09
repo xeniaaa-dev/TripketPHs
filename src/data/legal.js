@@ -365,3 +365,83 @@ export const TERMS_DOC = {
     },
   ],
 }
+
+/* =========================================================================
+   REFUND POLICY — PLACEHOLDER, NOT REAL POLICY
+
+   Tripket PH has not supplied this document yet. Everything below is
+   scaffolding so the page, route and navigation exist; none of it states an
+   actual rule.
+
+   It deliberately does NOT invent plausible refund terms — no windows, no
+   percentages, no processing times. A visitor who acted on invented terms
+   would be misled, and Tripket could be held to wording nobody approved. The
+   Terms of Service already carry the refund and cancellation rules that apply
+   today (see the "Cancellations and refunds" clause), so this page points
+   there in the meantime.
+
+   To publish for real: replace `notice` with null, replace each section's
+   body with the supplied copy, and delete the `robots: 'noindex, nofollow'`
+   line from PAGE_META['/support/refund-policy'] in src/data/content.js.
+   ========================================================================= */
+
+export const REFUND_DOC = {
+  eyebrow: 'Legal',
+  title: 'Refund Policy',
+  lede: 'This policy is being finalised. The rules that apply today are in our Terms of Service.',
+  notice: {
+    title: 'Draft page — not the final policy',
+    body: [
+      'Tripket PH has not published its refund policy yet, so nothing on this page is final or binding. Please do not rely on it.',
+      'The refund and cancellation rules that apply right now are in our Terms of Service. If you need help with a specific booking, contact our support team and we will check it for you.',
+    ],
+    links: [
+      { label: 'Read the Terms of Service', href: '/support/terms' },
+      { label: 'Contact support', href: '/support/contact' },
+    ],
+  },
+  sections: [
+    {
+      id: 'status',
+      title: 'Status of this page',
+      body: [
+        'Placeholder. This page exists so the Refund Policy has a home in the navigation while the wording is being prepared. It will be replaced in full once Tripket PH supplies the approved text.',
+      ],
+    },
+    {
+      id: 'scope',
+      title: 'What this policy will cover',
+      body: [
+        'Placeholder. This section will set out which bookings the refund policy applies to — passenger tickets, vehicle and cargo bookings, and any add-ons purchased through Tripket PH.',
+      ],
+    },
+    {
+      id: 'eligibility',
+      title: 'When a refund can be requested',
+      body: [
+        'Placeholder. This section will describe the circumstances in which a refund may be requested. No eligibility rule is stated here yet, and none should be assumed.',
+      ],
+    },
+    {
+      id: 'fees',
+      title: 'Fees and deductions',
+      body: [
+        'Placeholder. This section will state any cancellation fee, booking fee or shipping-line charge that is deducted from a refund. No amounts or percentages are given here yet.',
+      ],
+    },
+    {
+      id: 'processing',
+      title: 'How long a refund takes',
+      body: [
+        'Placeholder. This section will state how a refund is returned and how long it takes. No processing time is given here yet.',
+      ],
+    },
+    {
+      id: 'how-to-request',
+      title: 'How to request a refund',
+      body: [
+        'Placeholder. The confirmed process will be published here. Until then, contact support@tripketph.com with your booking details and our team will advise you directly.',
+      ],
+    },
+  ],
+}

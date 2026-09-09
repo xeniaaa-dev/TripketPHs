@@ -43,6 +43,29 @@ export default function LegalPage({ doc }) {
           </nav>
 
           <article className="legal-body">
+            {/* Optional callout for a document that is not final yet. role
+                note rather than alert: it is standing context, not something
+                that just happened, so it should not interrupt a screen
+                reader mid-page. */}
+            {doc.notice ? (
+              <aside className="legal-notice" role="note" aria-labelledby="legal-notice-heading">
+                <h2 id="legal-notice-heading">{doc.notice.title}</h2>
+                {doc.notice.body.map((paragraph) => (
+                  <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+                ))}
+                {doc.notice.links?.length ? (
+                  <p className="legal-notice-actions">
+                    {doc.notice.links.map(({ label, href }) => (
+                      <a className="button button-quiet" href={href} key={href}>
+                        {label}
+                        <ArrowRight aria-hidden="true" />
+                      </a>
+                    ))}
+                  </p>
+                ) : null}
+              </aside>
+            ) : null}
+
             {doc.sections.map((section) => (
               <section key={section.id} id={section.id} data-reveal>
                 <h2>{section.title}</h2>

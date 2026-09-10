@@ -9,7 +9,6 @@ import {
   ABOUT_HERO,
   ABOUT_PILLARS,
   ABOUT_STORY,
-  PARTNER_LOGOS,
   ROUTES,
 } from '../data/content'
 
@@ -96,20 +95,6 @@ export default function AboutPage() {
           </div>
           <div className="story-body" data-reveal="right">
             <p>{ABOUT_STORY.body}</p>
-            <ul className="story-stats">
-              <li>
-                <strong>{PARTNER_LOGOS.length}</strong>
-                <span>Shipping lines onboard</span>
-              </li>
-              <li>
-                <strong>3</strong>
-                <span>Island groups served</span>
-              </li>
-              <li>
-                <strong>2</strong>
-                <span>Booking types: tickets and cargo</span>
-              </li>
-            </ul>
           </div>
         </div>
       </section>

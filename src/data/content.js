@@ -36,6 +36,8 @@ export const ROUTES = {
   features: '#features',
   about: '/about',
   partners: '/partners',
+  // Kept, but nothing renders it now: the footer's "Get the App" was removed.
+  // It was a dead link anyway — /apps/tripket-ph is not served by this project.
   app: '/apps/tripket-ph',
   // The v2 web app. Every "Book Now" CTA and the hero's launch button read
   // from here, so this is the only line to change.
@@ -389,7 +391,6 @@ export const FOOTER_GROUPS = [
     links: [
       { label: 'About Us', href: ROUTES.about },
       { label: 'Partners', href: ROUTES.partners },
-      { label: 'Get the App', href: ROUTES.app },
     ],
   },
   {

@@ -1689,11 +1689,12 @@ button {
 /* The carriers, merged into the bottom of the partner band. A hairline keeps
    them legible as a distinct beat within the pitch without reintroducing the
    separate strip this used to be. */
-/* No rule between the pitch and the carriers: they are one band, and the line
-   read as a section break inside a section. Spacing carries the separation. */
 .partner-cta-trust {
   margin-top: clamp(var(--space-lg), 5vw, var(--space-2xl));
   padding-top: clamp(var(--space-lg), 4vw, var(--space-xl));
+  /* Cream at low alpha rather than --border, which is a hard grey edge against
+     the photograph behind this band. */
+  border-top: 1px solid rgba(255, 248, 238, 0.16);
 }
 
 /* .partner-name is --text-muted, which is near-black in the light theme and
@@ -2183,34 +2184,6 @@ button {
   color: var(--text-muted);
   font-size: clamp(1.02rem, 1.4vw, 1.14rem);
   line-height: 1.7;
-}
-
-.story-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
-  padding-top: var(--space-lg);
-  border-top: 1px solid var(--border);
-}
-
-.story-stats li {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.story-stats strong {
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 800;
-  line-height: 1;
-}
-
-.story-stats span {
-  color: var(--text-muted);
-  font-size: 0.86rem;
 }
 
 /* -------------------------------------------------------------- founders */
@@ -3799,11 +3772,6 @@ button {
 
   .founder-faces {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .story-stats {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-sm);
   }
 
   .page-cta-actions .button {

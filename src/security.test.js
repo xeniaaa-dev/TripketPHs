@@ -93,15 +93,45 @@ test('the page cannot be framed and carries the usual hardening', () => {
  * likely survive a plain catch-all anyway — the negative lookahead makes it
  * explicit rather than dependent on routing order.
  */
-test('the SPA catch-all does not swallow the API routes', () => {
+test('the SPA catch-all serves pages but never swallows real files', () => {
   const rewrite = vercel.rewrites[0]
   expect(rewrite.destination).toBe('/index.html')
-  expect(rewrite.source).toContain('?!api/')
-  // Prove the pattern itself excludes /api and still matches a page route.
   const pattern = new RegExp(`^${rewrite.source}$`)
-  expect(pattern.test('/api/schedules')).toBe(false)
-  expect(pattern.test('/support/faq')).toBe(true)
-  expect(pattern.test('/')).toBe(true)
+
+  /* Anything that resolves to an actual file or function has to pass through
+     untouched. /api matters in production; the rest matter under `vercel dev`,
+     where Vite serves modules straight from source — the catch-all used to
+     answer /src/main.jsx with index.html, so the browser got HTML where it
+     expected JavaScript and rendered a blank page. */
+  for (const path of [
+    '/api/schedules',
+    '/api/inquiry',
+    '/src/main.jsx',
+    '/@vite/client',
+    '/@react-refresh',
+    '/node_modules/.vite/deps/react.js',
+    '/assets/index-abc123.js',
+    '/assets/optimized/tripket-mark-64.png',
+  ]) {
+    expect(pattern.test(path), `${path} must not be rewritten`).toBe(false)
+  }
+
+  // Every page route, and any unknown path, still has to reach index.html or
+  // client-side routing breaks and 8 of the 9 pages 404 on a hard load.
+  for (const path of [
+    '/',
+    '/about',
+    '/partners',
+    '/support/contact',
+    '/support/faq',
+    '/support/refund-policy',
+    '/support/privacy',
+    '/support/terms',
+    '/support/account-deletion-request',
+    '/does-not-exist',
+  ]) {
+    expect(pattern.test(path), `${path} must be rewritten to index.html`).toBe(true)
+  }
 })
 
 /**

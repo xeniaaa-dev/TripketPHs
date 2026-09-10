@@ -60,3 +60,4 @@ $RECYCLE.BIN/
 #   skills-lock.json  — pins each skill's source and hash
 #   public/           — source images the build copies into dist/
 #   docs/             — branding and layout reference
+.vercel

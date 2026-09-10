@@ -32,7 +32,7 @@ export default function Features() {
         <div className="section-head is-centered" data-reveal>
           <p className="eyebrow">{SECTION_LABELS.features}</p>
           <h2 id="features-heading">
-            Everything you need to <span className="accent">book and ship</span>
+            Everything you need to <span className="accent">book and travel</span>
           </h2>
           <p className="section-lede">
             Tripket PH brings Philippine transportation online — fast, secure, and easy.

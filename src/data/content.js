@@ -82,7 +82,7 @@ export const HERO = {
   headlineAccent: 'new',
   headlineTail: ' Tripket PH is here',
   copy:
-    'The previous version of Tripket PH is no longer accessible. Book your ferry tickets and cargo shipments on the new Tripket web app.',
+    'The previous version of Tripket PH is no longer accessible. Book your ferry tickets on the new Tripket web app.',
 }
 
 /**
@@ -163,7 +163,8 @@ export const JOURNEY_STEPS = [
     icon: Smile,
     step: 3,
     title: 'Travel with Ease',
-    copy: 'Receive your e-ticket by email and present it when boarding. That’s it!',
+    copy:
+      'Receive your e-ticket in the Tripket app or by email, then present it when boarding. That’s it!',
   },
 ]
 
@@ -367,8 +368,8 @@ export const CARRIER_LOGOS = {
  * adding any number here.
  */
 export const PARTNER_BENEFITS = [
-  'Nationwide passenger reach',
-  'Online booking and cargo manifests',
+  'Reach more passengers',
+  'Online booking and passenger manifests',
   'Dedicated partner support',
 ]
 
@@ -406,7 +407,7 @@ export const ABOUT_HERO = {
   headlineLead: 'About ',
   headlineAccent: 'Tripket PH',
   copy:
-    'We are a Philippine-based online ticketing and cargo shipping platform dedicated to making inter-island travel seamless for every Filipino.',
+    'We are a Philippine-based online ticketing platform dedicated to making inter-island travel seamless for every Filipino.',
 }
 
 export const ABOUT_PILLARS = [
@@ -414,7 +415,7 @@ export const ABOUT_PILLARS = [
     icon: Target,
     title: 'Our Mission',
     body:
-      'To make inter-island travel and cargo shipping in the Philippines accessible, convenient, and affordable for every Filipino.',
+      'To make inter-island travel in the Philippines accessible, convenient, and affordable for every Filipino.',
   },
   {
     icon: Compass,
@@ -434,7 +435,7 @@ export const ABOUT_STORY = {
   eyebrow: 'Our story',
   title: 'Booking a ferry should not mean queueing at a ticket office',
   body:
-    'Tripket PH was founded to solve a real problem: booking ferry tickets and cargo shipments in the Philippines was complicated, time-consuming, and often required visiting physical ticketing offices. We built an all-in-one digital platform that lets passengers and shippers book and manage their trips online.',
+    'Tripket PH was founded to solve a real problem: booking ferry tickets in the Philippines was complicated, time-consuming, and often required visiting physical ticketing offices. We built an all-in-one digital platform that lets passengers book and manage their trips online.',
 }
 
 export const ABOUT_CONTACT = [
@@ -491,7 +492,7 @@ export const ABOUT_CTA = {
   title: 'Travel smarter with Tripket PH',
   // The live page says "download our app"; this project's hero announces the
   // v2 web app, so the primary action stays consistent with that.
-  body: 'Book your next ferry ticket or cargo shipment in minutes on the new Tripket web app.',
+  body: 'Book your next ferry ticket in minutes on the new Tripket web app.',
 }
 
 /* =========================================================================
@@ -503,7 +504,7 @@ export const PARTNERS_HERO = {
   headlineLead: 'Trusted by shipping lines ',
   headlineAccent: 'nationwide',
   copy:
-    'Tripket PH is trusted by leading Philippine shipping lines to power their online ticketing and cargo booking.',
+    'Tripket PH is trusted by leading Philippine shipping lines to power their online ticketing.',
   note: 'Our growing network of partners covers routes across Luzon, Visayas, and Mindanao.',
 }
 
@@ -521,14 +522,14 @@ export const PARTNERS_CTA = {
  */
 export const PAGE_META = {
   '/': {
-    title: 'Tripket PH — Online Ticket & Cargo Booking in the Philippines',
+    title: 'Tripket PH — Online Ferry Ticket Booking in the Philippines',
     description:
       'Search routes, pick your seats, and get your tickets - ferry travel across the Philippines, all in one app.',
   },
   '/about': {
     title: 'About Us — Tripket PH',
     description:
-      'Tripket PH is a Philippine-based online ticketing and cargo shipping platform making inter-island travel seamless for every Filipino.',
+      'Tripket PH is a Philippine-based online ticketing platform making inter-island travel seamless for every Filipino.',
   },
   '/partners': {
     title: 'Our Shipping Partners — Tripket PH',
@@ -538,7 +539,7 @@ export const PAGE_META = {
   '/support/contact': {
     title: 'Contact Us — Tripket PH',
     description:
-      'Get in touch with the Tripket PH support team about a booking, a payment, cargo shipping, or a partnership.',
+      'Get in touch with the Tripket PH support team about a booking, a payment, or a partnership.',
   },
   '/support/faq': {
     title: 'Frequently Asked Questions — Tripket PH',

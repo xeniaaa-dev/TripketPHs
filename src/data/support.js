@@ -69,7 +69,7 @@ export const DELETION_REMOVED = [
   'Your phone number, email address and billing address',
   'Stored payment method details',
   'Your age and passenger type',
-  'Vehicle details saved for cargo and RORO bookings',
+  'Vehicle details saved for RORO bookings',
 ]
 
 export const DELETION_RETAINED = [

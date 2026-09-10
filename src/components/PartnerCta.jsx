@@ -27,8 +27,7 @@ export default function PartnerCta() {
           Join Tripket PH as a <span className="accent">shipping partner</span>
         </h2>
         <p className="section-lede">
-          Connect your shipping line to thousands of passengers nationwide and grow your bookings
-          online.
+          Connect your shipping line with more passengers and grow your bookings online.
         </p>
 
         <ul className="partner-benefits">

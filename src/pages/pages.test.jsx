@@ -45,7 +45,7 @@ test('clicking About in the nav renders the about page without a reload', async 
   expect(window.location.pathname).toBe('/about')
   expect(await screen.findByRole('heading', { level: 1, name: /about tripket ph/i })).toBeInTheDocument()
   expect(
-    screen.getByText(/philippine-based online ticketing and cargo shipping platform/i),
+    screen.getByText(/philippine-based online ticketing platform/i),
   ).toBeInTheDocument()
 })
 

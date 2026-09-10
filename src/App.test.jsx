@@ -46,7 +46,7 @@ test('stacks the page sections in order, with the carriers inside the partner ba
   expect(text).toEqual(
     expect.arrayContaining([
       expect.stringMatching(/the new tripket ph is here/i),
-      expect.stringMatching(/everything you need to book and ship/i),
+      expect.stringMatching(/everything you need to book and travel/i),
       expect.stringMatching(/book your trip in 3 easy steps/i),
       expect.stringMatching(/join tripket ph as a shipping partner/i),
     ]),

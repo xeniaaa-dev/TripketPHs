@@ -431,6 +431,35 @@ describe('inquiry route', () => {
     expect(logged).toMatch(/TRIPKET_API_TOKEN/)
   })
 
+  test('a 404 names the missing route and promises no retry', async () => {
+    // The real upstream answered exactly this for POST /api/inquiries while
+    // serving /api/legs/featured-schedules on the same host, so this is the
+    // shape of a route that is simply not deployed.
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(upstreamReply(404, { message: 'Not found.', code: 404, success: false }))
+
+    const res = await post()
+
+    expect(res.statusCode).toBe(502)
+    // Pressing send again cannot deploy a route. Claiming otherwise would also
+    // suppress the form's email fallback, which is the only way out here.
+    expect(res.body.retry).toBeUndefined()
+    expect(JSON.stringify(res.body)).not.toMatch(/Not found|404/)
+
+    const logged = console.error.mock.calls.flat().join(' ')
+    expect(logged).toMatch(/TRIPKET_API_BASE/)
+    expect(logged).toMatch(/inquiries/)
+  })
+
+  test('a credential failure promises no retry either', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue(upstreamReply(401, { message: 'Unauthenticated.' }))
+    const res = await post()
+
+    expect(res.statusCode).toBe(502)
+    expect(res.body.retry).toBeUndefined()
+  })
+
   test('a credential is sent only when one is configured', async () => {
     await post()
     expect(globalThis.fetch.mock.calls[0][1].headers.Authorization).toBeUndefined()

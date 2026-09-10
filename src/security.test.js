@@ -47,10 +47,28 @@ test('script-src allows no inline or eval escape hatch', () => {
   expect(scriptSrc).not.toContain("'unsafe-eval'")
 })
 
-test('the browser may only reach our own origin for data', () => {
-  // connect-src 'self' is what makes the proxy the single way out; widening it
-  // would let the bundle call the schedules API directly and skip the limiter.
-  expect(csp).toContain("connect-src 'self'")
+/**
+ * connect-src is what makes the proxy the only way out of the page: the bundle
+ * cannot reach the Tripket API directly and skip the rate limiter, because the
+ * only host it may open a connection to besides our own is Google's.
+ *
+ * That one exception is not optional. reCAPTCHA v3 runs `recaptcha__en.js` in
+ * the top document, not inside its iframe, and that script fetches
+ * /recaptcha/api2/clr from www.google.com. Under `connect-src 'self'` the
+ * browser refuses it and logs a policy violation on every submission.
+ *
+ * Asserted as an exact string rather than with `toContain`, because the
+ * failure this guards against is someone widening it further — and a
+ * `toContain("connect-src 'self'")` check keeps passing no matter what else
+ * is appended, which is exactly how the guarantee would be lost quietly.
+ */
+test('the browser may only reach our own origin and reCAPTCHA', () => {
+  const connectSrc = csp
+    .split(';')
+    .map((part) => part.trim())
+    .find((part) => part.startsWith('connect-src '))
+
+  expect(connectSrc).toBe("connect-src 'self' https://www.google.com")
 })
 
 test('the page cannot be framed and carries the usual hardening', () => {

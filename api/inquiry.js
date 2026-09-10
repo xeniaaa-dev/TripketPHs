@@ -235,7 +235,29 @@ export default async function handler(req, res) {
         `inquiry ${requestId}: upstream returned ${response.status}. The inquiry endpoint ` +
           'needs a credential — set TRIPKET_API_TOKEN.',
       )
-      return fail(res, 502, { error: 'We cannot send your message right now.', retry: true })
+      // No `retry`: pressing send again cannot conjure a credential. The form
+      // offers the email route instead, because this is our problem to fix and
+      // the visitor should not be left waiting on it.
+      return fail(res, 502, { error: 'We cannot send your message right now.' })
+    }
+
+    /**
+     * A 404 means the route is not registered upstream — not that the request
+     * was wrong. Worth its own branch for the same reason as the 401 above:
+     * without it this lands in the generic bucket and the log says only
+     * "responded 404", leaving the next person to work out whether the path,
+     * the host or the deployment is at fault.
+     *
+     * Confirmed once already: POST /api/inquiries on the schedules host
+     * answered byte-identically to a route that does not exist, while
+     * /api/legs/featured-schedules on that same host answered 200.
+     */
+    if (response.status === 404) {
+      console.error(
+        `inquiry ${requestId}: upstream has no ${UPSTREAM_PATH} route (404). Check that the ` +
+          'inquiry endpoint is deployed, and that TRIPKET_API_BASE points at the host serving it.',
+      )
+      return fail(res, 502, { error: 'We cannot send your message right now.' })
     }
 
     if (response.status === 422 || response.status === 400) {

@@ -202,6 +202,25 @@ describe('when the send does not work', () => {
     expect(screen.queryByRole('button', { name: /email us instead/i })).not.toBeInTheDocument()
   })
 
+  test('a broken upstream offers the email route rather than a dead end', async () => {
+    const user = userEvent.setup()
+    stubRecaptcha()
+    // What the live site returned while the inquiry endpoint was undeployed.
+    globalThis.fetch.mockResolvedValue(
+      refused(502, { ok: false, error: 'We cannot send your message right now.' }),
+    )
+    render(<ContactPage />)
+
+    await fillAndSend(user)
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(/cannot send your message/i)
+    // The regression this guards: the offer used to be keyed on the absence of
+    // `retry`, and our 5xx responses carried it — so the failures that most
+    // needed a way out were the ones that hid it.
+    expect(screen.getByRole('button', { name: /email us instead/i })).toBeInTheDocument()
+  })
+
   test('a blocked reCAPTCHA offers the email route rather than a dead end', async () => {
     const user = userEvent.setup()
     // What an ad blocker or a strict extension looks like from here.

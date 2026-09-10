@@ -172,9 +172,24 @@ export default function SupportForm({ fields, subjectPrefix, submitLabel = 'Send
         setErrors(body.fields)
         focusFirstError(body.fields)
       }
-      // A rejection with nothing to fix means the send button is the answer,
-      // so email is not pushed at the visitor.
-      setOfferEmail(!body?.retry && !body?.fields)
+
+      /**
+       * Keyed on the status class, not on `retry`.
+       *
+       * A 4xx is about this submission: a field to correct, or a captcha to
+       * mint again by pressing send. Offering email there would push people
+       * out of a form that is one keystroke from working.
+       *
+       * A 5xx is our end failing — the upstream unreachable, misconfigured, or
+       * missing the route entirely. Pressing send again will fail the same way,
+       * so the visitor needs the other route out.
+       *
+       * This used to read `!body?.retry && !body?.fields`, which suppressed the
+       * email offer on precisely the failures that most needed it: our 502s
+       * carry `retry`, so a broken upstream left people looking at "we cannot
+       * send your message right now" with nowhere else to go.
+       */
+      setOfferEmail(response.status >= 500)
     } catch (error) {
       if (error?.name === 'AbortError') {
         setPhase('failed')

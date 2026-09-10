@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, expect, test } from 'vitest'
+import { afterEach, beforeEach, expect, test } from 'vitest'
+import { vi } from 'vitest'
 import App from '../App'
 import { ROUTES, SUPPORT_NAV } from '../data/content'
 import { FAQ_AUDIENCES } from '../data/faq'
@@ -11,6 +12,18 @@ beforeEach(() => {
   window.localStorage.clear()
   document.documentElement.removeAttribute('data-theme')
   window.history.pushState({}, '', '/')
+
+  /* Pin the site key empty so the contact form takes its email fallback here,
+     deterministically. Without this the file inherits whatever .env holds —
+     and .env is gitignored, so the same commit passed in CI and failed on a
+     machine that had a real key in it. The posting path, the honeypot and the
+     token handling are all owned by contact-form.test.jsx, which stubs this
+     value per case rather than depending on the file. */
+  vi.stubEnv('VITE_RECAPTCHA_SITE_KEY', '')
+})
+
+afterEach(() => {
+  vi.unstubAllEnvs()
 })
 
 /**

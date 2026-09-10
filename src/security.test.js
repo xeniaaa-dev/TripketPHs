@@ -124,7 +124,6 @@ test('the SPA catch-all serves pages but never swallows real files', () => {
     '/partners',
     '/support/contact',
     '/support/faq',
-    '/support/refund-policy',
     '/support/privacy',
     '/support/terms',
     '/support/account-deletion-request',

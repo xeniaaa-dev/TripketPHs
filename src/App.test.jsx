@@ -4,6 +4,7 @@ import { beforeEach, expect, test } from 'vitest'
 import App from './App'
 import {
   FEATURES,
+  BOOKING_AVAILABLE,
   PRIMARY_CTA_LABEL,
   ROUTES,
   JOURNEY_STEPS,
@@ -75,16 +76,19 @@ test('announces the v2 launch and retires the old version', () => {
   ).toBeInTheDocument()
 })
 
-test('every primary CTA points at the new web app', () => {
+test('no Book Now is shown while the web app is unavailable', () => {
   render(<App />)
 
-  // The header pill and the hero button now share one label.
-  const primaryCtas = screen.getAllByRole('link', { name: PRIMARY_CTA_LABEL })
-  expect(primaryCtas.length).toBeGreaterThanOrEqual(2)
-  primaryCtas.forEach((link) => expect(link).toHaveAttribute('href', ROUTES.book))
+  /* BOOKING_AVAILABLE is false: app.tripketph.com is not live, so a visible
+     "Book Now" would be a button that goes nowhere. Asserted rather than
+     assumed, because the flag gates three separate call sites — the navbar,
+     the hero and the About CTA — and missing one leaves a dead link on a page
+     nobody is looking at. */
+  expect(BOOKING_AVAILABLE).toBe(false)
+  expect(screen.queryAllByRole('link', { name: PRIMARY_CTA_LABEL })).toHaveLength(0)
 
-  // Regression: ROUTES.book was '#' for a while, so every "Book Now" on all
-  // eight pages did nothing. Pin it to an absolute URL.
+  /* The destination still has to be right for when the flag flips. Regression:
+     ROUTES.book was '#' for a while, so every "Book Now" did nothing. */
   expect(ROUTES.book).toBe('https://app.tripketph.com/')
   expect(ROUTES.book.startsWith('https://')).toBe(true)
   expect(screen.getAllByRole('link', { name: /learn more/i })[0]).toHaveAttribute('href', '#features')

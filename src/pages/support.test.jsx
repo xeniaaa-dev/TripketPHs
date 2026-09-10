@@ -341,54 +341,6 @@ test('the terms of service renders every clause', async () => {
   })
 })
 
-test('the refund policy is reachable but flagged as a draft, not real policy', async () => {
-  await go('/support/refund-policy')
-
-  expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/refund policy/i)
-
-  // The warning has to be on the page, not just sitting in the data file.
-  const notice = screen.getByRole('note')
-  expect(notice).toHaveTextContent(/nothing on this page is final or binding/i)
-  expect(notice).toHaveTextContent(/do not rely on it/i)
-  expect(within(notice).getByRole('link', { name: /terms of service/i })).toHaveAttribute(
-    'href',
-    ROUTES.terms,
-  )
-  expect(within(notice).getByRole('link', { name: /contact support/i })).toHaveAttribute(
-    'href',
-    ROUTES.contact,
-  )
-
-  /* The point of the placeholder is that it invents no rule. Nothing in the
-     document body may read as a refund window, a fee or a processing time —
-     a visitor acting on a made-up number is the failure this guards. */
-  const body = document.querySelector('.legal-body').textContent
-  expect(body).not.toMatch(/\d+\s*(days?|hours?|weeks?|months?|%|percent)/i)
-  expect(body).not.toMatch(/within \d/i)
-})
-
-test('the placeholder policy is kept out of search results', async () => {
-  await go('/support/refund-policy')
-
-  const robots = document.head.querySelector('meta[name="robots"]')
-  expect(robots?.getAttribute('content')).toMatch(/noindex/)
-})
-
-test('the noindex does not follow the visitor to other pages', async () => {
-  const user = userEvent.setup()
-  await go('/support/refund-policy')
-  expect(document.head.querySelector('meta[name="robots"]')).not.toBeNull()
-
-  /* This is one document that never reloads, so a robots tag left in the head
-     would de-index every page the visitor moves to next. */
-  await user.click(screen.getByRole('button', { name: 'Support' }))
-  const menu = document.getElementById('support-menu')
-  await user.click(within(menu).getByRole('link', { name: 'FAQ' }))
-  await screen.findByRole('heading', { level: 1, name: /frequently asked/i })
-
-  expect(document.head.querySelector('meta[name="robots"]')).toBeNull()
-})
-
 test('the account deletion page states what is removed and what is kept', async () => {
   await go('/support/account-deletion-request')
 

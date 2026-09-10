@@ -20,7 +20,6 @@ const LAZY_PAGES = {
   '/partners': lazy(() => import('./pages/PartnersPage')),
   '/support/contact': lazy(() => import('./pages/ContactPage')),
   '/support/faq': lazy(() => import('./pages/FaqPage')),
-  '/support/refund-policy': lazy(() => import('./pages/RefundPage')),
   '/support/privacy': lazy(() => import('./pages/PrivacyPage')),
   '/support/terms': lazy(() => import('./pages/TermsPage')),
   '/support/account-deletion-request': lazy(() => import('./pages/AccountDeletionPage')),

@@ -2,6 +2,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, test } from 'vitest'
 import App from '../App'
+import { isInternalRoute } from '../hooks/useRouter'
 import {
   ABOUT_PILLARS,
   FOUNDERS,
@@ -212,15 +213,19 @@ test('links this project does not own are left as real navigations', async () =>
   const contact = screen.getAllByRole('link', { name: /contact us to partner/i })[0]
   expect(contact).toHaveAttribute('href', ROUTES.contact)
 
-  /* The web app is a different origin, so the router has to let this through
-     to a real navigation rather than swallowing the click. This took over from
-     the Admin Dashboard check when that button left the navbar. */
-  const app = screen.getAllByRole('link', { name: /book now/i })[0]
-  expect(app).toHaveAttribute('href', ROUTES.book)
-  expect(ROUTES.book.startsWith('https://')).toBe(true)
+  /* The router must only intercept paths this project serves. Asserted against
+     the router's own list rather than a rendered link, because the external
+     CTAs come and go — the admin button was removed, and Book Now is hidden
+     while the web app is down — and this rule holds regardless of which
+     happen to be on screen. */
+  expect(isInternalRoute('/support/contact')).toBe(true)
+  expect(isInternalRoute('/partners')).toBe(true)
+  expect(isInternalRoute('/admin')).toBe(false)
+  expect(isInternalRoute('/apps/tripket-ph')).toBe(false)
 
-  // And the navbar no longer offers the admin dashboard at all.
+  // Neither removed link may reappear without a decision.
   expect(screen.queryByRole('link', { name: /admin dashboard/i })).not.toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: /^book now$/i })).not.toBeInTheDocument()
 })
 
 test('an unknown path falls back to the home page', async () => {

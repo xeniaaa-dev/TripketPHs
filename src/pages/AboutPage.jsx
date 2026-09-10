@@ -4,6 +4,7 @@ import PageHero from '../components/PageHero'
 import WaveRule from '../components/WaveRule'
 import {
   ABOUT_CONTACT,
+  BOOKING_AVAILABLE,
   ABOUT_CTA,
   ABOUT_HERO,
   ABOUT_PILLARS,
@@ -120,10 +121,12 @@ export default function AboutPage() {
           <h2 id="about-cta-heading">{ABOUT_CTA.title}</h2>
           <p>{ABOUT_CTA.body}</p>
           <div className="page-cta-actions">
-            <a className="button button-primary button-lg" href={ROUTES.book}>
-              Book Now
-              <ArrowRight aria-hidden="true" />
-            </a>
+            {BOOKING_AVAILABLE ? (
+              <a className="button button-primary button-lg" href={ROUTES.book}>
+                Book Now
+                <ArrowRight aria-hidden="true" />
+              </a>
+            ) : null}
             <a className="button button-quiet button-lg" href={ROUTES.partners}>
               See our partners
               <ArrowRight aria-hidden="true" />

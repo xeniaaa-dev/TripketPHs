@@ -1,5 +1,5 @@
 import { ArrowDown, ArrowRight } from 'lucide-react'
-import { HERO, PRIMARY_CTA_LABEL, ROUTES } from '../data/content'
+import { BOOKING_AVAILABLE, HERO, PRIMARY_CTA_LABEL, ROUTES } from '../data/content'
 
 export default function Hero() {
   return (
@@ -30,10 +30,12 @@ export default function Hero() {
           </h1>
           <p className="hero-lede">{HERO.copy}</p>
           <div className="hero-actions">
-            <a className="button button-primary button-lg" href={ROUTES.book}>
-              {PRIMARY_CTA_LABEL}
-              <ArrowRight aria-hidden="true" />
-            </a>
+            {BOOKING_AVAILABLE ? (
+              <a className="button button-primary button-lg" href={ROUTES.book}>
+                {PRIMARY_CTA_LABEL}
+                <ArrowRight aria-hidden="true" />
+              </a>
+            ) : null}
             <a className="button button-ghost button-lg" href={ROUTES.features}>
               <ArrowDown aria-hidden="true" />
               Learn More

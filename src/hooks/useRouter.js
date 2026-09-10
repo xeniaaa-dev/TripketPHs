@@ -7,7 +7,6 @@ export const ROUTE_PATHS = [
   '/partners',
   '/support/contact',
   '/support/faq',
-  '/support/refund-policy',
   '/support/privacy',
   '/support/terms',
   '/support/account-deletion-request',

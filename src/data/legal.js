@@ -356,6 +356,18 @@ export const TERMS_DOC = {
         'Options for payment include Paymaya, GrabPay, GCash and possibly Credit/Debit Cards. Discounts or promotions may be available for passengers 9 years old and below, students, and seniors.',
       ],
     },
+    /* SUPERSEDED — needs a decision, not a merge.
+       This clause described a rebooking service: change of travel date, a
+       6-month limit, rebooking costs. The Cancellation, Refund & Rebooking
+       Policy added below says Tripket PH does not rebook at all — you cancel,
+       take the refund, and book again as a new transaction.
+       Both cannot be true, and publishing both would let a customer rely on
+       whichever suited them. Commented out rather than deleted: if this clause
+       is the current rule and the PDF is wrong, uncomment it and remove the
+       'refund-rebooking-*' sections instead.
+       Note the pregnancy/illness waiver rule below appears ONLY here and is
+       not repeated in the new policy, so it is lost while this is commented
+       out — worth re-homing into the boarding conditions if it still applies.
     {
       id: 'rebooking',
       title: 'Conditions: rebooking',
@@ -369,6 +381,7 @@ export const TERMS_DOC = {
         'Rebooking time limit is 6 months.',
       ],
     },
+    */
     {
       id: 'boarding',
       title: 'Conditions: boarding guidelines',
@@ -377,84 +390,81 @@ export const TERMS_DOC = {
         "Please obtain a copy of the child's birth certificate for minors.",
       ],
     },
-  ],
-}
+    /* ---------------------------------------------------------------------
+       Cancellation, Refund & Rebooking Policy — transcribed verbatim from
+       Tripketph_Cancellation_Refund_Policy.pdf.
 
-/* =========================================================================
-   REFUND POLICY — PLACEHOLDER, NOT REAL POLICY
+       Only page 3 of 4 was supplied. Pages 1, 2 and 4 have not been seen, so
+       anything they contain is not represented here.
 
-   Tripket PH has not supplied this document yet. Everything below is
-   scaffolding so the page, route and navigation exist; none of it states an
-   actual rule.
-
-   It deliberately does NOT invent plausible refund terms — no windows, no
-   percentages, no processing times. A visitor who acted on invented terms
-   would be misled, and Tripket could be held to wording nobody approved. The
-   Terms of Service already carry the refund and cancellation rules that apply
-   today (see the "Cancellations and refunds" clause), so this page points
-   there in the meantime.
-
-   To publish for real: replace `notice` with null, replace each section's
-   body with the supplied copy, and delete the `robots: 'noindex, nofollow'`
-   line from PAGE_META['/support/refund-policy'] in src/data/content.js.
-   ========================================================================= */
-
-export const REFUND_DOC = {
-  eyebrow: 'Legal',
-  title: 'Refund Policy',
-  lede: 'This policy is being finalised. The rules that apply today are in our Terms of Service.',
-  notice: {
-    title: 'Draft page — not the final policy',
-    body: [
-      'Tripket PH has not published its refund policy yet, so nothing on this page is final or binding. Please do not rely on it.',
-      'The refund and cancellation rules that apply right now are in our Terms of Service. If you need help with a specific booking, contact our support team and we will check it for you.',
-    ],
-    links: [
-      { label: 'Read the Terms of Service', href: '/support/terms' },
-      { label: 'Contact support', href: '/support/contact' },
-    ],
-  },
-  sections: [
+       NOTE: section 4 of this policy contradicts the older 'rebooking' clause
+       above, which described a rebooking service with a 6-month limit. This
+       policy says Tripket does not rebook at all. The older clause is
+       commented out rather than deleted — see below — because two
+       contradictory rebooking rules in one document is worse than either one
+       alone, and a customer could rely on whichever suited them.
+       --------------------------------------------------------------------- */
     {
-      id: 'status',
-      title: 'Status of this page',
-      body: [
-        'Placeholder. This page exists so the Refund Policy has a home in the navigation while the wording is being prepared. It will be replaced in full once Tripket PH supplies the approved text.',
+      id: 'refund-shipping-line-cancellation',
+      title: 'Refunds: cancellation by the shipping line',
+      list: [
+        'If a trip is cancelled by the shipping line due to weather or operational reasons, the passenger is entitled to a full refund of the ticket fare and cancellation fees are waived.',
+        'Only the ticket fare is refunded. Service fees are non-refundable.',
       ],
     },
     {
-      id: 'scope',
-      title: 'What this policy will cover',
-      body: [
-        'Placeholder. This section will set out which bookings the refund policy applies to — passenger tickets, vehicle and cargo bookings, and any add-ons purchased through Tripket PH.',
+      id: 'refund-passenger-cancellation',
+      title: 'Refunds: cancellation by the passenger',
+      list: [
+        'Passengers who are unable to take their scheduled trip may request cancellation of their booking but are subject to an 8% cancellation fee to cover the transaction fees.',
+        'Only the ticket fare is refunded. Service fees are non-refundable.',
+        'All cancellation and refund requests are subject to verification and approval.',
       ],
     },
     {
-      id: 'eligibility',
-      title: 'When a refund can be requested',
+      id: 'refund-processing-timeline',
+      title: 'Refunds: processing timeline',
       body: [
-        'Placeholder. This section will describe the circumstances in which a refund may be requested. No eligibility rule is stated here yet, and none should be assumed.',
+        'Tripket PH standard processing time is 5-10 business days or longer, depending on the payment provider and circumstances of the transaction. GCash and PayMaya refunds may be faster than card refunds.',
       ],
     },
     {
-      id: 'fees',
-      title: 'Fees and deductions',
-      body: [
-        'Placeholder. This section will state any cancellation fee, booking fee or shipping-line charge that is deducted from a refund. No amounts or percentages are given here yet.',
+      id: 'refund-non-refundable',
+      title: 'Refunds: non-refundable situations',
+      body: ['Refunds may not be granted for the following circumstances:'],
+      list: [
+        'Failure to arrive at the terminal (No Show)',
+        'Incorrect passenger information',
+        'Invalid or Expired Ticket',
       ],
     },
     {
-      id: 'processing',
-      title: 'How long a refund takes',
+      id: 'refund-rebooking-process',
+      title: 'Refunds: rebooking process',
       body: [
-        'Placeholder. This section will state how a refund is returned and how long it takes. No processing time is given here yet.',
+        'Tripket PH does not directly rebook cancelled tickets. If a passenger wishes to travel on a different date:',
+      ],
+      list: [
+        'The passenger must first request cancellation of the original booking through Tripket PH.',
+        'The applicable refund will be processed after the cancellation has been approved.',
+        'Once the refund has been processed, the passenger may make a new booking through the Tripket PH app or website.',
       ],
     },
     {
-      id: 'how-to-request',
-      title: 'How to request a refund',
+      id: 'refund-rebooking-admin',
+      title: 'Refunds: bookings made on your behalf',
       body: [
-        'Placeholder. The confirmed process will be published here. Until then, contact support@tripketph.com with your booking details and our team will advise you directly.',
+        'Tripket PH Admin cannot initiate or process a new booking on behalf of the passenger.',
+      ],
+    },
+    {
+      id: 'refund-reminders',
+      title: 'Refunds: important reminders',
+      list: [
+        'All cancellation and refund requests are subject to verification and approval.',
+        'Shipping line-specific cancellation and refund policies may apply and may take priority over this policy.',
+        'A new booking made after cancellation is treated as a separate transaction and is subject to the fare, availability, and applicable fees at the time of booking.',
+        'Passengers are responsible for ensuring that their booking details and travel date are correct before completing a booking.',
       ],
     },
   ],

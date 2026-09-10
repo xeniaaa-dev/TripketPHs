@@ -47,7 +47,6 @@ export const ROUTES = {
   // removed. It was a dead link anyway — /admin is not served by this project.
   admin: '/admin',
   contact: '/support/contact',
-  refunds: '/support/refund-policy',
   faq: '/support/faq',
   privacy: '/support/privacy',
   terms: '/support/terms',
@@ -63,7 +62,6 @@ export const PRIMARY_NAV = [
 export const SUPPORT_NAV = [
   { label: 'Contact Us', href: ROUTES.contact },
   { label: 'FAQ', href: ROUTES.faq },
-  { label: 'Refund Policy', href: ROUTES.refunds },
   { label: 'Privacy Policy', href: ROUTES.privacy },
   { label: 'Terms of Service', href: ROUTES.terms },
   { label: 'Account Deletion', href: ROUTES.accountDeletion },
@@ -87,6 +85,17 @@ export const HERO = {
  * Label on the filled orange CTA, shared by the header pill and the hero so
  * the two cannot drift apart. Both point at `ROUTES.book`.
  */
+/**
+ * The v2 web app is not live yet, so every "Book Now" is hidden rather than
+ * pointing at something that does not answer. Flip this to true when
+ * app.tripketph.com is available and all three reappear — the navbar, the
+ * hero and the About page CTA — with no other change needed.
+ *
+ * The Schedule section's links to the web app are deliberately NOT behind
+ * this flag: see the note in Schedule.jsx.
+ */
+export const BOOKING_AVAILABLE = false
+
 export const PRIMARY_CTA_LABEL = 'Book Now'
 
 export const SECTION_LABELS = {
@@ -546,14 +555,6 @@ export const PAGE_META = {
     title: 'Frequently Asked Questions — Tripket PH',
     description:
       'Answers to common questions about booking, payments, rebooking, refunds, and the Tripket PH client dashboard.',
-  },
-  '/support/refund-policy': {
-    title: 'Refund Policy — Tripket PH',
-    description: 'Tripket PH refund and cancellation policy.',
-    /* Placeholder copy must not be indexed: a search result quoting invented
-       refund terms is worse than no result. Delete this line when the real
-       policy lands. */
-    robots: 'noindex, nofollow',
   },
   '/support/privacy': {
     title: 'Privacy Policy — Tripket PH',

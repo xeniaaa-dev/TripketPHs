@@ -22,6 +22,16 @@
     <title>Tripket PH — Online Ticket &amp; Cargo Booking in the Philippines</title>
 
     <!-- OpenGraph and Twitter, for link previews.
+
+         The origin below is the deployment these tags describe, and it has to
+         be the host actually serving this build. It previously read
+         tripketph.com, which is a DIFFERENT site — that host answered
+         /assets/og/tripket-og.jpg with its own HTML instead of the image, so
+         every shared link showed a card with no picture.
+
+         When this build takes over tripketph.com, change og:url and og:image
+         here and SITE_URL in src/hooks/useDocumentMeta.js together. A test in
+         src/security.test.js fails if they drift apart.
          These are STATIC on purpose. useDocumentMeta.js also sets og:title /
          description / url per route at runtime, which keeps the tab title and
          canonical link correct — but social crawlers (Facebook, LinkedIn, X,
@@ -34,7 +44,7 @@
     <meta property="og:site_name" content="Tripket PH" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_PH" />
-    <meta property="og:url" content="https://tripketph.com/" />
+    <meta property="og:url" content="https://tripket-p-hs.vercel.app/" />
     <meta
       property="og:title"
       content="Tripket PH — Online Ticket &amp; Cargo Booking in the Philippines"
@@ -43,7 +53,7 @@
       property="og:description"
       content="Book ferry tickets and cargo shipments online with Tripket PH — the all-in-one platform for Philippine transportation ticketing."
     />
-    <meta property="og:image" content="https://tripketph.com/assets/og/tripket-og.jpg" />
+    <meta property="og:image" content="https://tripket-p-hs.vercel.app/assets/og/tripket-og.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />

@@ -252,3 +252,46 @@ test('no API host or credential is baked into the client bundle', () => {
   // only the same-origin '/api/inquiry'.
   expect(src).not.toMatch(/api\/inquiries/)
 })
+
+/**
+ * Link previews are the one thing a broken URL fails silently at: the crawler
+ * fetches og:image, gets something that is not an image, and shows a card with
+ * no picture. Nobody sees an error. So the invariants are asserted here.
+ */
+test('the OpenGraph tags describe the host that actually serves this build', () => {
+  const html = fs.readFileSync('index.html', 'utf8')
+  const tag = (prop) =>
+    html.match(new RegExp(`<meta\\s+property="${prop}"\\s+content="([^"]*)"`, 's'))?.[1]
+
+  const ogUrl = tag('og:url')
+  const ogImage = tag('og:image')
+  expect(ogUrl, 'og:url missing').toBeTruthy()
+  expect(ogImage, 'og:image missing').toBeTruthy()
+
+  // Absolute, or crawlers resolve nothing and show no image at all.
+  expect(ogImage.startsWith('https://')).toBe(true)
+  expect(ogUrl.startsWith('https://')).toBe(true)
+
+  // Same origin as the canonical link, or the card and the canonical disagree
+  // about which site this is.
+  const meta = fs.readFileSync('src/hooks/useDocumentMeta.js', 'utf8')
+  const siteUrl = meta.match(/const SITE_URL = '([^']+)'/)[1]
+  expect(new URL(ogImage).origin).toBe(new URL(siteUrl).origin)
+  expect(new URL(ogUrl).origin).toBe(new URL(siteUrl).origin)
+
+  // And the file it names has to exist in what gets deployed.
+  const path = new URL(ogImage).pathname
+  expect(fs.existsSync(`public${path}`), `${path} not in public/`).toBe(true)
+})
+
+test('the OpenGraph image is the size crawlers expect', () => {
+  const html = fs.readFileSync('index.html', 'utf8')
+  const w = html.match(/property="og:image:width"\s+content="(\d+)"/)?.[1]
+  const h = html.match(/property="og:image:height"\s+content="(\d+)"/)?.[1]
+  expect([w, h]).toEqual(['1200', '630'])
+  // Declared dimensions must match the actual file, or the card crops oddly.
+  const path = html.match(/property="og:image"\s+content="[^"]*(\/assets\/[^"]+)"/)[1]
+  const bytes = fs.statSync(`public${path}`).size
+  expect(bytes).toBeGreaterThan(10_000)
+  expect(bytes).toBeLessThan(1_000_000) // crawler limits sit around 1-8MB
+})

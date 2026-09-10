@@ -1,7 +1,12 @@
 import { useEffect } from 'react'
 import { PAGE_META } from '../data/content'
 
-const SITE_URL = 'https://tripketph.com'
+/* The host serving this build. Used for the canonical link and the runtime
+   og:url. Must match the origin in index.html's og:* tags — a canonical
+   pointing at a domain that serves a different site is worse than none, and
+   src/security.test.js fails if the two drift apart. Change both together
+   when this build takes over tripketph.com. */
+const SITE_URL = 'https://tripket-p-hs.vercel.app'
 
 /** Creates the tag on first use, then keeps its content in step with the route. */
 function setMeta(selector, create, value) {

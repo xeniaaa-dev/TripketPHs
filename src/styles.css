@@ -1357,13 +1357,13 @@ button {
     animation: route-sail 18s linear 1300ms infinite;
   }
 
-  /* A 30-unit segment of the 100-unit path (pathLength normalises it), moving
-     with the ferry instead of the whole line appearing at once. The dotted
-     .route-guide underneath still shows the full route, so nothing is lost. */
+  /* The ferry draws the route as it sails: the stroke starts empty at step 1
+     and grows to the full path by step 3, with the ferry always at its tip.
+     The dotted .route-guide underneath shows where it is still heading. */
   .route-drawn {
-    stroke-dasharray: 30 70;
-    stroke-dashoffset: 30;
-    animation: route-wake 18s linear 1300ms infinite;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: route-trail 18s linear 1300ms infinite;
   }
 }
 
@@ -1377,17 +1377,22 @@ button {
   }
 }
 
-/* Phase matters. With a 30-unit dash the segment spans dashoffset -X to
-   -X+30, so its leading edge sits at the ferry when X = 30 - distance. As the
-   ferry runs 0 -> 100, the offset therefore runs 30 -> -70, which puts the
-   segment behind the hull like a wake rather than ahead of it. */
-@keyframes route-wake {
+/* Phase matters. With `stroke-dasharray: 100` on a path normalised to
+   pathLength 100, a dashoffset of X leaves the stroke drawn from 0 to 100 - X,
+   so the tip sits at the ferry when X = 100 - distance. As the ferry runs
+   0 -> 100 the offset therefore runs 100 -> 0, and the line grows behind it
+   from the very start of the route rather than trailing as a short segment.
+
+   Both wrap at the same instant: the ferry jumps back to step 1 and the line
+   empties with it, so the restart reads as one motion resetting rather than
+   two things going out of step. */
+@keyframes route-trail {
   from {
-    stroke-dashoffset: 30;
+    stroke-dashoffset: 100;
   }
 
   to {
-    stroke-dashoffset: -70;
+    stroke-dashoffset: 0;
   }
 }
 

@@ -1,4 +1,4 @@
-import { Clock, Mail, MapPin, Phone } from 'lucide-react'
+import { Mail, MapPin, Phone } from 'lucide-react'
 
 /* =========================================================================
    CONTACT — copy and details taken from tripketph.com/support/contact
@@ -33,12 +33,6 @@ export const CONTACT_CHANNELS = [
     label: 'Our office',
     value: '2nd floor, Mats Place, Hibbard Avenue, Piapi, Dumaguete City, Negros Oriental, Philippines',
     note: 'Where to find us',
-  },
-  {
-    icon: Clock,
-    label: 'Support hours',
-    value: 'Monday to Friday, 8:00AM – 6:00PM',
-    note: 'Philippine Standard Time',
   },
 ]
 

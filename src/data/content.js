@@ -4,7 +4,6 @@ import {
   Compass,
   CreditCard,
   Handshake,
-  Headphones,
   Map,
   Package,
   Search,
@@ -141,11 +140,6 @@ export const FEATURES = [
     icon: Ticket,
     title: 'Ticket Booking',
     copy: 'Book ferry and bus tickets from anywhere, anytime, in just a few taps.',
-  },
-  {
-    icon: Headphones,
-    title: '24/7 Support',
-    copy: 'Our team is always ready to assist you with any booking concern.',
   },
   {
     icon: Map,

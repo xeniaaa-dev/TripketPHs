@@ -853,55 +853,6 @@ button {
   font-weight: 800;
 }
 
-/* One continuous row of carriers, faded out at both edges. */
-.marquee {
-  overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-}
-
-/* 120s keeps the previous drift speed: the row now carries all 15 logos
-   rather than 8, so it has roughly twice as far to travel per loop. */
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee-scroll 120s linear infinite;
-}
-
-/* Keyboard focus still pauses the row so it can be read, but hover does not:
-   pointer users kept freezing it by accident just moving across the section. */
-.marquee:focus-within .marquee-track {
-  animation-play-state: paused;
-}
-
-/* Logos are decoration, not content to pull out of the page. The row is also
-   non-selectable: it never stops moving, so a press-and-sweep only ever
-   produced an accidental selection spanning several carrier names. The names
-   stay in the DOM, so screen readers still announce each carrier once. */
-.marquee {
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.marquee img {
-  -webkit-user-drag: none;
-  user-select: none;
-  -webkit-user-select: none;
-  pointer-events: none;
-}
-
-.marquee-group {
-  display: flex;
-  gap: clamp(var(--space-lg), 5vw, var(--space-xl));
-  padding-inline: clamp(var(--space-md), 2.5vw, var(--space-lg));
-}
-
-@keyframes marquee-scroll {
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
 .partner {
   display: flex;
   flex-direction: column;
@@ -1738,15 +1689,36 @@ button {
 /* The carriers, merged into the bottom of the partner band. A hairline keeps
    them legible as a distinct beat within the pitch without reintroducing the
    separate strip this used to be. */
+/* No rule between the pitch and the carriers: they are one band, and the line
+   read as a section break inside a section. Spacing carries the separation. */
 .partner-cta-trust {
   margin-top: clamp(var(--space-lg), 5vw, var(--space-2xl));
   padding-top: clamp(var(--space-lg), 4vw, var(--space-xl));
-  border-top: 1px solid rgba(255, 248, 238, 0.16);
 }
 
 /* .partner-name is --text-muted, which is near-black in the light theme and
    so would be invisible against this band. The section sets `color: cream`,
    but that rule is more specific than inheritance. */
+/* Three logos, centred and still. Wraps rather than scrolls, so a narrow
+   screen stacks them instead of hiding any. */
+.partner-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(var(--space-md), 4vw, var(--space-2xl));
+  margin-top: clamp(var(--space-md), 2.5vw, var(--space-lg));
+  padding-inline: var(--gutter);
+}
+
+/* Logos are decoration, not content to drag out of the page. */
+.partner-row img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
 .partner-cta-trust .partner-name {
   color: rgba(255, 248, 238, 0.72);
 }
@@ -4232,32 +4204,6 @@ button {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-  }
-
-  /* With the animation off, wrap both rows into static centred grids rather
-     than horizontal scrollers no keyboard can reach. */
-  .marquee {
-    overflow: visible;
-    mask-image: none;
-    -webkit-mask-image: none;
-  }
-
-  .marquee-track {
-    animation: none;
-    transform: none;
-    width: 100%;
-  }
-
-  .marquee-group {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-lg) var(--space-md);
-    width: 100%;
-  }
-
-  /* The looping clone adds nothing once the animation is off. */
-  .marquee-group[aria-hidden='true'] {
-    display: none;
   }
 
   .feature:hover,

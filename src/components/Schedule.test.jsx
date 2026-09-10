@@ -3,7 +3,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, test, vi } from 'vitest'
 import Schedule from './Schedule'
-import { CARRIER_LOGOS, INACTIVE_PARTNER_LOGOS, PARTNER_LOGOS, ROUTES } from '../data/content'
+import { BOOKING_AVAILABLE, CARRIER_LOGOS, INACTIVE_PARTNER_LOGOS, PARTNER_LOGOS, ROUTES } from '../data/content'
 
 const LEG = {
   id: 'leg-1',
@@ -299,23 +299,26 @@ test('caps how many route cards render at once', async () => {
   render(<Schedule />)
 
   expect(await screen.findAllByRole('listitem')).toHaveLength(4)
-  // The "See all departures" link is what tells the visitor there is more.
-  expect(screen.getByRole('link', { name: /see all departures/i })).toBeInTheDocument()
+  /* The "See all departures" link is hidden while the web app is down, so the
+     grid is now the only thing that says there is more. It must still cap. */
+  expect(screen.queryByRole('link', { name: /see all departures/i })).not.toBeInTheDocument()
 })
 
-test('offers a way through to the full timetable', async () => {
+test('no way through to the timetable while the web app is down', async () => {
   answer({ schedules: MIXED })
   render(<Schedule />)
 
   await screen.findAllByRole('listitem')
-  const cta = screen.getByRole('link', { name: /see all departures/i })
-  expect(cta).toHaveAttribute('href', ROUTES.schedule)
-  expect(cta.getAttribute('href')).toBe('https://app.tripketph.com/schedule')
-  /* Quiet rather than filled: the sticky header already carries the page's one
-     orange Book Now, and the branding allows a single dominant action per
-     viewport. */
-  expect(cta.className).toContain('button-quiet')
-  expect(cta.className).not.toContain('button-primary')
+
+  /* BOOKING_AVAILABLE is false, so nothing here may link to app.tripketph.com
+     — not the section CTA, not the per-route "+N more". A link that cannot
+     answer is worse than no link. */
+  expect(BOOKING_AVAILABLE).toBe(false)
+  expect(screen.queryByRole('link', { name: /see all departures/i })).not.toBeInTheDocument()
+  expect(document.querySelectorAll('a[href^="https://app.tripketph.com"]')).toHaveLength(0)
+
+  // The destination still has to be right for when the flag flips back.
+  expect(ROUTES.schedule).toBe('https://app.tripketph.com/schedule')
 })
 
 test('no way-out link when the section has nothing to show', async () => {
@@ -333,7 +336,8 @@ test('says so when there is nothing sailing today', async () => {
   render(<Schedule />)
 
   expect(await screen.findByText(/no sailings are listed for today/i)).toBeInTheDocument()
-  expect(screen.getByRole('link', { name: /open the web app/i })).toBeInTheDocument()
+  // The message stays; its link to the web app is hidden with the rest.
+  expect(screen.queryByRole('link', { name: /open the web app/i })).not.toBeInTheDocument()
   expect(screen.queryAllByRole('listitem')).toHaveLength(0)
 })
 

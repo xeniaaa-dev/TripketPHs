@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { AlertCircle, ArrowRight, Clock, Ship } from 'lucide-react'
 import useSchedules from '../hooks/useSchedules'
-import { CARRIER_LOGOS, ROUTES, SCHEDULES, SECTION_LABELS } from '../data/content'
+import { BOOKING_AVAILABLE, CARRIER_LOGOS, ROUTES, SCHEDULES, SECTION_LABELS } from '../data/content'
 
 /**
  * Times are shown in Philippine Standard Time whatever the visitor's own
@@ -160,13 +160,17 @@ function RouteCard({ group }) {
                    screen reader lists links — says nothing about where it goes
                    or what it belongs to. The web app has no per-route deep
                    link, so it points at the full timetable. */
-                <a
-                  className="sailing-chip is-more"
-                  href={ROUTES.schedule}
-                  aria-label={`See all ${times.length} departures for ${routeLabel} in the web app`}
-                >
-                  +{hidden} more
-                </a>
+                BOOKING_AVAILABLE ? (
+                  <a
+                    className="sailing-chip is-more"
+                    href={ROUTES.schedule}
+                    aria-label={`See all ${times.length} departures for ${routeLabel} in the web app`}
+                  >
+                    +{hidden} more
+                  </a>
+                ) : (
+                  <span className="sailing-chip is-more">+{hidden} more</span>
+                )
               ) : null}
             </p>
           ) : null}
@@ -235,10 +239,13 @@ export default function Schedule() {
           {status === 'ready' && schedules.length === 0 ? (
             <p className="schedule-notice">
               <span>{SCHEDULES.empty}</span>
-              <a className="button button-quiet" href={ROUTES.book}>
-                {SCHEDULES.emptyCta}
-                <ArrowRight aria-hidden="true" />
-              </a>
+              {/* Same web app as Book Now, so hidden with it. */}
+              {BOOKING_AVAILABLE ? (
+                <a className="button button-quiet" href={ROUTES.book}>
+                  {SCHEDULES.emptyCta}
+                  <ArrowRight aria-hidden="true" />
+                </a>
+              ) : null}
             </p>
           ) : null}
 
@@ -253,12 +260,15 @@ export default function Schedule() {
               {/* Quiet, not filled: the sticky header already carries the one
                   orange Book Now, and a second filled button in the same
                   viewport would compete with it. */}
-              <p className="schedule-more">
-                <a className="button button-quiet" href={ROUTES.schedule}>
-                  {SCHEDULES.seeMore}
-                  <ArrowRight aria-hidden="true" />
-                </a>
-              </p>
+              {/* Gated with the Book Now buttons: same web app, not live yet. */}
+              {BOOKING_AVAILABLE ? (
+                <p className="schedule-more">
+                  <a className="button button-quiet" href={ROUTES.schedule}>
+                    {SCHEDULES.seeMore}
+                    <ArrowRight aria-hidden="true" />
+                  </a>
+                </p>
+              ) : null}
             </>
           ) : null}
         </div>

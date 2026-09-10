@@ -61,12 +61,17 @@ export const PRIMARY_NAV = [
   { label: 'Partners', href: ROUTES.partners },
 ]
 
+/* Drives the Support dropdown AND the footer's "Help & Support" column, which
+   reads this same list. Account Deletion was removed from here on request; the
+   page and its route are untouched and still served at
+   /support/account-deletion-request — Google Play needs that URL to resolve,
+   and it is submitted to Play Console directly rather than found by crawling
+   the nav. Re-add the entry here to make it discoverable on the site again. */
 export const SUPPORT_NAV = [
   { label: 'Contact Us', href: ROUTES.contact },
   { label: 'FAQ', href: ROUTES.faq },
   { label: 'Privacy Policy', href: ROUTES.privacy },
   { label: 'Terms of Service', href: ROUTES.terms },
-  { label: 'Account Deletion', href: ROUTES.accountDeletion },
 ]
 
 /**

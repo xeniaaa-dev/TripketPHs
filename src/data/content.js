@@ -449,11 +449,12 @@ export const ABOUT_CONTACT = [
 /**
  * Founder names, roles and quotes exactly as published on the live About page.
  *
- * `photo` is the portrait shown in the faces column, taken from the images
- * tripketph.com/about uses for each founder. Allan's stays null: the live site
- * serves `placeholder-male.jpg` there — a generic grey silhouette, not him — so
- * the monogram is used instead of a stand-in stranger. Set `photo` to a real
- * headshot (square or portrait crop) and it takes over with no other change.
+ * Every `photo` is null, so each card shows the initials monogram. The images
+ * previously here came from tripketph.com/about and were not headshots — a
+ * motocross rider, a historical portrait, a figure outside a building — so all
+ * four now read consistently rather than three stand-in strangers beside one
+ * monogram. The slot is kept, not deleted: set `photo` to a real headshot
+ * (square or portrait crop) and it takes over with no other change.
  */
 export const FOUNDERS = [
   {
@@ -465,21 +466,21 @@ export const FOUNDERS = [
   },
   {
     initials: 'IU',
-    photo: '/assets/founders/irwin.jpg',
+    photo: null,
     name: 'Irwin Noel Ramas-Uypitching',
     role: 'CEO / Co-Founder',
     quote: 'Building connections, one route at a time.',
   },
   {
     initials: 'SC',
-    photo: '/assets/founders/sherwin.jpg',
+    photo: null,
     name: 'Sherwin Caraig',
     role: 'CEO / Co-Founder',
     quote: 'The best way to predict the future is to create it.',
   },
   {
     initials: 'AT',
-    photo: '/assets/founders/arvin.jpg',
+    photo: null,
     name: 'Arvin Tia',
     role: 'CEO / Co-Founder',
     quote: 'Design the future, one blueprint at a time.',

@@ -2,18 +2,23 @@
 // the mark is inlined once with `currentColor` and tinted per theme from CSS
 // (orange on the light surface, white on the dark one) rather than shipped as
 // two images that could drift apart.
-const RATIO = 428 / 266
+export const BRAND_MARK_RATIO = 428 / 266
 
-export default function BrandMark({ size = 26 }) {
+/* `className` is overridable because the mark is not always the header logo:
+   the sailing route in "How it works" uses the same artwork but must not
+   inherit `.brand-mark`, which pins a 26px height and its own colour. Extra
+   props pass through so a caller can position it inside an outer <svg>. */
+export default function BrandMark({ size = 26, className = 'brand-mark', ...rest }) {
   return (
     <svg
-      className="brand-mark"
+      className={className}
       viewBox="0 0 428 266"
-      width={Math.round(size * RATIO)}
+      width={Math.round(size * BRAND_MARK_RATIO)}
       height={size}
       fill="currentColor"
       aria-hidden="true"
       focusable="false"
+      {...rest}
     >
       <path d="M214.357 0L151.568 5.83489L98.3899 47.4814L104.043 127.146L117.903 125.013L146.152 50.8912L214.357 17.7417V0Z" />
       <path d="M265.054 3.59009L154.047 56.6146L123.573 134.51L72.9116 142.971L85.1485 186.514C143.634 176.467 192.726 155.662 259.09 107.469L266.385 7.36453L331.545 65.7499L265.054 3.59009Z" />

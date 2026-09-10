@@ -1396,15 +1396,14 @@ button {
   }
 }
 
-.route-ship svg {
+/* The Tripket mark is solid artwork, not a stroked glyph: it fills with the
+   route's own colour and carries no stroke at all. Setting both explicitly
+   rather than relying on the SVG defaults, because the previous icon here was
+   stroke-only and the inherited values are easy to get backwards. */
+.route-ship-mark {
   overflow: visible;
-  fill: none;
-  stroke: currentColor;
-  /* The nested viewport is 24 units wide but drawn at 48, and the outer SVG
-     then scales down — so the stroke is thickened to stay legible. */
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  fill: currentColor;
+  stroke: none;
 }
 
 /* Held at the start of the route rather than left mid-crossing — and the wake

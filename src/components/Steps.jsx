@@ -1,7 +1,19 @@
-import { Ship } from 'lucide-react'
+import BrandMark, { BRAND_MARK_RATIO } from './BrandMark'
 import { JOURNEY_STEPS, SECTION_LABELS } from '../data/content'
 
 const ROUTE_D = 'M4 40C220 4 400 76 720 40s500-36 716 0'
+
+/* The vessel on the route is the Tripket mark itself, not a generic glyph.
+   Sized in the outer SVG's user units, and offset by half its width so the
+   hull centres on the point riding the path. The mark's own hull line sits
+   about 84% down its 266-unit box, so the vertical offset lands that line on
+   the route instead of the middle of the sails — the ship reads as sailing
+   along the line rather than floating above it. */
+/* 52, not the old glyph's 48: roughly a third of the mark's box is its own
+   wave crest, so a like-for-like box would render a visibly smaller hull. */
+const SHIP_H = 52
+const SHIP_W = Math.round(SHIP_H * BRAND_MARK_RATIO)
+const SHIP_WATERLINE = 0.84
 
 /**
  * The connector is drawn as a sailing route rather than a straight rule: a
@@ -17,11 +29,16 @@ function RoutePath() {
       <path className="route-guide" d={ROUTE_D} />
       <path className="route-drawn" d={ROUTE_D} pathLength="100" />
 
-      {/* Sails the same curve via CSS offset-path — see .route-ship. A nested
-          <svg> keeps the icon in its own viewport, so it stays upright and
-          crisp while the group beneath it is moved and rotated. */}
+      {/* Sails the same curve via CSS offset-path — see .route-ship. BrandMark
+          renders a nested <svg>, which keeps the mark in its own viewport and
+          scaling cleanly while the group beneath it is moved and rotated. */}
       <g className="route-ship">
-        <Ship x="-24" y="-24" width="48" height="48" />
+        <BrandMark
+          className="route-ship-mark"
+          size={SHIP_H}
+          x={-SHIP_W / 2}
+          y={-Math.round(SHIP_H * SHIP_WATERLINE)}
+        />
       </g>
     </svg>
   )

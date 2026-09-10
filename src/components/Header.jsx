@@ -130,7 +130,10 @@ export default function Header({ theme, onToggleTheme, isStuck = false, path = '
           aria-pressed={isDark}
           onClick={onToggleTheme}
         >
-          {isDark ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
+          {/* The glyph names the theme you are in, not the one you would switch
+              to: moon while dark, sun while light. The aria-label still states
+              the action, since that is what activating the button does. */}
+          {isDark ? <Moon aria-hidden="true" /> : <Sun aria-hidden="true" />}
         </button>
       </div>
     </header>

@@ -405,7 +405,7 @@ export const FOOTER_GROUPS = [
 ]
 
 export const FOOTER_TAGLINE =
-  'The all-in-one platform for Philippine transportation ticketing — book ferry tickets and cargo shipments online.'
+  'Search routes, pick your seats, and get your tickets - ferry travel across the Philippines, all in one app.'
 
 export const SOCIAL_LINKS = [
   { label: 'Tripket PH on Facebook', network: 'facebook', href: 'https://www.facebook.com/tripketph' },

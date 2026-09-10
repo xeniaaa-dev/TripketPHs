@@ -30,7 +30,7 @@ test('renders the brand, landmarks, and hero campaign copy', () => {
   ).toBeInTheDocument()
   expect(
     within(screen.getByRole('contentinfo')).getByText(
-      /the all-in-one platform for philippine transportation ticketing/i,
+      /search routes, pick your seats, and get your tickets/i,
     ),
   ).toBeInTheDocument()
 })

@@ -2478,58 +2478,14 @@ button {
   text-wrap: balance;
 }
 
+/* No clamp: the Learn more button that used to release it is gone, and the
+   longest blurbs run past three lines. The track is a grid, so every slide
+   stretches to the tallest card and the row still finishes level. */
 .p-card-blurb {
   margin-top: var(--space-2xs);
   color: var(--text-muted);
   font-size: 0.92rem;
   line-height: 1.6;
-  /* Clamped so every card in a row is the same height; the button below
-     releases it. */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  overflow: hidden;
-}
-
-.p-card.is-expanded .p-card-blurb {
-  -webkit-line-clamp: unset;
-  line-clamp: unset;
-  overflow: visible;
-}
-
-.p-card-more {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  align-self: flex-start;
-  min-height: 44px;
-  margin-top: auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: color 200ms var(--ease);
-}
-
-.p-card-more svg {
-  width: 16px;
-  height: 16px;
-  transition: transform 240ms var(--ease-out);
-}
-
-.p-card.is-expanded .p-card-more svg {
-  transform: rotate(180deg);
-}
-
-/* The reference highlights the engaged card's action in the accent colour. */
-.p-card:hover .p-card-more,
-.p-card:focus-within .p-card-more {
-  color: var(--link);
 }
 
 /* ---- controls */

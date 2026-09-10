@@ -141,24 +141,21 @@ test('every partner has a vessel photo bundled with the site', async () => {
   })
 })
 
-test('a partner card reveals the rest of its description on demand', async () => {
-  const user = userEvent.setup()
+test('a partner card states its description outright, with nothing to expand', async () => {
   await go('/partners')
 
   const track = document.querySelector('.p-track')
-  const first = within(track).getAllByRole('button', { name: /learn more/i })[0]
-  const card = first.closest('.p-card')
 
-  expect(first).toHaveAttribute('aria-expanded', 'false')
-  expect(card).not.toHaveClass('is-expanded')
-  expect(document.getElementById(first.getAttribute('aria-controls'))).toBeInTheDocument()
+  // No Learn more / Show less toggle inside the track, and none of the cards
+  // is in an expanded state — the whole disclosure is gone, not just hidden.
+  expect(within(track).queryAllByRole('button', { name: /learn more|show less/i })).toHaveLength(0)
+  expect(track.querySelectorAll('.p-card.is-expanded')).toHaveLength(0)
 
-  await user.click(first)
-  expect(card).toHaveClass('is-expanded')
-  expect(within(card).getByRole('button', { name: /show less/i })).toHaveAttribute(
-    'aria-expanded',
-    'true',
-  )
+  // Each blurb is rendered whole, so the copy is readable without the toggle.
+  PARTNER_LOGOS.forEach(({ name, blurb }) => {
+    const card = within(track).getByRole('heading', { level: 3, name }).closest('.p-card')
+    expect(within(card).getByText(blurb)).toBeInTheDocument()
+  })
 })
 
 test('the carousel track is keyboard reachable and holds one slide per partner', async () => {

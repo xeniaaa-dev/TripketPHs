@@ -1,14 +1,11 @@
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
-import { ArrowLeft, ArrowRight, ChevronDown } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { PARTNER_LOGOS } from '../data/content'
 
 function PartnerSlide({ name, src, ship, blurb }) {
-  const [expanded, setExpanded] = useState(false)
-  const bodyId = useId()
-
   return (
     <li className="p-slide">
-      <article className={expanded ? 'p-card is-expanded' : 'p-card'}>
+      <article className="p-card">
         <div className="p-card-media">
           <img src={ship} alt={`${name} vessel`} loading="lazy" decoding="async" />
           <span className="p-card-logo">
@@ -18,22 +15,11 @@ function PartnerSlide({ name, src, ship, blurb }) {
 
         <div className="p-card-body">
           <h3>{name}</h3>
-          <p className="p-card-blurb" id={bodyId}>
-            {blurb}
-          </p>
-          {/* These shipping lines have no page of their own to link to, so the
-              action reveals the rest of the description instead of pointing at
-              a URL that does not exist. */}
-          <button
-            className="p-card-more"
-            type="button"
-            aria-expanded={expanded}
-            aria-controls={bodyId}
-            onClick={() => setExpanded((value) => !value)}
-          >
-            {expanded ? 'Show less' : 'Learn more'}
-            <ChevronDown aria-hidden="true" />
-          </button>
+          {/* Shown in full. The blurb used to be clamped to three lines with a
+              Learn more button to release it; with the button gone the clamp
+              went too, or the longest descriptions would be cut with no way to
+              read the rest. */}
+          <p className="p-card-blurb">{blurb}</p>
         </div>
       </article>
     </li>

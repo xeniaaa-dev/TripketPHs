@@ -540,7 +540,7 @@ export const PAGE_META = {
   '/': {
     title: 'Tripket PH — Online Ticket & Cargo Booking in the Philippines',
     description:
-      'Book ferry tickets and cargo shipments online with Tripket PH — the all-in-one platform for Philippine transportation ticketing.',
+      'Search routes, pick your seats, and get your tickets - ferry travel across the Philippines, all in one app.',
   },
   '/about': {
     title: 'About Us — Tripket PH',

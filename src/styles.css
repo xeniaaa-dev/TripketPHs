@@ -1325,29 +1325,12 @@ button {
   opacity: 0.32;
 }
 
+/* Fallback: where offset-path is unsupported there is no ferry to follow, so
+   the route is simply drawn in full. The travelling version is in the
+   @supports block below, next to the ship it is tied to. */
 .route-drawn {
   stroke: var(--accent);
-  stroke-dasharray: 100;
-  stroke-dashoffset: 0;
   opacity: 0.85;
-}
-
-[data-reveal-ready] .route-drawn {
-  stroke-dashoffset: 100;
-}
-
-[data-reveal-ready] .step-map[data-revealed] .route-drawn {
-  animation: route-draw 1100ms var(--ease-out) 200ms forwards;
-}
-
-@keyframes route-draw {
-  from {
-    stroke-dashoffset: 100;
-  }
-
-  to {
-    stroke-dashoffset: 0;
-  }
 }
 
 /* The ferry rides the same curve the line draws. offset-path takes the path in
@@ -1361,6 +1344,9 @@ button {
   display: none;
 }
 
+/* The ferry and the line it is on. Both live here, and both carry the same
+   duration, easing, delay and iteration count on purpose: they are one motion,
+   and the moment those values differ the wake drifts away from the hull. */
 @supports (offset-path: path('M0 0')) {
   .route-ship {
     display: block;
@@ -1369,6 +1355,39 @@ button {
     offset-distance: 0%;
     color: var(--accent);
     animation: route-sail 18s linear 1300ms infinite;
+  }
+
+  /* A 30-unit segment of the 100-unit path (pathLength normalises it), moving
+     with the ferry instead of the whole line appearing at once. The dotted
+     .route-guide underneath still shows the full route, so nothing is lost. */
+  .route-drawn {
+    stroke-dasharray: 30 70;
+    stroke-dashoffset: 30;
+    animation: route-wake 18s linear 1300ms infinite;
+  }
+}
+
+@keyframes route-sail {
+  from {
+    offset-distance: 0%;
+  }
+
+  to {
+    offset-distance: 100%;
+  }
+}
+
+/* Phase matters. With a 30-unit dash the segment spans dashoffset -X to
+   -X+30, so its leading edge sits at the ferry when X = 30 - distance. As the
+   ferry runs 0 -> 100, the offset therefore runs 30 -> -70, which puts the
+   segment behind the hull like a wake rather than ahead of it. */
+@keyframes route-wake {
+  from {
+    stroke-dashoffset: 30;
+  }
+
+  to {
+    stroke-dashoffset: -70;
   }
 }
 
@@ -1383,21 +1402,18 @@ button {
   stroke-linejoin: round;
 }
 
-@keyframes route-sail {
-  from {
-    offset-distance: 0%;
-  }
-
-  to {
-    offset-distance: 100%;
-  }
-}
-
-/* Held at the start of the route rather than left mid-crossing. */
+/* Held at the start of the route rather than left mid-crossing — and the wake
+   is held with it, or a detached segment would sit alone on the path. */
 @media (prefers-reduced-motion: reduce) {
   .route-ship {
     animation: none;
     offset-distance: 0%;
+  }
+
+  .route-drawn {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
   }
 }
 
@@ -4248,13 +4264,6 @@ button {
     /* The route draws in step with the scroll rather than on a timer. The
        first selector matches the timed rule's specificity and comes later,
        so it wins wherever this block applies. */
-    [data-reveal-ready] .step-map[data-revealed] .route-drawn,
-    [data-reveal-ready] .route-drawn {
-      animation: route-draw linear both;
-      animation-duration: auto;
-      animation-timeline: view();
-      animation-range: cover 15% cover 55%;
-    }
   }
 }
 

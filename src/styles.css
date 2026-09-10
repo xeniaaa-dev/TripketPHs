@@ -2205,89 +2205,17 @@ button {
   margin-bottom: var(--space-xl);
 }
 
-/* Faces on the left, detail cards on the right. */
-.founders-split {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
-  gap: clamp(var(--space-lg), 3.5vw, var(--space-2xl));
-}
-
-.founder-faces,
+/* All four founders in one row. This was the right-hand half of a two-column
+   split beside a portrait gallery; with the gallery removed the cards take the
+   full width, and four across keeps each card close to the width it had. */
 .founder-cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* Equal-height rows, so cards finish level whether or not the name wrapped.
+     The quotes are bottom-anchored, so slack opens between role and quote. */
+  grid-auto-rows: 1fr;
   gap: clamp(var(--space-sm), 1.6vw, var(--space-md));
   list-style: none;
-}
-
-/* Equal-height rows let the cards column fill the height the taller faces
-   column sets, so the two sides finish level instead of leaving dead space.
-   The quotes are bottom-anchored (margin-top: auto), so the extra height
-   opens up between the role and the quote rather than trailing off the end. */
-.founder-cards {
-  grid-auto-rows: 1fr;
-}
-
-/* ---- left column: the gallery */
-
-.founder-face {
-  transition: opacity 240ms var(--ease);
-}
-
-.founder-portrait {
-  position: relative;
-  display: grid;
-  place-items: center;
-  /* Square rather than 4:5 portraits: it keeps the faces column close to the
-     natural height of the cards column, so the equal-height rows below do not
-     have to stretch the cards open around a hollow middle. */
-  aspect-ratio: 1 / 1;
-  margin-bottom: var(--space-2xs);
-  border: 1px solid var(--glass-ring);
-  border-radius: var(--radius-md);
-  /* Monogram panel stands in until a real portrait is supplied; see the
-     `photo` note on FOUNDERS in src/data/content.js. */
-  background: linear-gradient(155deg, var(--peach), var(--sand) 55%, var(--surface-alt));
-  overflow: hidden;
-  transition: transform 300ms var(--ease-out), box-shadow 300ms var(--ease);
-}
-
-.founder-portrait img {
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-  object-fit: cover;
-  filter: grayscale(1);
-  transition: filter 300ms var(--ease), transform 400ms var(--ease-out);
-}
-
-.founder-monogram {
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  opacity: 0.55;
-}
-
-.founder-face-name {
-  font-family: var(--font-display);
-  font-size: 0.92rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-}
-
-.founder-face-role {
-  color: var(--text-muted);
-  font-size: 0.8rem;
-}
-
-/* ---- right column: the detail cards */
-
-.founder-card {
-  transition: opacity 240ms var(--ease);
 }
 
 .founder-card figure {
@@ -2376,27 +2304,13 @@ button {
   opacity: 0.7;
 }
 
-/* ---- pairing: hovering either side lifts the matching pair and dims the rest */
+/* ---- hover: the card lifts itself */
 
-/* Scoped through .founders-split so this matches the specificity of the
-   reveal rule above ([data-reveal-ready] [data-reveal][data-revealed]) and,
-   coming later in the file, still wins once an item has been revealed. */
-.founders-split .founder-face.is-dimmed,
-.founders-split .founder-card.is-dimmed {
-  opacity: 0.45;
-}
-
-.founder-face.is-paired .founder-portrait {
-  transform: translateY(-4px);
-  box-shadow: var(--glass-shadow-hover);
-}
-
-.founder-face.is-paired .founder-portrait img {
-  filter: grayscale(0);
-  transform: scale(1.04);
-}
-
-.founder-card.is-paired figure {
+/* Was driven from React state, so a hovered portrait could light up its
+   partner card across the split. With one column left there is no partner to
+   pair with, so this is plain CSS on the card's own hover and keyboard focus. */
+.founder-card:hover figure,
+.founder-card:focus-within figure {
   transform: translateY(-4px);
   border-color: var(--accent);
   background: var(--glass-bg-strong);
@@ -2404,9 +2318,8 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .founder-face.is-paired .founder-portrait,
-  .founder-card.is-paired figure,
-  .founder-face.is-paired .founder-portrait img {
+  .founder-card:hover figure,
+  .founder-card:focus-within figure {
     transform: none;
   }
 }
@@ -3751,14 +3664,9 @@ button {
     gap: var(--space-lg);
   }
 
-  /* Faces above the cards once there is no room for two columns of columns. */
-  .founders-split {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-lg);
-  }
-
-  .founder-faces {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* Two by two once four across would squeeze the quotes too narrow. */
+  .founder-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -3776,10 +3684,6 @@ button {
 @media (max-width: 620px) {
   .founder-cards {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .founder-faces {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .page-cta-actions .button {
@@ -4020,7 +3924,6 @@ button {
 
   .contact-row-label,
   .partner-name,
-  .founder-face-role,
   .legal-toc-heading,
   .faq-group > h2 {
     font-size: 0.84rem;

@@ -95,21 +95,20 @@ test('the about page carries the mission, vision, values and every founder', asy
     expect(screen.getByText(body)).toBeInTheDocument()
   })
 
-  // The split layout shows each founder twice: once in the faces gallery and
-  // once in the detail card beside it. The quote appears only in the card.
-  const faces = document.querySelector('.founder-faces')
+  // One card per founder, and only one: the portrait gallery that used to
+  // repeat every name beside these cards has been removed, so a second
+  // occurrence of a name would mean it crept back in.
   const cards = document.querySelector('.founder-cards')
 
   FOUNDERS.forEach(({ name, role, quote }) => {
-    expect(screen.getAllByText(name)).toHaveLength(2)
-    expect(within(faces).getByText(name)).toBeInTheDocument()
+    expect(screen.getAllByText(name)).toHaveLength(1)
     expect(within(cards).getByText(name)).toBeInTheDocument()
     expect(within(cards).getByText(quote)).toBeInTheDocument()
-    expect(within(faces).getAllByText(role).length).toBeGreaterThan(0)
+    expect(within(cards).getAllByText(role).length).toBeGreaterThan(0)
   })
 
-  // The gallery repeats what the cards already say, so it is not announced.
-  expect(faces).toHaveAttribute('aria-hidden', 'true')
+  expect(cards.querySelectorAll('.founder-card')).toHaveLength(FOUNDERS.length)
+  expect(document.querySelector('.founder-faces')).toBeNull()
 
   expect(screen.getByText(/mats place, hibbard avenue/i)).toBeInTheDocument()
   expect(screen.getByRole('link', { name: 'support@tripketph.com' })).toHaveAttribute(

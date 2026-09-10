@@ -4,8 +4,6 @@ import {
   Compass,
   CreditCard,
   Handshake,
-  Map,
-  Package,
   Search,
   Smile,
   Target,
@@ -140,16 +138,6 @@ export const FEATURES = [
     icon: Ticket,
     title: 'Ticket Booking',
     copy: 'Book ferry and bus tickets from anywhere, anytime, in just a few taps.',
-  },
-  {
-    icon: Map,
-    title: 'Customized Routes',
-    copy: 'Find the best route for your journey across the Philippine islands.',
-  },
-  {
-    icon: Package,
-    title: 'Cargo Shipping',
-    copy: 'Ship cargo and freight with trusted Philippine shipping line partners.',
   },
   {
     icon: Clock,

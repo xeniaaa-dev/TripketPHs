@@ -356,38 +356,18 @@ export const TERMS_DOC = {
         'Options for payment include Paymaya, GrabPay, GCash and possibly Credit/Debit Cards. Discounts or promotions may be available for passengers 9 years old and below, students, and seniors.',
       ],
     },
-    /* SUPERSEDED — needs a decision, not a merge.
-       This clause described a rebooking service: change of travel date, a
-       6-month limit, rebooking costs. The Cancellation, Refund & Rebooking
-       Policy added below says Tripket PH does not rebook at all — you cancel,
-       take the refund, and book again as a new transaction.
-       Both cannot be true, and publishing both would let a customer rely on
-       whichever suited them. Commented out rather than deleted: if this clause
-       is the current rule and the PDF is wrong, uncomment it and remove the
-       'refund-rebooking-*' sections instead.
-       Note the pregnancy/illness waiver rule below appears ONLY here and is
-       not repeated in the new policy, so it is lost while this is commented
-       out — worth re-homing into the boarding conditions if it still applies.
-    {
-      id: 'rebooking',
-      title: 'Conditions: rebooking',
-      body: [
-        'Rebooking costs apply to any transactions that include rebooking (except for cancelled trips). Options and lodging are based on availability.',
-      ],
-      list: [
-        'Rebooking tickets only allow passengers to change travel dates.',
-        'No name change, no travel destination change, no shipping line change, and no accommodation change.',
-        'Travelers who are pregnant or ill must board the vessel bearing a signed waiver attesting to their fitness to travel by sea and a medical certificate issued no less than five days prior to departure.',
-        'Rebooking time limit is 6 months.',
-      ],
-    },
-    */
     {
       id: 'boarding',
       title: 'Conditions: boarding guidelines',
       list: [
         'When boarding, be sure to produce a valid ID and a printed copy of your e-ticket.',
         "Please obtain a copy of the child's birth certificate for minors.",
+        /* Moved here from the retired rebooking clause: a fitness-to-travel
+           requirement, not a rebooking rule. It only sat under rebooking
+           because of how the original page grouped its conditions, and the new
+           policy does not cover it — so retiring that clause would otherwise
+           have dropped a live rule. */
+        'Travelers who are pregnant or ill must board the vessel bearing a signed waiver attesting to their fitness to travel by sea and a medical certificate issued no less than five days prior to departure.',
       ],
     },
     /* ---------------------------------------------------------------------

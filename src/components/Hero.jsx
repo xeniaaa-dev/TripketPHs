@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { BOOKING_AVAILABLE, HERO, PRIMARY_CTA_LABEL, ROUTES } from '../data/content'
 
 export default function Hero() {
@@ -36,8 +36,7 @@ export default function Hero() {
                 <ArrowRight aria-hidden="true" />
               </a>
             ) : null}
-            <a className="button button-ghost button-lg" href={ROUTES.features}>
-              <ArrowDown aria-hidden="true" />
+            <a className="button button-primary button-lg" href={ROUTES.about}>
               Learn More
             </a>
           </div>

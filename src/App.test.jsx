@@ -91,7 +91,13 @@ test('no Book Now is shown while the web app is unavailable', () => {
      ROUTES.book was '#' for a while, so every "Book Now" did nothing. */
   expect(ROUTES.book).toBe('https://app.tripketph.com/')
   expect(ROUTES.book.startsWith('https://')).toBe(true)
-  expect(screen.getAllByRole('link', { name: /learn more/i })[0]).toHaveAttribute('href', '#features')
+  /* The hero's Learn More is the primary action now that Book Now is hidden,
+     and it routes to the About page rather than scrolling to #features — hence
+     no down-arrow, which would point at a scroll that no longer happens. */
+  const learnMore = screen.getAllByRole('link', { name: /learn more/i })[0]
+  expect(learnMore).toHaveAttribute('href', ROUTES.about)
+  expect(learnMore.className).toContain('button-primary')
+  expect(learnMore.querySelector('svg')).toBeNull()
 })
 
 test('renders every feature, step and partner exactly once', () => {

@@ -809,18 +809,6 @@ button {
   padding-inline: var(--space-lg);
 }
 
-/* Secondary action stays an inline link so the filled CTA still dominates. */
-.hero-actions .button-ghost {
-  padding-inline: var(--space-2xs);
-  background: transparent;
-  color: var(--accent-secondary);
-}
-
-.hero-actions .button-ghost:hover {
-  background: transparent;
-  color: var(--link);
-}
-
 /* ------------------------------------------------------------- trust bar */
 
 .trust-head {

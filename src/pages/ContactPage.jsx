@@ -67,7 +67,7 @@ export default function ContactPage() {
                     ) : (
                       <span className="contact-row-value">{value}</span>
                     )}
-                    <span className="contact-row-note">{note}</span>
+                    {note ? <span className="contact-row-note">{note}</span> : null}
                   </span>
                 </li>
               ))}

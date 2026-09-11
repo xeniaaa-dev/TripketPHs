@@ -16,7 +16,8 @@ export const CONTACT_CHANNELS = [
     icon: Phone,
     label: 'Mobile',
     value: '+63 960 921 6651',
-    note: 'Mon–Fri, 8AM–6PM PHT',
+    // No `note`: it used to read "Mon-Fri, 8AM-6PM PHT", which is the same
+    // support-hours claim the dedicated row made before it was removed.
     // tel: needs the number with no spaces, so this has to be edited in step
     // with `value` above — they are the same number in two formats.
     href: 'tel:+639609216651',

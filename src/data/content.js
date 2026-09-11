@@ -137,7 +137,7 @@ export const FEATURES = [
   {
     icon: Ticket,
     title: 'Ticket Booking',
-    copy: 'Book ferry and bus tickets from anywhere, anytime, in just a few taps.',
+    copy: 'Book ferry tickets online in just a few taps.',
   },
   {
     icon: Clock,
